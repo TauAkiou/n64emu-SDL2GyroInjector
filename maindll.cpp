@@ -1,5 +1,6 @@
 #include "maindll.h"
 
+
 MainDll* MainDll::instance = nullptr;
 
 MainDll * MainDll::getInstance(HINSTANCE hinstance) {
@@ -14,6 +15,9 @@ bool MainDll::IsConfigDialogOpen() const {
 }
 
 MainDll::MainDll(HINSTANCE hinstance) {
+    // As part of the instantiation, also get object pointers.
+    _emuctrlptr = Controls::getInstance();
+    _jsdptr = JoyShockDriver::getInstance();
     _hinst = hinstance;
 
     wchar_t filepath[MAX_PATH] = {L'\0'};
@@ -38,17 +42,46 @@ MainDll::MainDll(HINSTANCE hinstance) {
 }
 
 bool MainDll::Initialize(const HWND hW) {
-    return true;
+
 }
 
 void MainDll::End() {
-
+    _configdialogisopen = false;
+    _rdramptr = nullptr;
+    _romptr = nullptr;
+    _ctrlptr = nullptr;
 }
 
 void MainDll::SetEmulatorOverclock(bool newoverclock) {
     _emuoverclock = newoverclock;
 }
 
+bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
+    _ctrlptr = ptr;
+
+    if(!Initialize(window)) {
+        for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+            _emuctrlptr->Profiles[player].SETTINGS[CONFIG] = DISABLED;
+            UpdateControllerStatus();
+            return false;
+        }
+    }
+        // Set up configuration objects.
+        _emuctrlptr->Profiles[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
+}
+
+void MainDll::UpdateControllerStatus() {
+    if(_ctrlptr == nullptr)
+        return;
+
+    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+        _ctrlptr[player].Present = _emuctrlptr->Profiles->SETTINGS[CONFIG];
+        _ctrlptr[player].RawData = false;
+        _ctrlptr[player].Plugin = player == PLAYER1 ? PLUGIN_MEMPACK : PLUGIN_NONE;
+    }
+}
+
+/* N64 Emulator Program Connection Methods */
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
@@ -56,6 +89,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
     {
         case DLL_PROCESS_ATTACH:
         {
+            // Initialize all state objects.
             MainDll::getInstance(hinstDLL);
             break;
         }
@@ -82,7 +116,6 @@ DLLEXPORT void CALL CloseDLL(void)
 //==========================================================================
 DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
 {
-    return;
 }
 //==========================================================================
 // Purpose: Optional function that is provided to give further information about the DLL
@@ -99,8 +132,10 @@ DLLEXPORT void CALL DllAbout(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllConfig(HWND hParent)
 {
-    if(!JoyShockDriver::getInstance().GetConnectedDeviceCount())
+    if(!JoyShockDriver::getInstance()->GetConnectedDeviceCount())
     {
+        MessageBoxA(hParent, "Controllers found.\n." , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
+
         //int laststate = mousetoggle;
         //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
         //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
@@ -116,7 +151,7 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllTest(HWND hParent)
 {
-    MessageBoxA(hParent, JoyShockDriver::getInstance().GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
+    MessageBoxA(hParent, JoyShockDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
 }
 //==========================================================================
 // Purpose: Allows the emulator to gather information about the DLL by filling in the PluginInfo structure
@@ -126,7 +161,7 @@ DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
 {
     PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
     PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    sprintf(PluginInfo->Name, "Joyshock for GE/PD %s", __GYRO_INJECTOR_VERSION__);
+    sprintf(PluginInfo->Name, "Joyshock for GE/PD (cpp) %s", __GYRO_INJECTOR_VERSION__);
 #ifdef SPEEDRUN_BUILD
     sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
 #endif
@@ -148,6 +183,11 @@ DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
 //==========================================================================
 DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Controls[4])
 {
+    if(!MainDll::getInstance()->InitiateControllers(hMainWindow, Controls)) {
+        MessageBoxA(hMainWindow,
+                    "Joyshock Input did not locate any usable controllers.\n\nPlease connect devices and restart the emulator.",
+                    "Joyshock Input - Error", MB_ICONERROR | MB_OK);
+    }
 }
 //==========================================================================
 // Purpose: Initializes how each of the controllers should be handled

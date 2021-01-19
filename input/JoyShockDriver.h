@@ -7,30 +7,36 @@
 
 #include <vector>
 #include <map>
+#include <windows.h>
 #include "../common.h"
-#include "JoyShockDriver.h"
-
-typedef struct {
-    bool PlayerIsActive;
-    int DeviceClass;
-    int DeviceHandlePrimary;
-    int DeviceHandleSecondary;
-} DeviceAssignment;
+#include "../settings/Settings.h"
+#include "../JoyShockLibrary/JoyShockLibrary.h"
 
 class JoyShockDriver {
     protected:
         static JoyShockDriver* instance;
+        HANDLE _inputthread = nullptr;
+        Controls* _ctrlptr = nullptr;
         int _devicecount = 0;
         int _windowactive = 1;
         int _initialized = 0;
-        std::vector<int> *_handles = new std::vector<int>();
-        std::vector<DeviceAssignment> *_playerassignment = new std::vector<PlayerAssignment>(); // Attach players to handles
+        std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
+        HWND _emulatorwindow = nullptr;
+
+        static DWORD WINAPI startinjectionloop(void* param);
+        DWORD injectionloop();
     public:
-        static JoyShockDriver getInstance();
+        static JoyShockDriver* getInstance();
         JoyShockDriver();
-        void Initialize();
+        void Initialize(const HWND hw);
         void Terminate();
+        void AssignEmulatorWindow(const HWND hw);
+
+        void StartInjectionThread();
+        void EndInjectionThread();
+        bool IsThreadRunning();
         int GetConnectedDeviceCount();
+        int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
         int GetConnectedDS4Count();
         int GetConnectedSPCCount();
         int GetConnectedJCLCount();
