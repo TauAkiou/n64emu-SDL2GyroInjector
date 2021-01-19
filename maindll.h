@@ -23,10 +23,7 @@ protected:
     bool _guibusy = true;
     int _changeratio = 0;
     bool _emuoverclock = true;
-    int _fovoverride = 60;
-    int _overrideratiowidth = 16;
-    int _overrideratioheight = 9;
-    bool _showgoldeneyecrosshair = false;
+
     bool _configdialogisopen = false;
     bool _threadrunning = false;
     // Emulator pointers:

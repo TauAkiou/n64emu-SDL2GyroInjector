@@ -42,7 +42,10 @@ MainDll::MainDll(HINSTANCE hinstance) {
 }
 
 bool MainDll::Initialize(const HWND hW) {
-
+    _jsdptr->Initialize(hW);
+    if(!_jsdptr->GetConnectedDeviceCount())
+        return false;
+    return true;
 }
 
 void MainDll::End() {
@@ -62,9 +65,9 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     if(!Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
             _emuctrlptr->Profiles[player].SETTINGS[CONFIG] = DISABLED;
-            UpdateControllerStatus();
-            return false;
         }
+        UpdateControllerStatus();
+        return false;
     }
         // Set up configuration objects.
         _emuctrlptr->Profiles[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
@@ -132,7 +135,7 @@ DLLEXPORT void CALL DllAbout(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllConfig(HWND hParent)
 {
-    if(!JoyShockDriver::getInstance()->GetConnectedDeviceCount())
+    if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
     {
         MessageBoxA(hParent, "Controllers found.\n." , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
 

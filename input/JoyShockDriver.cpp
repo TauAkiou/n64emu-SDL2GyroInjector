@@ -21,7 +21,7 @@ DWORD JoyShockDriver::injectionloop() {
 }
 
 int JoyShockDriver::GetConnectedDeviceCount() {
-    return 0;
+    return _devicecount;
 }
 
 void JoyShockDriver::Initialize(const HWND hw) {
@@ -41,7 +41,9 @@ void JoyShockDriver::Initialize(const HWND hw) {
 
             _devices->push_back(deviceentry);
         }
+        _initialized = true;
     }
+
 }
 
 void JoyShockDriver::AssignEmulatorWindow(const HWND hw) {

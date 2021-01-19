@@ -5,17 +5,20 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_GAME_H
 #define INC_1964_INPUT_JOYSHOCKCPP_GAME_H
 
+#define FOV_MIN 40
+#define FOV_MAX 120
+
+
 #include <vector>
 #include <string>
+#include "GameDriver.h"
 #include "Goldeneye.h"
 #include "PerfectDark.h"
-#include "GameDriver.h"
-
 
 class Game {
     protected:
-        Game* _instance = nullptr;
-        std::vector<GameDriver*> _gamedrivers { new Goldeneye() };
+        static Game* _instance;
+        std::vector<GameDriver*> _gamedrivers = { new Goldeneye() };
         GameDriver* _loadedgame = nullptr;
     public:
         static Game* getInstance();

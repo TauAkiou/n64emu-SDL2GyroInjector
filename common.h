@@ -10,6 +10,19 @@
 #define __CURRENTYEAR__ "2021"
 #define CONSOLE { AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout; )};
 
+#define FOV_MIN 40
+#define FOV_MAX 120
+
+#define TICKRATE (emuoverclock ? 2 : 4) // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
+#define TIMESTEP TICKRATE / 1000
+#ifdef SPEEDRUN_BUILD // fov/ratio hacks gives unfair advantage, always use default values for speedrun build
+#define RATIOFACTOR 1.f
+#define OVERRIDEFOV 60
+#else
+#define RATIOFACTOR (((float)overrideratiowidth / (float)overrideratioheight) / (16.f / 9.f))
+#define OVERRIDEFOV overridefov
+#endif
+
 enum CONTROLLERENUM {FORWARDS = 0, BACKWARDS, STRAFELEFT, STRAFERIGHT, FIRE, AIM, ACCEPT, CANCEL, START, CROUCH, KNEEL, PREVIOUSWEAPON, NEXTWEAPON, UP, DOWN, LEFT, RIGHT, RESETGYRO, TOGGLEGYRO, TOTALBUTTONS};
 enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVITYX, GYROSENSITIVITYY, ACCELERATION, CROSSHAIR, INVERTPITCH, CROUCHTOGGLE, GEAIMMODE, PDAIMMODE, CONMODE, HANDLE1, HANDLE2, COLOR, TOTALSETTINGS};
 enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};

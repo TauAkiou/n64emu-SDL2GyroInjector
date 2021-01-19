@@ -10,11 +10,25 @@
 class Controls {
     private:
         static Controls* instance;
+        Controls();
     public:
         static Controls* getInstance();
-        PROFILE Profiles[4];
-        DEVICE Devices[4];
+        PROFILE Profile[4];
+        DEVICE Device[4];
         float DeltaTime;
+};
+
+class PluginSettings {
+private:
+    static PluginSettings* _instance;
+    PluginSettings();
+public:
+    static PluginSettings* getInstance();
+    bool EmulatorOverclocked = true;
+    int _fovoverride = 60;
+    int _overrideratiowidth = 16;
+    int _overrideratioheight = 9;
+    bool _showgoldeneyecrosshair = false;
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
