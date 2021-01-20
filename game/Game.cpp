@@ -4,11 +4,24 @@
 
 #include "Game.h"
 
-void Game::Inject() {}
+Game* Game::_instance = nullptr;
 
-const std::string Game::Name() {}
+void Game::Inject() {
+    if(_loadedgame != nullptr)
+        _loadedgame->Inject();
+}
 
-void Game::Quit() {}
+std::string Game::Name() {
+    if(_loadedgame != nullptr)
+        return _loadedgame->GetName();
+    return "\0";
+}
+
+void Game::Quit() {
+    if(_loadedgame != nullptr)
+        _loadedgame->Quit();
+    _loadedgame = nullptr;
+}
 
 int Game::Status() {
     if(_loadedgame != nullptr) {
@@ -16,7 +29,6 @@ int Game::Status() {
             return 1;
         _loadedgame = nullptr;
     }
-    const Game* game;
     for(GameDriver* drv : _gamedrivers) {
         if (drv != nullptr && drv->Status())
             _loadedgame = drv;

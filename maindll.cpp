@@ -18,6 +18,7 @@ MainDll::MainDll(HINSTANCE hinstance) {
     // As part of the instantiation, also get object pointers.
     _emuctrlptr = Controls::getInstance();
     _jsdptr = JoyShockDriver::getInstance();
+    _gameptr = Game::getInstance();
     _hinst = hinstance;
 
     wchar_t filepath[MAX_PATH] = {L'\0'};
@@ -48,6 +49,14 @@ bool MainDll::Initialize(const HWND hW) {
     return true;
 }
 
+void MainDll::StartInjection() {
+    _jsdptr->StartInjectionThread();
+}
+
+void MainDll::EndInjection() {
+    _jsdptr->EndInjectionThread();
+}
+
 void MainDll::End() {
     _configdialogisopen = false;
     _rdramptr = nullptr;
@@ -64,13 +73,60 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     if(!Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            _emuctrlptr->Profiles[player].SETTINGS[CONFIG] = DISABLED;
+            _emuctrlptr->Profile[player].SETTINGS[CONFIG] = DISABLED;
         }
         UpdateControllerStatus();
         return false;
     }
         // Set up configuration objects.
-        _emuctrlptr->Profiles[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
+
+
+    // Use the first detected FULL controller type.
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
+
+    auto ctrllist = _jsdptr->GetConnectedFullControllers();
+
+    if(ctrllist.empty()) {
+        // No controller, just in case here
+        _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DISABLED;
+        return false;
+    }
+
+    // Get the first controller for testing.
+    _emuctrlptr->Profile->AssignedDevicePrimary = ctrllist.front();
+
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 500;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 500;
+
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 1000;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 1000;
+
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[INVERTPITCH] = 0;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROUCHTOGGLE] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[GEAIMMODE] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[PDAIMMODE] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONMODE] = 1;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[COLOR] = 0xFF0000;
+
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[FIRE].Button = JSMASK_ZR;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[AIM].Button = JSMASK_ZL;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[ACCEPT].Button = JSMASK_L;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[CANCEL].Button = JSMASK_R;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[START].Button = JSMASK_PLUS;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[CROUCH].Button = JSMASK_E;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[KNEEL].Button = JSMASK_S;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[PREVIOUSWEAPON].Button = JSMASK_W;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[NEXTWEAPON].Button = JSMASK_N;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[UP].Button = JSMASK_UP;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[DOWN].Button = JSMASK_DOWN;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
+    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
+    
+        UpdateControllerStatus();
+    return true;
 }
 
 void MainDll::UpdateControllerStatus() {
@@ -78,7 +134,7 @@ void MainDll::UpdateControllerStatus() {
         return;
 
     for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-        _ctrlptr[player].Present = _emuctrlptr->Profiles->SETTINGS[CONFIG];
+        _ctrlptr[player].Present = _emuctrlptr->Profile->SETTINGS[CONFIG];
         _ctrlptr[player].RawData = false;
         _ctrlptr[player].Plugin = player == PLAYER1 ? PLUGIN_MEMPACK : PLUGIN_NONE;
     }
@@ -94,6 +150,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
         {
             // Initialize all state objects.
             MainDll::getInstance(hinstDLL);
+            AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
+            std::cout << "test\n";
             break;
         }
         default:
@@ -137,7 +195,7 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
 {
     if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
     {
-        MessageBoxA(hParent, "Controllers found.\n." , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
+        MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
 
         //int laststate = mousetoggle;
         //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
@@ -175,9 +233,12 @@ DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
 //==========================================================================
 DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
 {
-    if(Keys == NULL)
+    if(Keys == nullptr)
         return;
-    Keys->Value = !MainDll::getInstance()->IsConfigDialogOpen() ? CONTROLLER[Control].Value : 0; // ignore input if config dialog is open
+
+    auto cons = Controls::getInstance();
+    std::cout << "Controller: " << Control << " Submitting " <<  Emulator::Controller[Control].Value << "\n";
+    Keys->Value = !MainDll::getInstance()->IsConfigDialogOpen() ? Emulator::Controller[Control].Value : 0; // ignore input if config dialog is open
 }
 //==========================================================================
 // Purpose: Initializes how each of the controllers should be handled
@@ -207,6 +268,7 @@ DLLEXPORT void CALL ReadController(int Control, BYTE *Command)
 //==========================================================================
 DLLEXPORT void CALL RomClosed(void)
 {
+    MainDll::getInstance()->EndInjection();
 }
 //==========================================================================
 // Purpose: Called when a ROM is open (from the emulation thread)
@@ -214,6 +276,8 @@ DLLEXPORT void CALL RomClosed(void)
 //==========================================================================
 DLLEXPORT void CALL RomOpen(void)
 {
+    JoyShockDriver::getInstance()->AssignEmulatorWindow(GetForegroundWindow());
+    MainDll::getInstance()->StartInjection();
 }
 //==========================================================================
 // Purpose: To pass the WM_KeyDown message from the emulator to the plugin

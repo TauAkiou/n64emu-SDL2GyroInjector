@@ -2,6 +2,8 @@
 // Created by Robin on 1/18/2021.
 //
 
+#include <cstdio>
+#include <iostream>
 #include "EmulatorLink.h"
 
 EmulatorLink* EmulatorLink::instance = nullptr;
@@ -54,8 +56,10 @@ unsigned EmulatorLink::ReadROM(const unsigned int addr) {
 }
 
 void EmulatorLink::WriteROM(const unsigned int addr, const unsigned int value) {
-    if(romptr != nullptr)
+    if(romptr != nullptr) {
         romptr[addr / 0x4] = static_cast<const unsigned char *>((void *) value);
+        std::cout << "Wrote " << value << " to ROM addr " << addr << std::endl;
+    }
 }
 
 void EmulatorLink::SetRAMPointer(const unsigned char **newramptr) {

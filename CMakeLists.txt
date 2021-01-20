@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(1964_input_joyshockcpp)
 
 SET(GCC_COVERAGE_COMPILE_FLAGS "-m32 -Wall")
-SET(1964_INSTALL_DIRECTORY "C:/utils/1964")
+SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
 SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -26,7 +26,7 @@ add_library(1964_input_joyshockcpp SHARED
         game/PerfectDark.h
         settings/Settings.cpp
         settings/Settings.h
-        JoyShockLibrary/JoyShockLibrary.h)
+        JoyShockLibrary/JoyShockLibrary.h plugin.c)
 
 target_include_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
 target_link_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)

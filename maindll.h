@@ -34,6 +34,7 @@ protected:
     // Pointers to objects.
     Controls* _emuctrlptr = nullptr;
     JoyShockDriver* _jsdptr = nullptr;
+    Game* _gameptr = nullptr;
 
     MainDll(HINSTANCE hinstance);
     bool Initialize(const HWND hW);

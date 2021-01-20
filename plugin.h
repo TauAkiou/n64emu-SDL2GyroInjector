@@ -65,6 +65,11 @@ typedef union
     };
 } BUTTONS;
 
-static BUTTONS CONTROLLER[4];
+class Emulator {
+    public:
+        inline static BUTTONS Controller[4];
+};
+
 
 #endif
+

@@ -21,14 +21,14 @@ class EmulatorLink {
     public:
         static EmulatorLink* getInstance();
         EmulatorLink();
-        inline short ReadShort(const unsigned int addr);
-        inline void WriteShort(const unsigned int addr, const short value);
+        short ReadShort(const unsigned int addr);
+        void WriteShort(const unsigned int addr, const short value);
         int ReadInt(unsigned int addr);
-        inline void WriteInt(const unsigned int addr, const int value);
+        void WriteInt(const unsigned int addr, const int value);
         float ReadFloat(const unsigned int addr);
-        inline void WriteFloat(const unsigned int addr, const float value);
-        inline unsigned ReadROM(const unsigned int addr);
-        inline void WriteROM(const unsigned int addr, const unsigned int value);
+        void WriteFloat(const unsigned int addr, const float value);
+        unsigned ReadROM(const unsigned int addr);
+        void WriteROM(const unsigned int addr, const unsigned int value);
         void SetRAMPointer(const unsigned char** newramptr);
         void SetROMPointer(const unsigned char** newromptr);
 };

@@ -4,16 +4,14 @@
 
 #include "Settings.h"
 
-Controls* Controls::instance = nullptr;
+Controls* Controls::_instance = nullptr;
+PluginSettings* PluginSettings::_instance = nullptr;
 
 Controls* Controls::getInstance() {
-    if(instance == nullptr) {
-        instance = new Controls();
+    if(_instance == nullptr) {
+        _instance = new Controls();
     }
-}
-
-Controls::Controls() {
-
+    return _instance;
 }
 
 PluginSettings* PluginSettings::getInstance() {

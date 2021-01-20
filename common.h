@@ -13,16 +13,6 @@
 #define FOV_MIN 40
 #define FOV_MAX 120
 
-#define TICKRATE (emuoverclock ? 2 : 4) // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
-#define TIMESTEP TICKRATE / 1000
-#ifdef SPEEDRUN_BUILD // fov/ratio hacks gives unfair advantage, always use default values for speedrun build
-#define RATIOFACTOR 1.f
-#define OVERRIDEFOV 60
-#else
-#define RATIOFACTOR (((float)overrideratiowidth / (float)overrideratioheight) / (16.f / 9.f))
-#define OVERRIDEFOV overridefov
-#endif
-
 enum CONTROLLERENUM {FORWARDS = 0, BACKWARDS, STRAFELEFT, STRAFERIGHT, FIRE, AIM, ACCEPT, CANCEL, START, CROUCH, KNEEL, PREVIOUSWEAPON, NEXTWEAPON, UP, DOWN, LEFT, RIGHT, RESETGYRO, TOGGLEGYRO, TOTALBUTTONS};
 enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVITYX, GYROSENSITIVITYY, ACCELERATION, CROSSHAIR, INVERTPITCH, CROUCHTOGGLE, GEAIMMODE, PDAIMMODE, CONMODE, HANDLE1, HANDLE2, COLOR, TOTALSETTINGS};
 enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
@@ -42,14 +32,15 @@ typedef struct {
     int NSPlayerLight;
 } JSDevice;
 
-// Device is either 1 or 2, meaning that this value is assigned to this controller.
+// Device is either 0 or 1, meaning that this value is assigned to device 1 or 2.
 typedef struct {
     int Device;
-    CONTROLLERENUM Button;
+    int Button;
 } ASSIGNMENT;
 
 typedef struct {
     // Secondary devices are used when we are in Joycon mode.
+    int ControllerMode; // 0 = Controller, 1 = Joycon
     JSDevice AssignedDevicePrimary;
     JSDevice AssignedDeviceSecondary;
     ASSIGNMENT BUTTONPRIM[TOTALBUTTONS];
@@ -61,6 +52,7 @@ typedef struct {
     float AIMSTICKX, AIMSTICKY, GYROX, GYROY, LTRIGGER, RTRIGGER;
     int POSX, POSY; // Just in case we want to read keyboard/mouse support
     int BUTTONPRIM[TOTALBUTTONS];
+    int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROISACTIVE;
 } DEVICE;

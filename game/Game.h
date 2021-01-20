@@ -23,7 +23,7 @@ class Game {
     public:
         static Game* getInstance();
         int Status();
-        const std::string Name();
+        std::string Name();
         void Inject();
         void Quit();
 };

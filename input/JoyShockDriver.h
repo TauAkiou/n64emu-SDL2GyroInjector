@@ -8,15 +8,20 @@
 #include <vector>
 #include <map>
 #include <windows.h>
+#include <ctime>
 #include "../common.h"
 #include "../settings/Settings.h"
 #include "../JoyShockLibrary/JoyShockLibrary.h"
+#include "../game/Game.h"
 
 class JoyShockDriver {
     protected:
         static JoyShockDriver* instance;
         HANDLE _inputthread = nullptr;
         Controls* _ctrlptr = nullptr;
+        PluginSettings* _pluginptr = nullptr;
+        Game* _gameptr = nullptr;
+        bool _terminatethread = true;
         int _devicecount = 0;
         int _windowactive = 1;
         int _initialized = 0;
@@ -35,8 +40,9 @@ class JoyShockDriver {
         void StartInjectionThread();
         void EndInjectionThread();
         bool IsThreadRunning();
-        int GetConnectedDeviceCount();
+        int GetConnectedDeviceCount() const;
         int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
+        std::vector<JSDevice> GetConnectedFullControllers();
         int GetConnectedDS4Count();
         int GetConnectedSPCCount();
         int GetConnectedJCLCount();

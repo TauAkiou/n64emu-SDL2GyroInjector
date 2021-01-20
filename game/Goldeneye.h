@@ -6,9 +6,6 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_GOLDENEYE_H
 
 #include "GameDriver.h"
-#include "EmulatorLink.h"
-#include "../settings/Settings.h"
-#include "../common.h"
 
 class Goldeneye : public GameDriver {
 private:
@@ -29,7 +26,7 @@ private:
     void _injecthacks();
 
 public:
-    Goldeneye();
+    Goldeneye() = default;
     int Status() override;
     void Inject() override;
     void Quit() override;
