@@ -14,10 +14,14 @@ class Controls {
         Controls() = default;
     public:
         static Controls* getInstance();
-        PROFILE Profile[4];
-        DEVICE Device[4];
-        float DeltaTime;
-        BUTTONS Controllers[4];
+        PROFILE Profile[4] { 0,
+                             { -1, None, 0, 0},
+                             {-1, None, 0, 0},
+                             {0, 0},
+                             {0, 0},
+                             {0} };
+        DEVICE Device[4] { 0, 0, 0, 0, 0, 0, 0, 0, {0}, {0}, {0}, false };
+        float DeltaTime = 0;
 };
 
 class PluginSettings {

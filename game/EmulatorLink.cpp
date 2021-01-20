@@ -58,6 +58,7 @@ unsigned EmulatorLink::ReadROM(const unsigned int addr) {
 void EmulatorLink::WriteROM(const unsigned int addr, const unsigned int value) {
     if(romptr != nullptr) {
         romptr[addr / 0x4] = static_cast<const unsigned char *>((void *) value);
+        //memcpy(romptr, reinterpret_cast<const void *>(value), sizeof(unsigned int));
         std::cout << "Wrote " << value << " to ROM addr " << addr << std::endl;
     }
 }

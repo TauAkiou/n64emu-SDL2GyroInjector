@@ -95,8 +95,8 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     // Get the first controller for testing.
     _emuctrlptr->Profile->AssignedDevicePrimary = ctrllist.front();
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 500;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 500;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 250;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 250;
 
     _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 1000;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 1000;
@@ -124,8 +124,10 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
-    
-        UpdateControllerStatus();
+
+    _jsdptr->CalibrateGyroscope(_emuctrlptr->Profile[PLAYER1].AssignedDeviceSecondary);
+
+    UpdateControllerStatus();
     return true;
 }
 
@@ -236,8 +238,8 @@ DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
     if(Keys == nullptr)
         return;
 
-    auto cons = Controls::getInstance();
-    std::cout << "Controller: " << Control << " Submitting " <<  Emulator::Controller[Control].Value << "\n";
+    //auto cons = Controls::getInstance();
+    //std::cout << "Controller: " << Control << " Submitting " <<  Emulator::Controller[Control].Value << "\n";
     Keys->Value = !MainDll::getInstance()->IsConfigDialogOpen() ? Emulator::Controller[Control].Value : 0; // ignore input if config dialog is open
 }
 //==========================================================================

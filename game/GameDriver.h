@@ -27,8 +27,8 @@
 class GameDriver {
 protected:
     GameDriver* _driver = nullptr;
-    Controls* _cfgptr = nullptr;
-    PluginSettings* _pluginptr = nullptr;
+    Controls* _cfgptr = Controls::getInstance();
+    PluginSettings* _pluginptr = PluginSettings::getInstance();
     EmulatorLink* _link = EmulatorLink::getInstance();
     std::string _name;
     float ClampFloat(const float value, const float min, const float max);

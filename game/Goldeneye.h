@@ -9,7 +9,6 @@
 
 class Goldeneye : public GameDriver {
 private:
-    Controls* _cfgptr = Controls::getInstance();
     std::string _name = "GoldenEye 007";
     unsigned int playerbase[4] = {0};
     int safetocrouch[4] = { 1, 1, 1, 1 };

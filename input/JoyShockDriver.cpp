@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <cmath>
 #include "JoyShockDriver.h"
 
 JoyShockDriver* JoyShockDriver::instance = nullptr;
@@ -40,7 +41,7 @@ DWORD JoyShockDriver::injectionloop() {
     while(!_terminatethread) {
         time_previous = time_current;
         time_current = clock();
-        delta = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
+        _ctrlptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
 
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
             if(_ctrlptr->Profile[player].SETTINGS[CONFIG] == DISABLED)
@@ -58,14 +59,13 @@ DWORD JoyShockDriver::injectionloop() {
 
                 if(jsl_buttons_primary.stickRX >= 0.10 || jsl_buttons_primary.stickRX <= -0.10) {
                     dev->AIMSTICKX = jsl_buttons_primary.stickRX;
-                    dev->AIMSTICKY = jsl_buttons_primary.stickRY;
                 }
                 else {
                     dev->AIMSTICKX = 0;
                 }
 
                 if(jsl_buttons_primary.stickRY >= 0.10 || jsl_buttons_primary.stickRY <= -0.10) {
-                    dev->AIMSTICKY = jsl_buttons_primary.stickRY;
+                    dev->AIMSTICKY = -jsl_buttons_primary.stickRY;
                 }
                 else {
                     dev->AIMSTICKY = 0;
@@ -89,8 +89,13 @@ DWORD JoyShockDriver::injectionloop() {
 
                 // Assign IMU values.
 
-                dev->GYROX = -jsl_imu_primary.gyroY;
-                dev->GYROY = -jsl_imu_primary.gyroX;
+                //dev->GYROX = -jsl_imu_primary.gyroY;
+                //dev->GYROY = -jsl_imu_primary.gyroX;
+
+                auto gyrotight = TightenGyroInput(vec2<float> {jsl_imu_primary.gyroX, jsl_imu_primary.gyroY}, 3);
+
+                dev->GYROX = -gyrotight.y;
+                dev->GYROY = -gyrotight.x;
 
                 for (int button = FIRE; button < TOTALBUTTONS; button++) {
                     dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button].Button) != 0;
@@ -105,6 +110,9 @@ DWORD JoyShockDriver::injectionloop() {
 
         if(checkwindowtick > (250 / TICKRATE)) // poll every 500ms
         {
+            // Hijack this to ensure we can actually read the gyro output i guess
+
+            std::cout << "GyroX: " << _ctrlptr->Device[PLAYER1].GYROX << " GyroY: " << _ctrlptr->Device[PLAYER1].GYROY << std::endl;
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
@@ -191,4 +199,23 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
     }
     return val;
 
+}
+
+void JoyShockDriver::CalibrateGyroscope(JSDevice jsd) {
+    int samplescollected;
+    auto start = clock();
+    auto now = clock();
+    IMU_STATE gyro_sample_total;
+    IMU_STATE gyro_sample_now;
+
+    while((now - start) / CLOCKS_PER_SEC < 10) {
+        now = clock();
+        gyro_sample_now = JslGetIMUState(jsd.Handle);
+        gyro_sample_total.gyroY += gyro_sample_now.gyroY;
+        gyro_sample_total.gyroX += gyro_sample_now.gyroX;
+        gyro_sample_total.gyroZ += gyro_sample_now.gyroZ;
+        samplescollected++;
+    }
+
+    JslPauseContinuousCalibration(jsd.Handle);
 }

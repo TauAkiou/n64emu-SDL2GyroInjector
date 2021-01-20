@@ -13,6 +13,7 @@
 #include "../settings/Settings.h"
 #include "../JoyShockLibrary/JoyShockLibrary.h"
 #include "../game/Game.h"
+#include "../common/vec2.h"
 
 class JoyShockDriver {
     protected:
@@ -30,6 +31,10 @@ class JoyShockDriver {
 
         static DWORD WINAPI startinjectionloop(void* param);
         DWORD injectionloop();
+
+        // Gyro-specific methods
+
+
     public:
         static JoyShockDriver* getInstance();
         JoyShockDriver();
@@ -49,7 +54,8 @@ class JoyShockDriver {
         int GetConnectedJCRCount();
         void SetPlayerDS4Color(const int playernumber, const int color);
         void SetPlayerSPCJCNumber(const int playernumber, const int number);
-        void CalibrateGyroscope(const int playernumber);
+        void CalibrateGyroscope(const JSDevice playernumber, );
+        void CalibrateAllGyroscopes();
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H

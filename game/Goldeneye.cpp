@@ -64,8 +64,8 @@ void Goldeneye::Quit() {
 }
 
 void Goldeneye::Inject() {
-    //if(_link->ReadInt(GE_menupage) < 1) // hacks can only be injected at boot sequence before code blocks are cached, so inject until the main menu
-        //_injecthacks();
+    if(_link->ReadInt(GE_menupage) < 1) // hacks can only be injected at boot sequence before code blocks are cached, so inject until the main menu
+        _injecthacks();
     const int camera = _link->ReadInt(GE_camera);
     const int exit = _link->ReadInt(GE_exit);
     const int pause = _link->ReadInt(GE_pause);

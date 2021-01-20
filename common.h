@@ -19,13 +19,14 @@ enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 
 enum JSD_ControllerType {
+    None = 0,
     JoyconLeft = 1,
     JoyconRight = 2,
     SwitchPro = 3,
     Dualshock_4 = 4
 };
 
-typedef struct {
+typedef struct  {
     int Handle;
     JSD_ControllerType ConType;
     int DS4LightColor;
@@ -38,9 +39,9 @@ typedef struct {
     int Button;
 } ASSIGNMENT;
 
-typedef struct {
+typedef struct PROFILE {
     // Secondary devices are used when we are in Joycon mode.
-    int ControllerMode; // 0 = Controller, 1 = Joycon
+    int ControllerMode; // -1 = Disabled, 0 = Controller, 1 = Joycon
     JSDevice AssignedDevicePrimary;
     JSDevice AssignedDeviceSecondary;
     ASSIGNMENT BUTTONPRIM[TOTALBUTTONS];
@@ -55,6 +56,7 @@ typedef struct {
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROISACTIVE;
+    float CALIBRATION;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
