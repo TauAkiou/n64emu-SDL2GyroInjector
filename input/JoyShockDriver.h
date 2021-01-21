@@ -13,7 +13,6 @@
 #include "../settings/Settings.h"
 #include "../JoyShockLibrary/JoyShockLibrary.h"
 #include "../game/Game.h"
-#include "../common/vec2.h"
 
 class JoyShockDriver {
     protected:
@@ -29,8 +28,13 @@ class JoyShockDriver {
         std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
         HWND _emulatorwindow = nullptr;
 
+        // Flick Stick state
+        float flickProgress[ALLPLAYERS];
+        float flicksize[ALLPLAYERS];
+
         static DWORD WINAPI startinjectionloop(void* param);
         DWORD injectionloop();
+        float ProcessFlickStick();
 
         // Gyro-specific methods
 
@@ -54,7 +58,7 @@ class JoyShockDriver {
         int GetConnectedJCRCount();
         void SetPlayerDS4Color(const int playernumber, const int color);
         void SetPlayerSPCJCNumber(const int playernumber, const int number);
-        void CalibrateGyroscope(const JSDevice playernumber, );
+        void CalibrateGyroscope(JSDevice &jsd);
         void CalibrateAllGyroscopes();
 };
 

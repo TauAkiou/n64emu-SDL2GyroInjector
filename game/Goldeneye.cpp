@@ -76,6 +76,8 @@ void Goldeneye::Inject() {
     {
         if(_cfgptr->Profile[player].SETTINGS[CONFIG] == DISABLED) // bypass disabled players
             continue;
+        vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player);
+
         playerbase[player] = BONDDATA(player);
         const int dead = _link->ReadInt(playerbase[player] + GE_deathflag);
         const int watch = _link->ReadInt(playerbase[player] + GE_watch);
@@ -87,6 +89,11 @@ void Goldeneye::Inject() {
         //const float mouseaccel = _cfgptr->Profile[player].SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * _cfgptr->Profile[player].SETTINGS[ACCELERATION] : 0;
         const float sensitivity_stick_x = _cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYX] / 40.0f;// * fmax(mouseaccel, 1);
         const float sensitivity_stick_y = _cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYY] / 40.0f; // * fmax(mouseaccel, 1);
+
+        const float sensitivity_stick_menu_x = 100 / 40.0f;
+        const float sensitivity_stick_menu_y = 100 / 40.0f;
+
+
         const float sensitivity_gyro_x = _cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYX] / 40.0f;
         const float sensitivity_gyro_y = _cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYY] / 40.0f; // fmax(mouseaccel, 1);
 
@@ -103,7 +110,7 @@ void Goldeneye::Inject() {
             {
                 _crouch(player); // only allow crouching if player is not in tank
                 if(!cursoraimingflag) { // if not aiming (or geaimmode is off)
-                    camx += _cfgptr->Device[player].AIMSTICKX / 10.0f * sensitivity_stick_x *
+                    camx += aimstickdata.x / 10.0f * sensitivity_stick_x *
                             (fov / basefov); // regular mouselook calculation
                     camx += _cfgptr->Device[player].GYROX / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov);
                 }
@@ -120,7 +127,7 @@ void Goldeneye::Inject() {
                 GE_ResetCrouchToggle(player); // reset crouch toggle if in tank
                 float tankx = _link->ReadFloat(GE_tankxrot);
                 if(!cursoraimingflag || _link->ReadInt(playerbase[player] + GE_currentweapon) == 32) { // if not aiming (or geaimmode is off) or player is driving tank with tank equipped as weapon, then use regular mouselook calculation
-                    tankx += _cfgptr->Device[player].AIMSTICKX / 10.0f * sensitivity_stick_x / (360 / TANKXROTATIONLIMIT * 2.5) *
+                    tankx += aimstickdata.x / 10.0f * sensitivity_stick_x / (360 / TANKXROTATIONLIMIT * 2.5) *
                              (fov / basefov);
                     tankx += _cfgptr->Device[player].GYROX / 10.0f * sensitivity_gyro_x / (360 / TANKXROTATIONLIMIT * 2.5) *
                              _cfgptr->DeltaTime * (fov / basefov);
@@ -134,7 +141,7 @@ void Goldeneye::Inject() {
                 _link->WriteFloat(GE_tankxrot, tankx);
             }
             if(!cursoraimingflag) {
-                camy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? -_cfgptr->Device[player].AIMSTICKY : _cfgptr->Device[player].AIMSTICKY) /
+                camy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? -aimstickdata.y : aimstickdata.y) /
                         10.0f * sensitivity_stick_y * (fov / basefov);
                 camy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? -_cfgptr->Device[player].GYROY : _cfgptr->Device[player].GYROY) /
                         10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov);
@@ -148,9 +155,9 @@ void Goldeneye::Inject() {
                 if(!tankflag)
                 {
                     float gunx = _link->ReadFloat(playerbase[player] + GE_gunx), crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx); // after camera x and y have been calculated and injected, calculate the gun/crosshair movement
-                    gunx += _cfgptr->Device[player].AIMSTICKX / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / basefov) * 0.019f;
+                    gunx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / basefov) * 0.019f;
                     gunx += _cfgptr->Device[player].GYROX / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov) * 0.019f;
-                    crosshairx += _cfgptr->Device[player].AIMSTICKX / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / 4 / (basefov / 4)) * 0.01912f / RATIOFACTOR;
+                    crosshairx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / 4 / (basefov / 4)) * 0.01912f / RATIOFACTOR;
                     crosshairx += _cfgptr->Device[player].GYROX / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * (fov / 4 / (basefov / 4)) * _cfgptr->DeltaTime * 0.01912f / RATIOFACTOR;
                     if(aimingflag) // emulate cursor moving back to the center
                         gunx /= _pluginptr->EmulatorOverclocked ? 1.03f : 1.07f, crosshairx /= _pluginptr->EmulatorOverclocked ? 1.03f : 1.07f;
@@ -162,10 +169,10 @@ void Goldeneye::Inject() {
                 if((!tankflag && camy > -90 || tankflag && camy > -20) && camy < 90) // only allow player's gun to pitch within a valid range
                 {
                     float guny = _link->ReadFloat(playerbase[player] + GE_guny), crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
-                    guny += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].AIMSTICKY : -_cfgptr->Device[player].AIMSTICKY) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_stick_y * (fov / basefov) * 0.025f;
+                    guny += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_stick_y * (fov / basefov) * 0.025f;
                     guny += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].GYROY : -_cfgptr->Device[player].GYROY) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_gyro_y * (fov / basefov) * 0.025f;
-                    crosshairy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].AIMSTICKY : -_cfgptr->Device[player].AIMSTICKY) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.0225f;
-                    crosshairy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].AIMSTICKY : -_cfgptr->Device[player].AIMSTICKY) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.0225f;
+                    crosshairy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.0225f;
+                    crosshairy += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].GYROY : -_cfgptr->Device[player].GYROY) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.0225f;
                     if(aimingflag)
                         guny /= _pluginptr->EmulatorOverclocked ? 1.15f : 1.35f, crosshairy /= _pluginptr->EmulatorOverclocked ? 1.15f : 1.35f;
                     guny = ClampFloat(guny, -GUNAIMLIMIT, GUNAIMLIMIT);
@@ -177,10 +184,12 @@ void Goldeneye::Inject() {
         }
         else if(player == PLAYER1 && menupage != 11 && menupage != 23) // if user is in menu (only player 1 can control menu)
         {
+            // Use raw stick data for menus only.
             float menucrosshairx = _link->ReadFloat(GE_menux), menucrosshairy = _link->ReadFloat(GE_menuy);
-            menucrosshairx += _cfgptr->Device[player].AIMSTICKX / 10.0f * sensitivity_stick_x * 6;
+            // Use a 1:1 sensitivity for the menu.
+            menucrosshairx += _cfgptr->Device[player].AIMSTICKX / 10.0f * sensitivity_stick_menu_x * 6;
             menucrosshairx += _cfgptr->Device[player].GYROX / 10.0f * _cfgptr->DeltaTime * sensitivity_gyro_x * 6;
-            menucrosshairy += _cfgptr->Device[player].AIMSTICKY / 10.0f * sensitivity_stick_y * (400.0f / 290.0f * 6); // y is a little weaker then x in the menu so add more power to make it feel even with x axis
+            menucrosshairy += _cfgptr->Device[player].AIMSTICKY / 10.0f *  sensitivity_stick_menu_y * (400.0f / 290.0f * 6); // y is a little weaker then x in the menu so add more power to make it feel even with x axis
             menucrosshairy += _cfgptr->Device[player].GYROY / 10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (400.0f / 290.0f * 6); // y is a little weaker then x in the menu so add more power to make it feel even with x axis
             menucrosshairx = ClampFloat(menucrosshairx, 20, 420);
             menucrosshairy = ClampFloat(menucrosshairy, 20, 310);
@@ -222,10 +231,19 @@ void Goldeneye::_aimmode(const int player, const int aimingflag, const float fov
     if(aimingflag) // if player is aiming
     {
         //const float mouseaccel = _cfgptr->Profile[player].SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * _cfgptr->Profile[player].SETTINGS[ACCELERATION] : 0;
-        crosshairposx[player] += _cfgptr->Device[player].AIMSTICKX / 10.0f * (_cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYX] / sensitivity / RATIOFACTOR); // fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposx[player] += _cfgptr->Device[player].GYROX / 10.0f * (_cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYX] / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].AIMSTICKY : -_cfgptr->Device[player].AIMSTICKY) / 10.0f * (_cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYY] / sensitivity); // fmax(mouseaccel, 1);
+        if(_cfgptr->Profile->SETTINGS[STICKAIMING]) {
+            crosshairposx[player] += _cfgptr->Device[player].AIMSTICKX / 10.0f *
+                                     (_cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYX] / sensitivity /
+                                      RATIOFACTOR); // fmax(mouseaccel, 1); // calculate the crosshair position
+            crosshairposy[player] +=
+                    (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].AIMSTICKY
+                                                                     : -_cfgptr->Device[player].AIMSTICKY) / 10.0f *
+                    (_cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYY] / sensitivity); // fmax(mouseaccel, 1);
+        }
+
+        crosshairposx[player] += _cfgptr->Device[player].GYROX / 10.0f * (_cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYX] / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
         crosshairposy[player] += (!_cfgptr->Profile[player].SETTINGS[INVERTPITCH] ? _cfgptr->Device[player].GYROY : -_cfgptr->Device[player].GYROY) / 10.0f * (_cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYY] / sensitivity) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
+
         crosshairposx[player] = ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
         crosshairposy[player] = ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
         if(aimingintank) // if player is aiming while driving tank with tank equipped as weapon, set x axis crosshair to 0 (like the original game - so you cannot aim across the screen because the tank barrel is locked in the center)
@@ -328,6 +346,9 @@ void Goldeneye::_injecthacks()
     }
 }
 
+//==========================================================================
+// Purpose: Reset Y coordinate to 0 in the event that a gyro controller needs to be recentered.
+//==========================================================================
 void Goldeneye::_resetgyro() {
     for(int player = 0; player < ALLPLAYERS; player++) {
         if (_cfgptr->Device[player].BUTTONPRIM[RESETGYRO]) {

@@ -6,11 +6,14 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_GOLDENEYE_H
 
 #include "GameDriver.h"
+#include "../vec2.h"
+#include "../input/InputHandler.h"
 
 class Goldeneye : public GameDriver {
 private:
     std::string _name = "GoldenEye 007";
     unsigned int playerbase[4] = {0};
+    InputHandler _ihandler;
     int safetocrouch[4] = { 1, 1, 1, 1 };
     int safetostand[4] = {0};
     int crouchstance[4] = {0};

@@ -38,6 +38,9 @@ DWORD JoyShockDriver::injectionloop() {
 
     int checkwindowtick = 0;
 
+    // Start by calibrating all gyroscopes.
+    CalibrateAllGyroscopes();
+
     while(!_terminatethread) {
         time_previous = time_current;
         time_current = clock();
@@ -57,19 +60,18 @@ DWORD JoyShockDriver::injectionloop() {
                 // Skip over touch output for now until we can figure out how to use it properly.
                 jsl_touch = JslGetTouchState(prf.AssignedDevicePrimary.Handle);
 
-                if(jsl_buttons_primary.stickRX >= 0.10 || jsl_buttons_primary.stickRX <= -0.10) {
-                    dev->AIMSTICKX = jsl_buttons_primary.stickRX;
-                }
-                else {
-                    dev->AIMSTICKX = 0;
-                }
-
-                if(jsl_buttons_primary.stickRY >= 0.10 || jsl_buttons_primary.stickRY <= -0.10) {
-                    dev->AIMSTICKY = -jsl_buttons_primary.stickRY;
-                }
-                else {
-                    dev->AIMSTICKY = 0;
-                }
+                        if((jsl_buttons_primary.stickRY >= 0.10 || jsl_buttons_primary.stickRY <= -0.10) ) {
+                            dev->AIMSTICKY = -jsl_buttons_primary.stickRY;
+                        }
+                        else {
+                            dev->AIMSTICKY = 0;
+                        }
+                        if(jsl_buttons_primary.stickRX >= 0.10 || jsl_buttons_primary.stickRX <= -0.10) {
+                            dev->AIMSTICKX = jsl_buttons_primary.stickRX;
+                        }
+                        else {
+                            dev->AIMSTICKX = 0;
+                        }
 
                 dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
                 dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
@@ -89,13 +91,8 @@ DWORD JoyShockDriver::injectionloop() {
 
                 // Assign IMU values.
 
-                //dev->GYROX = -jsl_imu_primary.gyroY;
-                //dev->GYROY = -jsl_imu_primary.gyroX;
-
-                auto gyrotight = TightenGyroInput(vec2<float> {jsl_imu_primary.gyroX, jsl_imu_primary.gyroY}, 3);
-
-                dev->GYROX = -gyrotight.y;
-                dev->GYROY = -gyrotight.x;
+                dev->GYROX = (jsl_imu_primary.gyroY > 0.2 || jsl_imu_primary.gyroY < -0.2) ? -jsl_imu_primary.gyroY : 0;
+                dev->GYROY = (jsl_imu_primary.gyroX > 0.2 || jsl_imu_primary.gyroX < -0.2) ? -jsl_imu_primary.gyroX : 0;
 
                 for (int button = FIRE; button < TOTALBUTTONS; button++) {
                     dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button].Button) != 0;
@@ -112,7 +109,7 @@ DWORD JoyShockDriver::injectionloop() {
         {
             // Hijack this to ensure we can actually read the gyro output i guess
 
-            std::cout << "GyroX: " << _ctrlptr->Device[PLAYER1].GYROX << " GyroY: " << _ctrlptr->Device[PLAYER1].GYROY << std::endl;
+            //std::cout << "GyroX: " << _ctrlptr->Device[PLAYER1].GYROX << " GyroY: " << _ctrlptr->Device[PLAYER1].GYROY << std::endl;
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
@@ -201,21 +198,21 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
 
 }
 
-void JoyShockDriver::CalibrateGyroscope(JSDevice jsd) {
-    int samplescollected;
-    auto start = clock();
-    auto now = clock();
-    IMU_STATE gyro_sample_total;
-    IMU_STATE gyro_sample_now;
+void JoyShockDriver::CalibrateAllGyroscopes() {
+    std::cout << "Starting calibration for all assigned controllers..." << std::endl;
+    for(PROFILE prf : _ctrlptr->Profile) {
+        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+    }
+    auto clock_start = clock();
+    auto clock_now = clock_start;
 
-    while((now - start) / CLOCKS_PER_SEC < 10) {
-        now = clock();
-        gyro_sample_now = JslGetIMUState(jsd.Handle);
-        gyro_sample_total.gyroY += gyro_sample_now.gyroY;
-        gyro_sample_total.gyroX += gyro_sample_now.gyroX;
-        gyro_sample_total.gyroZ += gyro_sample_now.gyroZ;
-        samplescollected++;
+    while((clock_now - clock_start) / CLOCKS_PER_SEC < 5)  {
+        clock_now = clock();
     }
 
-    JslPauseContinuousCalibration(jsd.Handle);
+    for(PROFILE prf : _ctrlptr->Profile) {
+        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+    }
+    std::cout << "Calibration completed." << std::endl;
 }

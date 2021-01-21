@@ -95,11 +95,13 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     // Get the first controller for testing.
     _emuctrlptr->Profile->AssignedDevicePrimary = ctrllist.front();
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 250;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 250;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKMODE] = FLICK;
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 1000;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 1000;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 400;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 400;
+
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 400;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 400;
 
     _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[INVERTPITCH] = 0;
@@ -107,8 +109,6 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _emuctrlptr->Profile[PLAYER1].SETTINGS[GEAIMMODE] = 1;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[PDAIMMODE] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONMODE] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[COLOR] = 0xFF0000;
 
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[FIRE].Button = JSMASK_ZR;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[AIM].Button = JSMASK_ZL;
@@ -124,8 +124,9 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKAIMING] = false;
 
-    _jsdptr->CalibrateGyroscope(_emuctrlptr->Profile[PLAYER1].AssignedDeviceSecondary);
+    PluginSettings::getInstance()->ShowGoldeneyeCrosshair = true;
 
     UpdateControllerStatus();
     return true;
@@ -142,7 +143,7 @@ void MainDll::UpdateControllerStatus() {
     }
 }
 
-/* N64 Emulator Program Connection Methods */
+/* N64 Emulator extern Methods */
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
@@ -153,7 +154,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
             // Initialize all state objects.
             MainDll::getInstance(hinstDLL);
             AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
-            std::cout << "test\n";
             break;
         }
         default:
@@ -185,7 +185,8 @@ DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
 // Input: A handle to the window that calls this function
 //==========================================================================
 DLLEXPORT void CALL DllAbout(HWND hParent)
-{    //auto message = "JoyShockLibrary Plugin for 1964 (GE/PD) "__GYRO_INJECTOR_VERSION__" (Build: "__DATE__")\nCopyright (C) "__CURRENTYEAR__", Carnivorous, TauAkiou";
+{
+    //std::string message = "JoyShockLibrary Plugin for 1964 (GE/PD) " << __GYRO_INJECTOR_VERSION__ << " (Build: "<< __DATE__ << ")\nCopyright (C) " << __CURRENTYEAR__ << ", Carnivorous, TauAkiou";
     //MessageBoxA(hParent, message.c_str() , "JoyShock Injector - About", MB_ICONINFORMATION | MB_OK);
 }
 //==========================================================================
