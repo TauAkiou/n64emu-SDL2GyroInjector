@@ -19,8 +19,11 @@ class Controls {
                              {-1, None, 0, 0},
                              {0, 0},
                              {0, 0},
+                             { vec2<float>(0,0) },
                              {0} };
-        DEVICE Device[4] { 0, 0, 0, 0, 0, 0, 0, 0, {0}, {0}, {0}, false };
+        DEVICE Device[4] { vec2<float>(0, 0),
+                           vec2<float>(0, 0),
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false };
         float DeltaTime = 0;
 };
 

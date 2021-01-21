@@ -21,16 +21,18 @@ class InputHandler {
         const float turnsmooththreshold = 0.1;
 
         // Store flick state for up to 4 devices.
-        float flickprogress[4] = { 0, 0, 0, 0 };
-        float flicksize[4] = { 0, 0, 0, 0 };
-        vec2<float> laststick[4];
-        bool isflicking[4];
+        float flickprogress[ALLPLAYERS] = { 0, 0, 0, 0 };
+        float flicksize[ALLPLAYERS] = { 0, 0, 0, 0 };
+        vec2<float> laststick[ALLPLAYERS];
 
         float aimstickbuffer[ALLPLAYERS][SMOOTHBUFLEN];
-        int bufferpos[ALLPLAYERS] = { 0 };
+        int stickbufferpos[ALLPLAYERS] = { 0 };
+
+        vec2<float> gyrobuffer[ALLPLAYERS][SMOOTHBUFLEN];
+        int gyrobufferpos[ALLPLAYERS] = { 0 };
 
         Controls* _ctrlptr = Controls::getInstance();
-        float getFlickState(PLAYERS player);
+        float getFlickState(PLAYERS player, const vec2<float> &stick);
         float getStickLength(float stickX, float stickY);
         float WarpEaseOut(float input);
         float getDirectStickRotation(float input);
@@ -42,6 +44,8 @@ class InputHandler {
     public:
         InputHandler() = default;
         vec2<float> ProcessAimStickInputForPlayer(PLAYERS player);
+        vec2<float> HandleDeadZoneStickInput(const vec2<float> stick, const vec2<float> deadzone);
+
 
 
 

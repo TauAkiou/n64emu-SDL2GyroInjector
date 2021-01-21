@@ -2,21 +2,30 @@
 // Created by robin on 1/20/2021.
 //
 
+#include <iostream>
 #include "InputHandler.h"
 
 vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
+    auto vec = vec2<float>();
     switch(_ctrlptr->Profile[player].SETTINGS[STICKMODE]) {
         default:
         case FULL:
-            return { _ctrlptr->Device[player].AIMSTICKX, _ctrlptr->Device[player].AIMSTICKY };
+            return HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
+                                            _ctrlptr->Profile[player].VECTORSETTINGS[AIMDEADZONE]);
         case XONLY:
-            return { _ctrlptr->Device[player].AIMSTICKX, 0 };
-        case FLICK:
-            auto vec = getFlickState(player);
-            laststick[player] = { _ctrlptr->Device[player].AIMSTICKX, _ctrlptr->Device[player].AIMSTICKY };
-            return { vec, 0};
+            vec = HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
+                                                _ctrlptr->Profile[player].VECTORSETTINGS[AIMDEADZONE]);
+            // Zero the y.
+            vec.y = 0;
+            return vec;
+        case FLICK: // Ignore deadzone calculations for flickstick, for the moment.
+            auto flick = getFlickState(player, _ctrlptr->Device[player].AIMSTICK);
+            laststick[player] = _ctrlptr->Device[player].AIMSTICK;
+            return { flick, 0 };
     }
 }
+
+
 
 float InputHandler::ClampFloat(const float value, const float min, const float max) {
     const float test = value < min ? min : value;
@@ -27,46 +36,62 @@ float InputHandler::getStickLength(float stickX, float stickY) {
     return sqrtf(stickX * stickX + stickY * stickY);
 }
 
-// Flick Stick and smoothing code adapted from JoyShockMapper.
+// Flick Stick and smoothing code adapted from http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick
+// Very special thanks to Jibb Smart for sharing his implementation!
 
-float InputHandler::getFlickState(PLAYERS player) {
+float InputHandler::getFlickState(PLAYERS player, const vec2<float> &stick) {
     float result = 0.0;
 
     float lastLength = getStickLength(laststick[player].x, laststick[player].y);
-    float length = getStickLength(_ctrlptr->Device[player].AIMSTICKX, _ctrlptr->Device[player].AIMSTICKY);
+    float length = getStickLength(stick.x, stick.y);
 
     if(length >= flickthreshold) {
-        float stickangle = atan2f(-_ctrlptr->Device[player].AIMSTICKX, _ctrlptr->Device[player].AIMSTICKY);
+        if (lastLength < flickthreshold) {
+            float stickangle = atan2f(stick.x, stick.y);
 
-        if(!isflicking[player]) {
-            isflicking[player] = true;
+            // We have a new flick.
+            flickprogress[player] = 0;
+            flicksize[player] = atan2f(stick.x, -stick.y);
 
-
-            }
+            //std::cout << "Flick " << stickangle * (180.0f / (float) PI) << std::endl;
+        }
+        else {
+            float stickAngle = atan2f(stick.x, -stick.y);
+            float lastStickAngle = atan2f(laststick[player].x, -laststick[player].y);
+            float angleChange = stickAngle - lastStickAngle;
+            // https://stackoverflow.com/a/11498248/1130520
+            angleChange = fmod(angleChange + PI, 2.0f * PI);
+            if (angleChange < 0)
+                angleChange += 2.0f * PI;
+            angleChange -= PI;
+            result += getTieredSmoothedStickRotation(player, angleChange,
+                                                     turnsmooththreshold / 2.0, turnsmooththreshold);
         }
     }
     else {
-        // turning cleanup code
+        // turn cleanup
         if (lastLength >= flickthreshold) {
             // we've just transitioned from flick/turn to no flick, so clean up
             zeroTurnSmoothing(player);
         }
     }
 
-    float lastFlickProgress = flickprogress[player];
-    if(lastFlickProgress < flicktime) {
-        flickprogress[player] = std::min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
 
-        //
-        float lastPerOne = lastFlickProgress / flicktime;
-        float thisPerOne = flickprogress[player] / flicktime;
+        float lastFlickProgress = flickprogress[player];
+        if (lastFlickProgress < flicktime) {
+            flickprogress[player] = std::min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
 
-        float warpedLastPerOne = WarpEaseOut(lastPerOne);
-        float warpedThisPerOne = WarpEaseOut(thisPerOne);
+            // get last time and this time in 0-1 completion range
+            float lastPerOne = lastFlickProgress / flicktime;
+            float thisPerOne = flickprogress[player] / flicktime;
 
-        result += (warpedThisPerOne - warpedLastPerOne) * flicksize[player];
-    }
+            // our WarpEaseOut function stays within the 0-1 range but pushes it all closer to 1
+            float warpedLastPerOne = WarpEaseOut(lastPerOne);
+            float warpedThisPerOne = WarpEaseOut(thisPerOne);
 
+            // now use the difference between last frame/sample and this frame/sample
+            result += (warpedThisPerOne - warpedLastPerOne) * flicksize[player];
+        }
 
     return result;
 }
@@ -80,9 +105,22 @@ float InputHandler::getDirectStickRotation(float input) {
     return input;
 }
 
+vec2<float> InputHandler::HandleDeadZoneStickInput(const vec2<float> stick, const vec2<float> deadzone) {
+    auto vector = vec2<float>(0,0);
+    if(stick.x > deadzone.x || stick.x < -deadzone.x) {
+        vector.x = stick.x;
+    }
+    if(stick.y > deadzone.y || stick.y < -deadzone.y) {
+        vector.y = stick.y;
+    }
+
+    return vector;
+
+}
+
 float InputHandler::getSmoothedStickRotation(PLAYERS player, float input) {
-    bufferpos[player] = (bufferpos[player] + 1) % SMOOTHBUFLEN;
-    aimstickbuffer[player][bufferpos[player]] = input;
+    stickbufferpos[player] = (stickbufferpos[player] + 1) % SMOOTHBUFLEN;
+    aimstickbuffer[player][stickbufferpos[player]] = input;
 
     float average = 0.0;
     for(float sample : aimstickbuffer[player]) {

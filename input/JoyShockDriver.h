@@ -52,6 +52,8 @@ class JoyShockDriver {
         int GetConnectedDeviceCount() const;
         int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
         std::vector<JSDevice> GetConnectedFullControllers();
+        std::vector<JSDevice> GetConnectedLeftJoycons();
+        std::vector<JSDevice> GetConnectedRightJoycons();
         int GetConnectedDS4Count();
         int GetConnectedSPCCount();
         int GetConnectedJCLCount();

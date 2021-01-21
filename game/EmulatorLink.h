@@ -29,6 +29,7 @@ class EmulatorLink {
         void WriteFloat(const unsigned int addr, const float value);
         unsigned ReadROM(const unsigned int addr);
         void WriteROM(const unsigned int addr, const unsigned int value);
+        bool IsWithinRange(unsigned int param);
         void SetRAMPointer(const unsigned char** newramptr);
         void SetROMPointer(const unsigned char** newromptr);
 };

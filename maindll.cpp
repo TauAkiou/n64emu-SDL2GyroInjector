@@ -84,24 +84,38 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     // Use the first detected FULL controller type.
     _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
 
-    auto ctrllist = _jsdptr->GetConnectedFullControllers();
+    //auto ctrllist = _jsdptr->GetConnectedFullControllers();
+    auto ctrllst_ljc = _jsdptr->GetConnectedLeftJoycons();
+    auto ctrllst_rjc = _jsdptr->GetConnectedRightJoycons();
 
+    /*
     if(ctrllist.empty()) {
         // No controller, just in case here
         _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DISABLED;
         return false;
     }
+     */
+
+
 
     // Get the first controller for testing.
-    _emuctrlptr->Profile->AssignedDevicePrimary = ctrllist.front();
+    _emuctrlptr->Profile[PLAYER1].ControllerMode = 1;
+    _emuctrlptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_ljc.front();
+    _emuctrlptr->Profile[PLAYER1].AssignedDeviceSecondary = ctrllst_rjc.front();
+    //_emuctrlptr->Profile[PLAYER2].AssignedDevicePrimary = ctrllist.back();
 
     _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKMODE] = FLICK;
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 400;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 400;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 23000;
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 23000;
+
+
+    //_emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 800;
+    //_emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 800;
 
     _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 400;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 400;
+    _emuctrlptr->Profile[PLAYER1].VECTORSETTINGS[AIMDEADZONE] = { 0.20, 0.20 };
 
     _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[INVERTPITCH] = 0;
@@ -125,6 +139,44 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
     _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
     _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKAIMING] = false;
+
+    // Use the first detected FULL controller type.
+    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[CONFIG] = DEFAULT;
+
+
+    // Get the first controller for testing.
+
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKMODE] = FLICK;
+
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKSENSITIVITYX] = 23000;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKSENSITIVITYY] = 23000;
+
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[GYROSENSITIVITYX] = 400;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[GYROSENSITIVITYY] = 400;
+
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROSSHAIR] = 1;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[INVERTPITCH] = 0;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROUCHTOGGLE] = 1;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[GEAIMMODE] = 1;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROSSHAIR] = 1;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[PDAIMMODE] = 1;
+
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[FIRE].Button = JSMASK_ZR;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[AIM].Button = JSMASK_ZL;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[ACCEPT].Button = JSMASK_L;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[CANCEL].Button = JSMASK_R;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[START].Button = JSMASK_PLUS;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[CROUCH].Button = JSMASK_E;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[KNEEL].Button = JSMASK_S;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[PREVIOUSWEAPON].Button = JSMASK_W;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[NEXTWEAPON].Button = JSMASK_N;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[UP].Button = JSMASK_UP;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[DOWN].Button = JSMASK_DOWN;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
+    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
+    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKAIMING] = false;
 
     PluginSettings::getInstance()->ShowGoldeneyeCrosshair = true;
 
@@ -239,8 +291,6 @@ DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
     if(Keys == nullptr)
         return;
 
-    //auto cons = Controls::getInstance();
-    //std::cout << "Controller: " << Control << " Submitting " <<  Emulator::Controller[Control].Value << "\n";
     Keys->Value = !MainDll::getInstance()->IsConfigDialogOpen() ? Emulator::Controller[Control].Value : 0; // ignore input if config dialog is open
 }
 //==========================================================================

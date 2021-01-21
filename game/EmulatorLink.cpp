@@ -68,3 +68,7 @@ void EmulatorLink::SetRAMPointer(const unsigned char **newramptr) {
 void EmulatorLink::SetROMPointer(const unsigned char **newromptr) {
     romptr = newromptr;
 }
+
+bool EmulatorLink::IsWithinRange(unsigned int param) {
+    return ((rdramptr != nullptr) && ((param & 0xFF800000U) == 0x80000000U));
+}

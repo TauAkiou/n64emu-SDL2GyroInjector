@@ -60,18 +60,9 @@ DWORD JoyShockDriver::injectionloop() {
                 // Skip over touch output for now until we can figure out how to use it properly.
                 jsl_touch = JslGetTouchState(prf.AssignedDevicePrimary.Handle);
 
-                        if((jsl_buttons_primary.stickRY >= 0.10 || jsl_buttons_primary.stickRY <= -0.10) ) {
-                            dev->AIMSTICKY = -jsl_buttons_primary.stickRY;
-                        }
-                        else {
-                            dev->AIMSTICKY = 0;
-                        }
-                        if(jsl_buttons_primary.stickRX >= 0.10 || jsl_buttons_primary.stickRX <= -0.10) {
-                            dev->AIMSTICKX = jsl_buttons_primary.stickRX;
-                        }
-                        else {
-                            dev->AIMSTICKX = 0;
-                        }
+                dev->AIMSTICK.y = -jsl_buttons_primary.stickRY;
+                dev->AIMSTICK.x = jsl_buttons_primary.stickRX;
+
 
                 dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
                 dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
@@ -91,8 +82,8 @@ DWORD JoyShockDriver::injectionloop() {
 
                 // Assign IMU values.
 
-                dev->GYROX = (jsl_imu_primary.gyroY > 0.2 || jsl_imu_primary.gyroY < -0.2) ? -jsl_imu_primary.gyroY : 0;
-                dev->GYROY = (jsl_imu_primary.gyroX > 0.2 || jsl_imu_primary.gyroX < -0.2) ? -jsl_imu_primary.gyroX : 0;
+                dev->GYRO.x = (jsl_imu_primary.gyroY > 0.2 || jsl_imu_primary.gyroY < -0.2) ? -jsl_imu_primary.gyroY : 0;
+                dev->GYRO.y = (jsl_imu_primary.gyroX > 0.2 || jsl_imu_primary.gyroX < -0.2) ? -jsl_imu_primary.gyroX : 0;
 
                 for (int button = FIRE; button < TOTALBUTTONS; button++) {
                     dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button].Button) != 0;
@@ -101,8 +92,34 @@ DWORD JoyShockDriver::injectionloop() {
 
             }
             else if(prf.ControllerMode == 1) {
+                // Primary is our left joycon, secondary is our right joycon.
+                jsl_buttons_primary = JslGetSimpleState(prf.AssignedDevicePrimary.Handle);
+                jsl_buttons_secondary = JslGetSimpleState(prf.AssignedDeviceSecondary.Handle);
+                jsl_imu_primary = JslGetIMUState(prf.AssignedDevicePrimary.Handle);
+                jsl_imu_secondary = JslGetIMUState(prf.AssignedDeviceSecondary.Handle);
+                auto combined_buttons = jsl_buttons_primary.buttons | jsl_buttons_secondary.buttons;
+
+                dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
+                dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
+                dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
+                dev->BUTTONPRIM[STRAFERIGHT] = jsl_buttons_primary.stickLX > 0.25;
+
+                // Aimstick is typically on the secondary device.
+                dev->AIMSTICK.y = -jsl_buttons_secondary.stickRY;
+                dev->AIMSTICK.x = jsl_buttons_secondary.stickRX;
+
+                dev->GYRO.x = (jsl_imu_secondary.gyroY > 0.2 || jsl_imu_secondary.gyroY < -0.2) ? -jsl_imu_secondary.gyroY : 0;
+                dev->GYRO.y = (jsl_imu_secondary.gyroX > 0.2 || jsl_imu_secondary.gyroX < -0.2) ? -jsl_imu_secondary.gyroX : 0;
+
+                for (int button = FIRE; button < TOTALBUTTONS; button++) {
+                    dev->BUTTONPRIM[button] = (combined_buttons & prf.BUTTONPRIM[button].Button) != 0;
+                    dev->BUTTONSEC[button] = (combined_buttons & prf.BUTTONSEC[button].Button) != 0;
+                }
 
             }
+
+
+
         }
 
         if(checkwindowtick > (250 / TICKRATE)) // poll every 500ms
@@ -195,14 +212,36 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
             val.push_back(jsd);
     }
     return val;
-
 }
+
+std::vector<JSDevice> JoyShockDriver::GetConnectedLeftJoycons() {
+    std::vector<JSDevice> val;
+    for(JSDevice jsd : *_devices) {
+        if(jsd.ConType == JoyconLeft)
+            val.push_back(jsd);
+    }
+    return val;
+}
+
+std::vector<JSDevice> JoyShockDriver::GetConnectedRightJoycons() {
+    std::vector<JSDevice> val;
+    for(JSDevice jsd : *_devices) {
+        if(jsd.ConType == JoyconRight)
+            val.push_back(jsd);
+    }
+    return val;
+}
+
 
 void JoyShockDriver::CalibrateAllGyroscopes() {
     std::cout << "Starting calibration for all assigned controllers..." << std::endl;
     for(PROFILE prf : _ctrlptr->Profile) {
         JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
         JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+        if(prf.AssignedDeviceSecondary.Handle != -1) {
+            JslResetContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+            JslStartContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+        }
     }
     auto clock_start = clock();
     auto clock_now = clock_start;
@@ -213,6 +252,10 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
 
     for(PROFILE prf : _ctrlptr->Profile) {
         JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+        if(prf.AssignedDeviceSecondary.Handle != -1) {
+            JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+
+        }
     }
     std::cout << "Calibration completed." << std::endl;
 }

@@ -18,7 +18,7 @@
 class Game {
     protected:
         static Game* _instance;
-        std::vector<GameDriver*> _gamedrivers = { new Goldeneye() };
+        std::vector<GameDriver*> _gamedrivers = { new Goldeneye(), new PerfectDark() };
         GameDriver* _loadedgame = nullptr;
     public:
         static Game* getInstance();
