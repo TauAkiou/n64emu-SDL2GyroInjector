@@ -26,10 +26,9 @@
 
 class GameDriver {
 protected:
-    GameDriver* _driver = nullptr;
     Settings* _settings = nullptr;
-    ControlState* _cfgptr = ControlState::getInstance();
-    EmulatorLink* _link = EmulatorLink::getInstance();
+    ControlState* _cfgptr = ControlState::GetInstance();
+    EmulatorLink* _link = EmulatorLink::GetInstance();
     std::string _name;
     float ClampFloat(const float value, const float min, const float max);
     int ClampInt(const int value, const int min, const int max);

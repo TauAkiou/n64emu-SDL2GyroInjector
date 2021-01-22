@@ -4,14 +4,14 @@
 
 #include "Settings.h"
 
-Settings* Settings::getInstance() {
+Settings* Settings::GetInstance() {
     if(_instance == nullptr) {
         _instance = new Settings();
     }
     return _instance;
 }
 
-ControlState* ControlState::getInstance() {
+ControlState* ControlState::GetInstance() {
     if(_instance == nullptr)
         _instance = new ControlState();
     return _instance;

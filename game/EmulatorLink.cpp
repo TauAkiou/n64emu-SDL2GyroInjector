@@ -6,13 +6,11 @@
 #include <iostream>
 #include "EmulatorLink.h"
 
-EmulatorLink* EmulatorLink::instance = nullptr;
-
-EmulatorLink * EmulatorLink::getInstance() {
-    if(instance == nullptr) {
-        instance = new EmulatorLink();
+EmulatorLink* EmulatorLink::GetInstance() {
+    if(_instance == nullptr) {
+        _instance = new EmulatorLink;
     }
-    return instance;
+    return _instance;
 }
 
 EmulatorLink::EmulatorLink() {

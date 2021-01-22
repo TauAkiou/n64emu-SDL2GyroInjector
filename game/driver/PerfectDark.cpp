@@ -79,7 +79,7 @@ void PerfectDark::Inject(void)
     const int mppause = (_link->ReadShort(PD_mppause) & 0xFF00);
     for(int player = PLAYER1; player < ALLPLAYERS; player++)
     {
-        if(_cfgptr->Profile[player].SETTINGS[CONFIG] == DISABLED) // bypass disabled players
+        if(_settings->Profile[player].QuickConfigSetting == DISABLED) // bypass disabled players
             continue;
 
         vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player);
@@ -90,16 +90,16 @@ void PerfectDark::Inject(void)
         const int grabflag = _link->ReadInt(playerbase[player] + PD_grabflag);
         const unsigned int bikebase = _link->ReadInt((unsigned int)_link->ReadInt(playerbase[player] + PD_bikeptr) + PD_bikebase);
         const int thirdperson = _link->ReadInt(playerbase[player] + PD_thirdperson);
-        const int cursoraimingflag = _cfgptr->Profile[player].SETTINGS[PDAIMMODE] && aimingflag && _link->ReadInt(playerbase[player] + PD_currentweapon) != 50; // don't use cursoraiming when using the horizon scanner
+        const int cursoraimingflag = _settings->Profile[player].PerfectDarkAimMode && aimingflag && _link->ReadInt(playerbase[player] + PD_currentweapon) != 50; // don't use cursoraiming when using the horizon scanner
         const float fov = _link->ReadFloat(playerbase[player] + PD_fov);
         const float basefov = fov > 60.0f ? (float)OVERRIDEFOV : 60.0f;
         // const float mouseaccel = _cfgptr->Profile[player].SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * _cfgptr->Profile[player].SETTINGS[ACCELERATION] : 0;
-        const float sensitivity_stick_x = _cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYX] / 40.0f; // * fmax(mouseaccel, 1);
-        const float sensitivity_stick_y = _cfgptr->Profile[player].SETTINGS[STICKSENSITIVITYY] / 40.0f; // * fmax(mouseaccel, 1);
-        const float sensitivity_gyro_x = _cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYX] / 40.0f; // * fmax(mouseaccel, 1);
-        const float sensitivity_gyro_y = _cfgptr->Profile[player].SETTINGS[GYROSENSITIVITYY] / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_stick_x = _settings->Profile[player].AimStickSensitivity.x / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_stick_y = _settings->Profile[player].AimStickSensitivity.y / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_gyro_x = _settings->Profile[player].GyroscopeSensitivity.x / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_gyro_y = _settings->Profile[player].GyroscopeSensitivity.y / 40.0f; // * fmax(mouseaccel, 1);
 
-        const float gunsensitivity_stick_x = sensitivity_stick_x * (_cfgptr->Profile[player].SETTINGS[CROSSHAIR] / 2.5f);
+        const float gunsensitivity_stick_x = sensitivity_stick_x * (_settings->Profile[player].SETTINGS[CROSSHAIR] / 2.5f);
         const float gunsensitivity_stick_y = sensitivity_stick_y * (_cfgptr->Profile[player].SETTINGS[CROSSHAIR] / 2.5f);
         const float gunsensitivity_gyro_x = sensitivity_gyro_x * (_cfgptr->Profile[player].SETTINGS[CROSSHAIR] / 2.5f);
         const float gunsensitivity_gyro_y = sensitivity_gyro_y * (_cfgptr->Profile[player].SETTINGS[CROSSHAIR] / 2.5f);

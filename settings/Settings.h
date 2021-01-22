@@ -12,14 +12,10 @@ class Settings {
 private:
     static inline Settings* _instance;
     public:
-    static Settings* getInstance();
+    static Settings* GetInstance();
        PROFILE Profile[4] { 0,
                              { -1, None, 0, 0},
-                             {-1, None, 0, 0},
-                             {0, 0},
-                             {0, 0},
-                             { vec2<float>(0,0) },
-                             {0} };
+                             {-1, None, 0, 0} };
 
        // Plugin/Emulator settings
     bool EmulatorOverclocked = true;
@@ -41,7 +37,7 @@ private:
     static ControlState* _instance;
     ControlState() = default;
 public:
-    static ControlState* getInstance();
+    static ControlState* GetInstance();
     DEVICE Device[ALLPLAYERS] = {};
     float DeltaTime = 0.0;
 };

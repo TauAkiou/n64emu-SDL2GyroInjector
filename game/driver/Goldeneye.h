@@ -17,10 +17,10 @@ private:
     int safetocrouch[4] = { 1, 1, 1, 1 };
     int safetostand[4] = {0};
     int crouchstance[4] = {0};
-    float crosshairposx[4];
-    float crosshairposy[4];
-    float aimx[4];
-    float aimy[4];
+    float crosshairposx[4]{};
+    float crosshairposy[4]{};
+    float aimx[4]{};
+    float aimy[4]{};
     void _crouch(const int player);
     void _aimmode(const int player, const int aimingflag, const float fov, const float basefov);
     void _resetgyro();

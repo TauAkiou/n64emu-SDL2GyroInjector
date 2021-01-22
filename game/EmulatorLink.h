@@ -15,12 +15,12 @@
 
 class EmulatorLink {
     private:
-        static EmulatorLink* instance;
+        inline static EmulatorLink* _instance;
         const unsigned char **rdramptr = nullptr; // pointer to emulator's rdram table
         const unsigned char **romptr = nullptr; // pointer to emulator's loaded rom
     public:
-        static EmulatorLink* getInstance();
-        EmulatorLink(const unsigned char** ramptr, const unsigned char **romptr);
+        static EmulatorLink* GetInstance();
+        EmulatorLink() = default;
         short ReadShort(const unsigned int addr);
         void WriteShort(const unsigned int addr, const short value);
         int ReadInt(unsigned int addr);

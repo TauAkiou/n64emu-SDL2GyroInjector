@@ -31,7 +31,7 @@ class InputHandler {
         vec2<float> gyrobuffer[ALLPLAYERS][SMOOTHBUFLEN];
         int gyrobufferpos[ALLPLAYERS] = { 0 };
 
-        Controls* _ctrlptr = Controls::getInstance();
+        ControlState* _ctrlptr = ControlState::GetInstance();
         float getFlickState(PLAYERS player, const vec2<float> &stick);
         float getStickLength(float stickX, float stickY);
         float WarpEaseOut(float input);
