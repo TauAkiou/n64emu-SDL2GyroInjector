@@ -12,9 +12,6 @@
 #include "settings/Settings.h"
 #include "game/Game.h"
 
-#define DLLEXPORT __declspec(dllexport)
-#define CALL __cdecl
-
 class MainDll {
 protected:
     static MainDll* instance;
@@ -32,7 +29,8 @@ protected:
     CONTROL *_ctrlptr = nullptr;
 
     // Pointers to objects.
-    Controls* _emuctrlptr = nullptr;
+    Settings* _settingsptr = nullptr;
+    InputHandler* _emuctrlptr = nullptr;
     JoyShockDriver* _jsdptr = nullptr;
     Game* _gameptr = nullptr;
 
@@ -51,22 +49,6 @@ public:
     void EndInjection();
 
 };
-
-extern "C" DLLEXPORT void CALL CloseDLL(void);
-extern "C" DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command);
-extern "C" DLLEXPORT void CALL DllAbout(HWND hParent);
-extern "C" DLLEXPORT void CALL DllConfig(HWND hParent);
-extern "C" DLLEXPORT void CALL DllTest(HWND hParent);
-extern "C" DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo);
-extern "C" DLLEXPORT void CALL GetKeys(int Control, BUTTONS* Keys);
-extern "C" DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Controls[4]);
-extern "C" DLLEXPORT void CALL ReadController(int Control, BYTE *Command);
-extern "C" DLLEXPORT void CALL RomClosed(void);
-extern "C" DLLEXPORT void CALL RomOpen(void);
-extern "C" DLLEXPORT void CALL WM_KeydwDown(WPARAM wParam, LPARAM lParam);
-extern "C" DLLEXPORT void CALL WM_KeyUp(WPARAM wParam, LPARAM lParam);
-extern "C" DLLEXPORT void CALL HookRDRAM(DWORD *Mem, int OCFactor);
-extern "C" DLLEXPORT void CALL HookROM(DWORD *Rom);
 
 static const std::string JsonFilePathDefault = ".\\plugin\\gyroinjector.json";
 

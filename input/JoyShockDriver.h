@@ -18,8 +18,8 @@ class JoyShockDriver {
     protected:
         static JoyShockDriver* instance;
         HANDLE _inputthread = nullptr;
-        Controls* _ctrlptr = nullptr;
-        PluginSettings* _pluginptr = nullptr;
+        Settings* _settings = nullptr;
+        ControlState* _cstateptr = nullptr;
         Game* _gameptr = nullptr;
         bool _terminatethread = true;
         int _devicecount = 0;

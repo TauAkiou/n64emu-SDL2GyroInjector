@@ -36,7 +36,7 @@ int Game::Status() {
     return (_loadedgame != nullptr);
 }
 
-Game * Game::getInstance() {
+Game * Game::GetInstance() {
     if(_instance == nullptr)
         _instance = new Game();
     return _instance;

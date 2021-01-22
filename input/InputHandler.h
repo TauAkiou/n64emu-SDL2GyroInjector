@@ -11,10 +11,12 @@
 #include <chrono>
 #include "../common.h"
 #include "../settings/Settings.h"
-#include "../vec2.h"
+#include "../common/vec2.h"
 
 class InputHandler {
     private:
+    ControlState* _ctrlptr = ControlState::GetInstance();
+    Settings* _settings = Settings::GetInstance();
 
         const float flickthreshold = 0.9;
         const float flicktime = 0.1;
@@ -25,13 +27,12 @@ class InputHandler {
         float flicksize[ALLPLAYERS] = { 0, 0, 0, 0 };
         vec2<float> laststick[ALLPLAYERS];
 
-        float aimstickbuffer[ALLPLAYERS][SMOOTHBUFLEN];
+        float aimstickbuffer[ALLPLAYERS][SMOOTHBUFLEN]{};
         int stickbufferpos[ALLPLAYERS] = { 0 };
 
         vec2<float> gyrobuffer[ALLPLAYERS][SMOOTHBUFLEN];
         int gyrobufferpos[ALLPLAYERS] = { 0 };
 
-        ControlState* _ctrlptr = ControlState::GetInstance();
         float getFlickState(PLAYERS player, const vec2<float> &stick);
         float getStickLength(float stickX, float stickY);
         float WarpEaseOut(float input);
@@ -39,12 +40,12 @@ class InputHandler {
         float getSmoothedStickRotation(PLAYERS player, float input);
         float getTieredSmoothedStickRotation(PLAYERS player, float input, float threshold1, float threshold2);
         float zeroTurnSmoothing(PLAYERS player);
-        float ClampFloat(const float value, const float min, const float max);
+        float ClampFloat(float value, float min, float max);
 
     public:
         InputHandler() = default;
         vec2<float> ProcessAimStickInputForPlayer(PLAYERS player);
-        vec2<float> HandleDeadZoneStickInput(const vec2<float> stick, const vec2<float> deadzone);
+        vec2<float> HandleDeadZoneStickInput(vec2<float> stick, vec2<float> deadzone);
 
 
 

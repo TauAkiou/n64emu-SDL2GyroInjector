@@ -13,7 +13,7 @@
 #define FOV_MIN 40
 #define FOV_MAX 120
 
-#include "vec2.h"
+#include "common/vec2.h"
 
 
 enum CONTROLLERENUM {FORWARDS = 0, BACKWARDS, STRAFELEFT, STRAFERIGHT, FIRE, AIM, ACCEPT, CANCEL, START, CROUCH, KNEEL, PREVIOUSWEAPON, NEXTWEAPON, UP, DOWN, LEFT, RIGHT, RESETGYRO, TOGGLEGYRO, TOTALBUTTONS};
@@ -52,7 +52,7 @@ typedef struct PROFILE {
     vec2<float> MoveStickSensitivity = {};
     vec2<float> AimStickSensitivity = {};
     vec2<float> GyroscopeSensitivity = {};
-    bool Crosshair = {};
+    float Crosshair = {};
     bool PitchInverted = {};
     bool CrouchToggle = {};
     bool GoldeneyeAimMode = {};

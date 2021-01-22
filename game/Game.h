@@ -21,7 +21,7 @@ class Game {
         std::vector<GameDriver*> _gamedrivers = { new Goldeneye(), new PerfectDark() };
         GameDriver* _loadedgame = nullptr;
     public:
-        static Game* getInstance();
+        static Game* GetInstance();
         int Status();
         std::string Name();
         void Inject();

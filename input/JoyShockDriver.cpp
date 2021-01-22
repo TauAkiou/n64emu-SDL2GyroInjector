@@ -15,9 +15,8 @@ JoyShockDriver* JoyShockDriver::getInstance() {
 }
 
 JoyShockDriver::JoyShockDriver() {
-    _gameptr = Game::getInstance();
-    _ctrlptr = Controls::getInstance();
-    _pluginptr = PluginSettings::getInstance();
+    _gameptr = Game::GetInstance();
+    _settings = Settings::GetInstance();
 }
 
 DWORD JoyShockDriver::injectionloop() {
@@ -44,14 +43,14 @@ DWORD JoyShockDriver::injectionloop() {
     while(!_terminatethread) {
         time_previous = time_current;
         time_current = clock();
-        _ctrlptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
+        _cstateptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
 
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            if(_ctrlptr->Profile[player].SETTINGS[CONFIG] == DISABLED)
+            if(_settings->Profile[player].QuickConfigSetting == DISABLED)
                 continue;
 
-            PROFILE prf = _ctrlptr->Profile[player];
-            DEVICE *dev = &_ctrlptr->Device[player];
+            PROFILE prf = _settings->Profile[player];
+            DEVICE *dev = &_cstateptr->Device[player];
 
             // Handle processing for standard cons (DS4/SPC)
             if(prf.ControllerMode == 0) {
@@ -86,8 +85,8 @@ DWORD JoyShockDriver::injectionloop() {
                 dev->GYRO.y = (jsl_imu_primary.gyroX > 0.2 || jsl_imu_primary.gyroX < -0.2) ? -jsl_imu_primary.gyroX : 0;
 
                 for (int button = FIRE; button < TOTALBUTTONS; button++) {
-                    dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button].Button) != 0;
-                    dev->BUTTONSEC[button] = (jsl_buttons_primary.buttons & prf.BUTTONSEC[button].Button) != 0;
+                    dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button]) != 0;
+                    dev->BUTTONSEC[button] = (jsl_buttons_primary.buttons & prf.BUTTONSEC[button]) != 0;
                 }
 
             }
@@ -112,8 +111,8 @@ DWORD JoyShockDriver::injectionloop() {
                 dev->GYRO.y = (jsl_imu_secondary.gyroX > 0.2 || jsl_imu_secondary.gyroX < -0.2) ? -jsl_imu_secondary.gyroX : 0;
 
                 for (int button = FIRE; button < TOTALBUTTONS; button++) {
-                    dev->BUTTONPRIM[button] = (combined_buttons & prf.BUTTONPRIM[button].Button) != 0;
-                    dev->BUTTONSEC[button] = (combined_buttons & prf.BUTTONSEC[button].Button) != 0;
+                    dev->BUTTONPRIM[button] = (combined_buttons & prf.BUTTONPRIM[button]) != 0;
+                    dev->BUTTONSEC[button] = (combined_buttons & prf.BUTTONSEC[button]) != 0;
                 }
 
             }
@@ -130,7 +129,7 @@ DWORD JoyShockDriver::injectionloop() {
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
-                memset(&_ctrlptr->Device, 0, sizeof(DEVICE)); // reset player input
+                memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
                 _gameptr->Inject(); // ship empty input to game
                 _windowactive = 0;
             }
@@ -235,10 +234,10 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedRightJoycons() {
 
 void JoyShockDriver::CalibrateAllGyroscopes() {
     std::cout << "Starting calibration for all assigned controllers..." << std::endl;
-    for(PROFILE prf : _ctrlptr->Profile) {
+    for(PROFILE prf : _settings->Profile) {
         JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
         JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-        if(prf.AssignedDeviceSecondary.Handle != -1) {
+        if(prf.ControllerMode > 1 && prf.AssignedDeviceSecondary.Handle != -1) {
             JslResetContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
             JslStartContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
         }
@@ -250,11 +249,10 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
         clock_now = clock();
     }
 
-    for(const PROFILE &prf : _ctrlptr->Profile) {
+    for(const PROFILE &prf : _settings->Profile) {
         JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-        if(prf.AssignedDeviceSecondary.Handle != -1) {
+        if(prf.ControllerMode > 1 && prf.AssignedDeviceSecondary.Handle != -1) {
             JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
-
         }
     }
     std::cout << "Calibration completed." << std::endl;
