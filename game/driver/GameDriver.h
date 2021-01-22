@@ -5,7 +5,7 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_GAMEDRIVER_H
 #define INC_1964_INPUT_JOYSHOCKCPP_GAMEDRIVER_H
 
-#include "EmulatorLink.h"
+#include "../EmulatorLink.h"
 #include "../settings/Settings.h"
 #include "../common.h"
 #include "../plugin.h"
@@ -27,8 +27,8 @@
 class GameDriver {
 protected:
     GameDriver* _driver = nullptr;
-    Controls* _cfgptr = Controls::getInstance();
-    PluginSettings* _pluginptr = PluginSettings::getInstance();
+    Settings* _settings = nullptr;
+    ControlState* _cfgptr = ControlState::getInstance();
     EmulatorLink* _link = EmulatorLink::getInstance();
     std::string _name;
     float ClampFloat(const float value, const float min, const float max);

@@ -11,9 +11,9 @@
 
 #include <vector>
 #include <string>
-#include "GameDriver.h"
-#include "Goldeneye.h"
-#include "PerfectDark.h"
+#include "driver/GameDriver.h"
+#include "driver/Goldeneye.h"
+#include "driver/PerfectDark.h"
 
 class Game {
     protected:

@@ -6,8 +6,8 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_GOLDENEYE_H
 
 #include "GameDriver.h"
-#include "../vec2.h"
-#include "../input/InputHandler.h"
+#include "../../vec2.h"
+#include "../../input/InputHandler.h"
 
 class Goldeneye : public GameDriver {
 private:

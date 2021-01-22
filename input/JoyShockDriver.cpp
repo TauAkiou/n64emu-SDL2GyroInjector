@@ -250,7 +250,7 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
         clock_now = clock();
     }
 
-    for(PROFILE prf : _ctrlptr->Profile) {
+    for(const PROFILE &prf : _ctrlptr->Profile) {
         JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
         if(prf.AssignedDeviceSecondary.Handle != -1) {
             JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);

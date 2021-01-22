@@ -16,17 +16,17 @@ add_library(1964_input_joyshockcpp SHARED
         common.h
         game/EmulatorLink.cpp
         game/EmulatorLink.h
-        game/GameDriver.cpp
+        game/driver/GameDriver.cpp
         game/Game.cpp
         game/Game.h
-        game/PerfectDark.cpp
-        game/Goldeneye.cpp
-        game/Goldeneye.h
-        game/GameDriver.h
-        game/PerfectDark.h
+        game/driver/PerfectDark.cpp
+        game/driver/Goldeneye.cpp
+        game/driver/Goldeneye.h
+        game/driver/GameDriver.h
+        game/driver/PerfectDark.h
         settings/Settings.cpp
         settings/Settings.h
-        JoyShockLibrary/JoyShockLibrary.h input/InputHandler.h input/InputHandler.cpp vec2.h)
+        JoyShockLibrary/JoyShockLibrary.h input/InputHandler.h input/InputHandler.cpp vec2.h common/Helpers.cpp common/Helpers.h)
 
 target_include_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
 target_link_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)

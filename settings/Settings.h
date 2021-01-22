@@ -8,31 +8,20 @@
 #include "../common.h"
 #include "../plugin.h"
 
-class Controls {
-    private:
-        static Controls* _instance;
-        Controls() = default;
+class Settings {
+private:
+    static inline Settings* _instance;
     public:
-        static Controls* getInstance();
-        PROFILE Profile[4] { 0,
+    static Settings* getInstance();
+       PROFILE Profile[4] { 0,
                              { -1, None, 0, 0},
                              {-1, None, 0, 0},
                              {0, 0},
                              {0, 0},
                              { vec2<float>(0,0) },
                              {0} };
-        DEVICE Device[4] { vec2<float>(0, 0),
-                           vec2<float>(0, 0),
-                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false };
-        float DeltaTime = 0;
-};
 
-class PluginSettings {
-private:
-    static PluginSettings* _instance;
-    PluginSettings() = default;
-public:
-    static PluginSettings* getInstance();
+       // Plugin/Emulator settings
     bool EmulatorOverclocked = true;
     int FovOverride = 60;
     int OverrideRatioWidth = 16;
@@ -40,4 +29,20 @@ public:
     bool ShowGoldeneyeCrosshair = false;
 };
 
+/*
+ * ControlState:
+ *
+ * Stores input working state.
+ *
+ */
+
+class ControlState {
+private:
+    static ControlState* _instance;
+    ControlState() = default;
+public:
+    static ControlState* getInstance();
+    DEVICE Device[ALLPLAYERS] = {};
+    float DeltaTime = 0.0;
+};
 #endif //INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H

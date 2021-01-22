@@ -20,7 +20,7 @@ enum CONTROLLERENUM {FORWARDS = 0, BACKWARDS, STRAFELEFT, STRAFERIGHT, FIRE, AIM
 enum VECTORSETTINGSENUM {AIMDEADZONE = 0, TOTALVECTORSETTINGS};
 enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVITYX, GYROSENSITIVITYY, ACCELERATION, CROSSHAIR, INVERTPITCH, CROUCHTOGGLE, GEAIMMODE, PDAIMMODE, STICKMODE, STICKAIMING, TOTALSETTINGS};
 enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
-enum STICKMODEENUM {FULL = 0, XONLY, FLICK, ALLMODES};
+enum STICKMODE {FULL = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 
 enum JSD_ControllerType {
@@ -38,22 +38,29 @@ typedef struct  {
     int NSPlayerLight;
 } JSDevice;
 
-// Device is either 0 or 1, meaning that this value is assigned to device 1 or 2.
-typedef struct {
-    int Device;
-    int Button;
-} ASSIGNMENT;
-
 typedef struct PROFILE {
     // Secondary devices are used when we are in Joycon mode.
     int ControllerMode; // -1 = Disabled, 0 = Controller, 1 = Joycon
-    JSDevice AssignedDevicePrimary;
-    JSDevice AssignedDeviceSecondary;
-    ASSIGNMENT BUTTONPRIM[TOTALBUTTONS];
-    ASSIGNMENT BUTTONSEC[TOTALBUTTONS];
-    vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
-    float FLOATSETTINGS[TOTALVECTORSETTINGS];
-    int SETTINGS[TOTALSETTINGS];
+    JSDevice AssignedDevicePrimary = {-1, None, 0, 0};
+    JSDevice AssignedDeviceSecondary = { -1, None, 0, 0};
+    QUICKCONFIGENUM QuickConfigSetting = DISABLED;
+    enum STICKMODE StickMode = FULL;
+    int BUTTONPRIM[TOTALBUTTONS];
+    int BUTTONSEC[TOTALBUTTONS];
+    // Other settings (converted from enumerator arrays
+    vec2<float> AimstickDeadzone = {};
+    vec2<float> MoveStickSensitivity = {};
+    vec2<float> AimStickSensitivity = {};
+    vec2<float> GyroscopeSensitivity = {};
+    bool Crosshair = {};
+    bool PitchInverted = {};
+    bool CrouchToggle = {};
+    bool GoldeneyeAimMode = {};
+    bool PerfectDarkAimMode = {};
+    bool UseStickToAim = {};
+    //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
+    //float FLOATSETTINGS[TOTALVECTORSETTINGS];
+    //int SETTINGS[TOTALSETTINGS];
 } PROFILE;
 
 typedef struct {
@@ -63,8 +70,8 @@ typedef struct {
     int BUTTONPRIM[TOTALBUTTONS];
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
-    bool GYROISACTIVE;
-    bool CALIBRATING;
+    bool GYROSTATE;
+    bool GYROCALIBRATION;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H

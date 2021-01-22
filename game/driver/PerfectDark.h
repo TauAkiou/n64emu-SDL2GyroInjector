@@ -5,7 +5,7 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_PERFECTDARK_H
 #define INC_1964_INPUT_JOYSHOCKCPP_PERFECTDARK_H
 
-#include "../input/InputHandler.h"
+#include "../../input/InputHandler.h"
 #include "GameDriver.h"
 
 #define PD_ResetCrouchToggle(X) safetocrouch[X] = 1, safetostand[X] = 0, crouchstance[X] = 2 // reset crouch toggle bind
