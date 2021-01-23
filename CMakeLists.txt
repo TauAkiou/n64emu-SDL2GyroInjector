@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 project(1964_input_joyshockcpp)
 
 # used for automatic deployment & debugging purposes.
-#SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
-#SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
+SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
+SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
 
 SET(GCC_COVERAGE_COMPILE_FLAGS "-m32 -Wall")
 set(CMAKE_CXX_STANDARD 20)
@@ -43,7 +43,7 @@ target_link_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
 target_link_libraries(1964_input_joyshockcpp JoyShockLibrary)
 
 
-#add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy
-#        ${CMAKE_CURRENT_BINARY_DIR}/lib1964_input_joyshockcpp.dll
-#        ${1964_PLUGIN_DIRECTORY}/)
+add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_CURRENT_BINARY_DIR}/lib1964_input_joyshockcpp.dll
+         ${1964_PLUGIN_DIRECTORY}/)

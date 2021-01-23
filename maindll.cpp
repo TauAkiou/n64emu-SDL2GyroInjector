@@ -124,8 +124,11 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     Assignment player1asgn = {FULLCONTROLLER, ctrllst_full.front(),
                              {-1, None}};
+    Assignment player2asgn { FULLCONTROLLER, ctrllst_full.back(),
+                             {-1, None}};
 
-    PROFILE player1prof;
+    PROFILE player1prof = {};
+    PROFILE player2prof = {};
     
     player1prof.FreeAiming = true;
     player1prof.StickMode = FLICK;
@@ -138,7 +141,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     player1prof.CrouchToggle = true;
     player1prof.GoldeneyeAimMode = true;
     player1prof.PerfectDarkAimMode = true;
-
+    player1prof.AimstickDeadzone = {0.2, 0.2};
 
 
     player1prof.BUTTONPRIM[FIRE] = JSMASK_ZR;
@@ -156,6 +159,42 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     player1prof.BUTTONPRIM[RIGHT] = JSMASK_RIGHT;
     player1prof.BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
     player1prof.CalibrationButton = JSMASK_CAPTURE;
+
+    _settingsptr->SetProfileForPlayer(PLAYER1, player1prof);
+    _settingsptr->SetAssignmentForPlayer(PLAYER1, player1asgn);
+
+    player2prof.FreeAiming = true;
+    player2prof.StickMode = FLICK;
+    player2prof.UseStickToAim = false;
+    player2prof.DS4Color = 0x0000FF;
+    player2prof.AimStickSensitivity = {23000, 23000};
+    player2prof.GyroscopeSensitivity = {400, 400};
+    player2prof.Crosshair = 1;
+    player2prof.PitchInverted = false;
+    player2prof.CrouchToggle = true;
+    player2prof.GoldeneyeAimMode = true;
+    player2prof.PerfectDarkAimMode = true;
+
+    player2prof.BUTTONPRIM[FIRE] = JSMASK_ZR;
+    player2prof.BUTTONPRIM[AIM] = JSMASK_ZL;
+    player2prof.BUTTONPRIM[ACCEPT] = JSMASK_L;
+    player2prof.BUTTONPRIM[CANCEL] = JSMASK_R;
+    player2prof.BUTTONPRIM[START] = JSMASK_PLUS;
+    player2prof.BUTTONPRIM[CROUCH] = JSMASK_E;
+    player2prof.BUTTONPRIM[KNEEL] = JSMASK_S;
+    player2prof.BUTTONPRIM[PREVIOUSWEAPON] = JSMASK_W;
+    player2prof.BUTTONPRIM[NEXTWEAPON] = JSMASK_N;
+    player2prof.BUTTONPRIM[UP] = JSMASK_UP;
+    player2prof.BUTTONPRIM[DOWN] = JSMASK_DOWN;
+    player2prof.BUTTONPRIM[LEFT]= JSMASK_LEFT;
+    player2prof.BUTTONPRIM[RIGHT] = JSMASK_RIGHT;
+    player2prof.BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
+    player2prof.CalibrationButton = JSMASK_CAPTURE;
+
+    _settingsptr->SetProfileForPlayer(PLAYER2, player2prof);
+    _settingsptr->SetAssignmentForPlayer(PLAYER2, player2asgn);
+
+
 
     /*
     _settingsptr->Profile[PLAYER2].ControllerMode = 0;

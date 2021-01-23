@@ -84,7 +84,7 @@ DWORD JoyShockDriver::injectionloop() {
         _cstateptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
 
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            if(_settings->GetIfPlayerIsConnected(static_cast<PLAYERS>(player)))
+            if(!_settings->GetIfPlayerIsConnected(static_cast<PLAYERS>(player)))
                 continue;
 
             PROFILE prf = _settings->GetProfileForPlayer(static_cast<PLAYERS>(player));
@@ -94,7 +94,7 @@ DWORD JoyShockDriver::injectionloop() {
 
 
             // Handle processing for standard cons (DS4/SPC)
-            if(prf.ControllerMode == 0) {
+            if(asgn.ControllerMode == FULLCONTROLLER) {
                 jsl_buttons_primary = JslGetSimpleState(asgn.PrimaryDevice.Handle);
                 jsl_imu_primary = JslGetIMUState(asgn.PrimaryDevice.Handle);
                 // Skip over touch output for now until we can figure out how to use it properly.
@@ -147,7 +147,7 @@ DWORD JoyShockDriver::injectionloop() {
                 }
 
             }
-            else if(prf.ControllerMode == 1) {
+            else if(asgn.ControllerMode == JOYCONS) {
                 // Primary is our left joycon, secondary is our right joycon.
                 jsl_buttons_primary = JslGetSimpleState(asgn.PrimaryDevice.Handle);
                 jsl_buttons_secondary = JslGetSimpleState(asgn.SecondaryDevice.Handle);

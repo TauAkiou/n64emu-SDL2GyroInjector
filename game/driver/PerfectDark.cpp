@@ -27,9 +27,13 @@
 #include "PerfectDark.h"
 
 #define GUNAIMLIMIT 14.12940025 // 0x41621206
+#define GUNAIMLIMITFREE 18.12940025
 #define CROSSHAIRLIMIT 18.76135635 // 0x41961742
+#define CROSSHAIRLIMITFREE 24.76135635
 #define GUNRECOILXLIMIT 756.1247559 // 0x443D07FC
 #define GUNRECOILYLIMIT 57.63883972 // 0x42668E2C
+#define GUNRECOILXLIMITFREE 756.1247559 // 0x443D07FC
+#define GUNRECOILYLIMITFREE 57.63883972 // 0x42668E2C
 #define BIKEXROTATIONLIMIT 6.282184601 // 0x40C907A8
 #define BIKEROLLLIMIT 0.7852724195 // 0xBF49079D/0x3F49079D
 #define PI 3.1415927 // 0x40490FDB
@@ -103,7 +107,7 @@ void PerfectDark::Inject()
     for(int player_int = PLAYER1; player_int < ALLPLAYERS; player_int++)
     {
         auto player = static_cast<PLAYERS>(player_int);
-        if(_settings->GetIfPlayerIsConnected(player)) // bypass disabled players
+        if(!_settings->GetIfPlayerIsConnected(player)) // bypass disabled players
             continue;
 
         PROFILE profile = _settings->GetProfileForPlayer(player);
@@ -613,7 +617,7 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                 camx += aimstickdata.x / 10.0f * sensitivity_stick_x *
                         (fov / basefov); // regular mouselook calculation
                 //camx += _cfgptr->Device[player].GYRO.x / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime *
-                        (fov / basefov);
+                        //(fov / basefov);
             }
             else
                 camx += aimx[player] * (fov / basefov); // scroll screen with aimx/aimy
@@ -672,7 +676,7 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                 gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f;
 
             gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMIT, GUNAIMLIMIT);
-            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
+            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMITFREE, CROSSHAIRLIMIT);
             _link->WriteFloat(playerbase[player] + PD_gunrx, gunx);
             _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairx * (GUNRECOILXLIMIT / CROSSHAIRLIMIT));
             _link->WriteFloat(playerbase[player] + PD_gunlx, gunx);
