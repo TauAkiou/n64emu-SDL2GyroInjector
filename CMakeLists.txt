@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(1964_input_joyshockcpp)
 
 # used for automatic deployment & debugging purposes.
-SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
+SET(1964_INSTALL_DIRECTORY "C:/utils/1964")
 SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
 
 SET(GCC_COVERAGE_COMPILE_FLAGS "-m32 -Wall")

@@ -124,7 +124,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     Assignment player1asgn = {FULLCONTROLLER, ctrllst_full.front(),
                              {-1, None}};
-    Assignment player2asgn { FULLCONTROLLER, ctrllst_full.back(),
+    Assignment player2asgn { DISCONNECTED, ctrllst_full.back(),
                              {-1, None}};
 
     PROFILE player1prof = {};

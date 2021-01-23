@@ -6,7 +6,7 @@
  * Copyright (C) 2016-2021 Carnivorous
  *
  * Joyshock Injector
- * Copyright (C) 2016-2021 TauAkiou
+ * Copyright (C) 2021 TauAkiou
  * All rights reserved.
  *
  * Joyshock Injector is free software; you can redistribute it and/or modify it

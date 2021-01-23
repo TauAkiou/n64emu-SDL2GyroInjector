@@ -27,9 +27,9 @@
 #include "PerfectDark.h"
 
 #define GUNAIMLIMIT 14.12940025 // 0x41621206
-#define GUNAIMLIMITFREE 18.12940025
+#define GUNAIMLIMITFREE 22.12940025
 #define CROSSHAIRLIMIT 18.76135635 // 0x41961742
-#define CROSSHAIRLIMITFREE 24.76135635
+#define CROSSHAIRLIMITFREE 26.76135635
 #define GUNRECOILXLIMIT 756.1247559 // 0x443D07FC
 #define GUNRECOILYLIMIT 57.63883972 // 0x42668E2C
 #define GUNRECOILXLIMITFREE 756.1247559 // 0x443D07FC
@@ -675,12 +675,12 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
             if(aimingflag) // emulate cursor moving back to the center
                 gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f;
 
-            gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMIT, GUNAIMLIMIT);
-            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMITFREE, CROSSHAIRLIMIT);
+            gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMITFREE, GUNAIMLIMITFREE);
+            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
             _link->WriteFloat(playerbase[player] + PD_gunrx, gunx);
-            _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairx * (GUNRECOILXLIMIT / CROSSHAIRLIMIT));
+            _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairx * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE));
             _link->WriteFloat(playerbase[player] + PD_gunlx, gunx);
-            _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairx * (GUNRECOILXLIMIT / CROSSHAIRLIMIT));
+            _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairx * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE));
             _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairx);
             if(camy > -90 && camy < 90) // only allow player's gun to pitch within a valid range
             {
@@ -711,17 +711,18 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
 
 
 void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
-    const float crosshairx = _link->ReadFloat(playerbase[player] + PD_crosshairx), crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
+    const float crosshairx = _link->ReadFloat(playerbase[player] + PD_crosshairx);
+    const float crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
     const int gunrreload = _link->ReadInt(playerbase[player] + PD_gunrstate) == 1, gunlreload = _link->ReadInt(playerbase[player] + PD_gunlstate) == 1, unarmed = _link->ReadInt(playerbase[player] + PD_currentweapon) < 2;
     const float fovratio = fov / basefov, fovmodifier = basefov / 60.f; // basefov is 60 unless override is above 60
-    const float threshold = 0.72f, speed = 475.f, sensitivity = 100.f * fovmodifier, centertime = 60.f;
+    const float threshold = 0.90f, speed = 475.f, sensitivity = 100.f * fovmodifier, centertime = 60.f;
     // In free aim, the aimer is always unlocked and tied to the gyro exclusively.
 
         //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * (profile.GyroscopeSensitivity.x / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
         crosshairposy[player] += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
-        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
-        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
+        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
+        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
         _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
         _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
         if(unarmed || gunrreload) // if unarmed or reloading right weapon, remove from gunrcenter
