@@ -49,7 +49,7 @@ enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVI
 enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
 enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
-enum CONTROLLERMODE { };
+enum CONTROLLERMODE { DISCONNECTED = -1, FULLCONTROLLER, JOYCONS };
 
 enum JSD_ControllerType {
     None = 0,
@@ -59,19 +59,20 @@ enum JSD_ControllerType {
     Dualshock_4 = 4
 };
 
-typedef struct  {
+typedef struct {
     int Handle;
-    JSD_ControllerType ConType;
-    int DS4LightColor;
-    int NSPlayerLight;
+    JSD_ControllerType Type;
 } JSDevice;
+
+typedef struct {
+    enum CONTROLLERMODE ControllerMode;
+    JSDevice PrimaryDevice;
+    JSDevice SecondaryDevice;
+} Assignment;
 
 typedef struct PROFILE {
     // Secondary devices are used when we are in Joycon mode.
     int ControllerMode; // -1 = Disabled, 0 = Controller, 1 = Joycon
-    JSDevice AssignedDevicePrimary = {-1, None, 0, 0};
-    JSDevice AssignedDeviceSecondary = { -1, None, 0, 0};
-    QUICKCONFIGENUM QuickConfigSetting = DISABLED;
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
     int CalibrationButton = {};

@@ -30,14 +30,15 @@
 
 vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
     vec2<float> vec;
-    switch(_settings->Profile[player].StickMode) {
+    auto profile = _settings->GetProfileForPlayer(player);
+    switch(profile.StickMode) {
         default:
         case FULLSTICK:
             return HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
-                                            _settings->Profile[player].AimstickDeadzone);
+                                            profile.AimstickDeadzone);
         case XONLY:
             vec = HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
-                                                _settings->Profile[player].AimstickDeadzone);
+                                                profile.AimstickDeadzone);
             // Zero the y.
             vec.y = 0;
             return vec;

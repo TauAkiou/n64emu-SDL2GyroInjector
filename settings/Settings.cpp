@@ -35,15 +35,15 @@ Settings* Settings::GetInstance() {
     return _instance;
 }
 
-PROFILE Settings::GetProfileForPlayer(int player) {
-    return this->Profile[player];
+PROFILE Settings::GetProfileForPlayer(enum PLAYERS player) {
+    return Profile[player];
 }
 
 bool Settings::GetIfEmulatorOverclocked() const {
     return EmulatorOverclocked;
 }
 
-void Settings::SetProfileForPlayer(int player, PROFILE profile) {
+void Settings::SetProfileForPlayer(enum PLAYERS player, PROFILE profile) {
     Profile[player] = std::move(profile);
 }
 
@@ -55,8 +55,41 @@ bool Settings::GetShowGoldeneyeCrosshair() const {
     return ShowGoldeneyeCrosshair;
 }
 
-bool Settings::SetShowGoldeneyeCrosshair(bool val) {
+void Settings::SetShowGoldeneyeCrosshair(bool val) {
     ShowGoldeneyeCrosshair = val;
+}
+
+bool Settings::GetIfPlayerIsConnected(enum PLAYERS player) {
+    switch(ControllerAssignments[player].ControllerMode) {
+        default:
+        case DISCONNECTED:
+            return false;
+        case FULLCONTROLLER:
+        case JOYCONS:
+            return true;
+    }
+
+
+}
+
+Assignment Settings::GetAssignmentForPlayer(enum PLAYERS player) {
+    return ControllerAssignments[player];
+}
+
+int Settings::GetFovOverride() const {
+    return FovOverride;
+}
+
+int Settings::GetOverrideRatioWidth() const {
+    return OverrideRatioWidth;
+}
+
+void Settings::SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn) {
+    ControllerAssignments[player] = asgn;
+}
+
+void Settings::SetFovOverride(int fov) {
+    FovOverride = fov;
 }
 
 ControlState* ControlState::GetInstance() {

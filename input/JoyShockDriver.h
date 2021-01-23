@@ -57,10 +57,6 @@ class JoyShockDriver {
         std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
         HWND _emulatorwindow = nullptr;
 
-        // Flick Stick state
-        float flickProgress[ALLPLAYERS];
-        float flicksize[ALLPLAYERS];
-
         static DWORD WINAPI startinjectionloop(void* param);
         DWORD injectionloop();
 
@@ -71,7 +67,6 @@ class JoyShockDriver {
         int Initialize(const HWND hw);
         void Terminate();
         void AssignEmulatorWindow(const HWND hw);
-
         void StartInjectionThread();
         void EndInjectionThread();
         bool IsThreadRunning();

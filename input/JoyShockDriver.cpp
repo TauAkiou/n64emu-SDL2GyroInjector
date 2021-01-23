@@ -45,8 +45,6 @@ DWORD JoyShockDriver::injectionloop() {
     // Allocate structs for all handles.
     JOY_SHOCK_STATE jsl_buttons_primary;
     JOY_SHOCK_STATE jsl_buttons_secondary;
-
-    // AFAIK we have two seperate IMUs in the joycons? I assume that's actually only true for the right joycon.
     IMU_STATE jsl_imu_primary;
     IMU_STATE jsl_imu_secondary;
 
@@ -61,16 +59,18 @@ DWORD JoyShockDriver::injectionloop() {
 
     // Set up controller player lights/colors
     for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-        auto prf = _settings->Profile[player];
-        switch(prf.ControllerMode) {
-            default:
-            case 0:
-                JslSetLightColour(prf.AssignedDevicePrimary.Handle, prf.DS4Color);
-                JslSetPlayerNumber(prf.AssignedDevicePrimary.Handle, player+1);
+        auto assignment = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+        auto profile = _settings->GetProfileForPlayer(static_cast<PLAYERS>(player));
+        switch(assignment.ControllerMode) {
+            case FULLCONTROLLER:
+                JslSetLightColour(assignment.PrimaryDevice.Handle, profile.DS4Color);
+                JslSetPlayerNumber(assignment.PrimaryDevice.Handle, player+1);
                 break;
-            case 1:
-                JslSetPlayerNumber(prf.AssignedDevicePrimary.Handle, player+1);
-                JslSetPlayerNumber(prf.AssignedDeviceSecondary.Handle, player+1);
+            case JOYCONS:
+                JslSetPlayerNumber(assignment.PrimaryDevice.Handle, player+1);
+                JslSetPlayerNumber(assignment.SecondaryDevice.Handle, player+1);
+                break;
+            default:
                 break;
         }
     }
@@ -84,34 +84,35 @@ DWORD JoyShockDriver::injectionloop() {
         _cstateptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
 
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            if(_settings->Profile[player].QuickConfigSetting == DISABLED)
+            if(_settings->GetIfPlayerIsConnected(static_cast<PLAYERS>(player)))
                 continue;
 
-            PROFILE prf = _settings->Profile[player];
+            PROFILE prf = _settings->GetProfileForPlayer(static_cast<PLAYERS>(player));
+            Assignment asgn = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
             DEVICE *dev = &_cstateptr->Device[player];
 
 
 
             // Handle processing for standard cons (DS4/SPC)
             if(prf.ControllerMode == 0) {
-                jsl_buttons_primary = JslGetSimpleState(prf.AssignedDevicePrimary.Handle);
-                jsl_imu_primary = JslGetIMUState(prf.AssignedDevicePrimary.Handle);
+                jsl_buttons_primary = JslGetSimpleState(asgn.PrimaryDevice.Handle);
+                jsl_imu_primary = JslGetIMUState(asgn.PrimaryDevice.Handle);
                 // Skip over touch output for now until we can figure out how to use it properly.
-                jsl_touch = JslGetTouchState(prf.AssignedDevicePrimary.Handle);
+                jsl_touch = JslGetTouchState(asgn.PrimaryDevice.Handle);
 
                 if(!dev->GYROCALIBRATION) {
                     if(jsl_buttons_primary.buttons & prf.CalibrationButton) {
                         std::cout << "Player " << player+1 << " controller is calibrating." << std::endl;
                         dev->GYROCALIBRATION = true;
-                        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-                        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslResetContinuousCalibration(asgn.PrimaryDevice.Handle);
+                        JslStartContinuousCalibration(asgn.PrimaryDevice.Handle);
                     }
                 }
                 else {
                     if(!(jsl_buttons_primary.buttons & prf.CalibrationButton)) {
                         std::cout << "Player " << player+1 << " calbration complete." << std::endl;
                         dev->GYROCALIBRATION = false;
-                        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslPauseContinuousCalibration(asgn.PrimaryDevice.Handle);
                     }
                 }
 
@@ -148,10 +149,10 @@ DWORD JoyShockDriver::injectionloop() {
             }
             else if(prf.ControllerMode == 1) {
                 // Primary is our left joycon, secondary is our right joycon.
-                jsl_buttons_primary = JslGetSimpleState(prf.AssignedDevicePrimary.Handle);
-                jsl_buttons_secondary = JslGetSimpleState(prf.AssignedDeviceSecondary.Handle);
-                jsl_imu_primary = JslGetIMUState(prf.AssignedDevicePrimary.Handle);
-                jsl_imu_secondary = JslGetIMUState(prf.AssignedDeviceSecondary.Handle);
+                jsl_buttons_primary = JslGetSimpleState(asgn.PrimaryDevice.Handle);
+                jsl_buttons_secondary = JslGetSimpleState(asgn.SecondaryDevice.Handle);
+                jsl_imu_primary = JslGetIMUState(asgn.PrimaryDevice.Handle);
+                jsl_imu_secondary = JslGetIMUState(asgn.SecondaryDevice.Handle);
                 auto combined_buttons = jsl_buttons_primary.buttons | jsl_buttons_secondary.buttons;
 
                 if(!dev->GYROCALIBRATION) {
@@ -159,10 +160,10 @@ DWORD JoyShockDriver::injectionloop() {
                         std::cout << "Player " << player+1 << " joycons are calibrating." << std::endl;
 
                         dev->GYROCALIBRATION = true;
-                        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-                        JslResetContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
-                        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-                        JslStartContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+                        JslResetContinuousCalibration(asgn.PrimaryDevice.Handle);
+                        JslResetContinuousCalibration(asgn.SecondaryDevice.Handle);
+                        JslStartContinuousCalibration(asgn.PrimaryDevice.Handle);
+                        JslStartContinuousCalibration(asgn.SecondaryDevice.Handle);
                     }
                 }
                 else {
@@ -170,8 +171,8 @@ DWORD JoyShockDriver::injectionloop() {
                         std::cout << "Player " << player+1 << " calibration complete." << std::endl;
 
                         dev->GYROCALIBRATION = false;
-                        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-                        JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+                        JslPauseContinuousCalibration(asgn.PrimaryDevice.Handle);
+                        JslPauseContinuousCalibration(asgn.SecondaryDevice.Handle);
                     }
                 }
 
@@ -240,9 +241,7 @@ int JoyShockDriver::Initialize(const HWND hw) {
 
         for(int _handleid : discoveredhandles) {
             deviceentry.Handle = _handleid;
-            deviceentry.ConType = (JSD_ControllerType)JslGetControllerType(_handleid);
-            deviceentry.DS4LightColor = 0x000000;
-            deviceentry.NSPlayerLight = 0;
+            deviceentry.Type = (JSD_ControllerType)JslGetControllerType(_handleid);
 
             _devices->push_back(deviceentry);
         }
@@ -282,7 +281,7 @@ void JoyShockDriver::EndInjectionThread() {
 std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
     std::vector<JSDevice> val;
     for(JSDevice jsd : *_devices) {
-        if(jsd.ConType == SwitchPro || jsd.ConType == Dualshock_4)
+        if(jsd.Type == SwitchPro || jsd.Type == Dualshock_4)
             val.push_back(jsd);
     }
     return val;
@@ -291,7 +290,7 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
 std::vector<JSDevice> JoyShockDriver::GetConnectedLeftJoycons() {
     std::vector<JSDevice> val;
     for(JSDevice jsd : *_devices) {
-        if(jsd.ConType == JoyconLeft)
+        if(jsd.Type == JoyconLeft)
             val.push_back(jsd);
     }
     return val;
@@ -300,7 +299,7 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedLeftJoycons() {
 std::vector<JSDevice> JoyShockDriver::GetConnectedRightJoycons() {
     std::vector<JSDevice> val;
     for(JSDevice jsd : *_devices) {
-        if(jsd.ConType == JoyconRight)
+        if(jsd.Type == JoyconRight)
             val.push_back(jsd);
     }
     return val;
@@ -309,12 +308,13 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedRightJoycons() {
 
 void JoyShockDriver::CalibrateAllGyroscopes() {
     std::cout << "Starting calibration for all assigned controllers..." << std::endl;
-    for(PROFILE prf : _settings->Profile) {
-        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-        if(prf.ControllerMode > 1 && prf.AssignedDeviceSecondary.Handle != -1) {
-            JslResetContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
-            JslStartContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+        auto asgn = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+        JslResetContinuousCalibration(asgn.PrimaryDevice.Handle);
+        JslStartContinuousCalibration(asgn.PrimaryDevice.Handle);
+        if(asgn.ControllerMode > 1 && asgn.SecondaryDevice.Handle != -1) {
+            JslResetContinuousCalibration(asgn.SecondaryDevice.Handle);
+            JslStartContinuousCalibration(asgn.SecondaryDevice.Handle);
         }
     }
     auto clock_start = clock();
@@ -324,10 +324,11 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
         clock_now = clock();
     }
 
-    for(const PROFILE &prf : _settings->Profile) {
-        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
-        if(prf.ControllerMode > 1 && prf.AssignedDeviceSecondary.Handle != -1) {
-            JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+        auto asgn = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+        JslPauseContinuousCalibration(asgn.PrimaryDevice.Handle);
+        if(asgn.ControllerMode > 1 && asgn.SecondaryDevice.Handle != -1) {
+            JslPauseContinuousCalibration(asgn.SecondaryDevice.Handle);
         }
     }
     std::cout << "Calibration completed." << std::endl;

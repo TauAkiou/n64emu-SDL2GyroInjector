@@ -63,16 +63,16 @@ private:
     int gunrcenter[4]{};
     int gunlcenter[4]{};
 
-    void _crouch(const int player);
-    void _camspyslayer(const int player, const int camspyflag, const float sensitivityx, const float sensitivityy);
-    void _processOriginalInput(int player);
-    void _aimmode(const int player, const int aimingflag, const float fov, const float basefov);
-    void _radialmenunav(const int player);
+    void _crouch(int player, const PROFILE& profile);
+    void _camspyslayer(int player, const PROFILE& profile, int camspyflag, float sensitivityx, float sensitivityy);
+    void _processOriginalInput(int player, const PROFILE& profile);
+    void _aimmode(int player, const PROFILE& profile, int aimingflag, float fov, float basefov);
+    void _radialmenunav(int player, const PROFILE& profile);
     void _resetgyro();
     void _controller();
     void _injecthacks();
-    void _processFreeAimInput(int player);
-    void _aimmode_free(const int player, const int aimingflag, const float fov, const float basefov);
+    void _processFreeAimInput(int player, const PROFILE& profile);
+    void _aimmode_free(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov);
 
 public:
     explicit PerfectDark(EmulatorLink* linkptr);

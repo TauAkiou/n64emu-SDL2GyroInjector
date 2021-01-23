@@ -38,12 +38,11 @@
 class Settings {
 private:
     static inline Settings* _instance;
-    static Settings* GetInstance();
-       PROFILE Profile[4] { 0,
-                             { -1, None, 0, 0},
-                             {-1, None, 0, 0} };
 
-       // Plugin/Emulator settings
+    PROFILE Profile[4] {};
+    Assignment ControllerAssignments[4] = { DISCONNECTED, { -1, None}, { -1, None } };
+
+    // Plugin/Emulator settings
     bool EmulatorOverclocked = true;
     int FovOverride = 60;
     int OverrideRatioWidth = 16;
@@ -51,15 +50,20 @@ private:
     bool ShowGoldeneyeCrosshair = false;
 
 public:
-    PROFILE GetProfileForPlayer(int player);
-    bool GetIfEmulatorOverclocked() const;
+    static Settings* GetInstance();
+    PROFILE GetProfileForPlayer(enum PLAYERS player);
+    bool GetIfPlayerIsConnected(enum PLAYERS player);
+    Assignment GetAssignmentForPlayer(enum PLAYERS player);
+    void SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn);
+    [[nodiscard]] bool GetIfEmulatorOverclocked() const;
     void SetIfEmulatorOverclocked(bool val);
-    int GetFovOverride();
-    int GetOverrideRatioWidth();
-    int GetOverrideRatioHeight() const;
-    bool GetShowGoldeneyeCrosshair() const;
-    void SetProfileForPlayer(int player, PROFILE profile);
-    bool SetShowGoldeneyeCrosshair(bool val);
+    int GetFovOverride() const;
+    void SetFovOverride(int fov);
+    int GetOverrideRatioWidth() const;
+    [[nodiscard]] int GetOverrideRatioHeight() const;
+    [[nodiscard]] bool GetShowGoldeneyeCrosshair() const;
+    void SetProfileForPlayer(enum PLAYERS player, PROFILE profile);
+    void SetShowGoldeneyeCrosshair(bool val);
 };
 
 /*

@@ -39,15 +39,15 @@
 #include "../plugin.h"
 #include <string>
 
-#define TICKRATE (_settings->EmulatorOverclocked ? 2 : 4) // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
+#define TICKRATE (_settings->GetIfEmulatorOverclocked() ? 2 : 4) // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
 #define TIMESTEP TICKRATE / 1000
 
 #ifdef SPEEDRUN_BUILD // fov/ratio hacks gives unfair advantage, always use default values for speedrun build
 #define RATIOFACTOR 1.f
 #define OVERRIDEFOV 60
 #else
-#define RATIOFACTOR (((float)_settings->OverrideRatioWidth / (float)_settings->OverrideRatioHeight) / (16.f / 9.f))
-#define OVERRIDEFOV _settings->FovOverride
+#define RATIOFACTOR (((float)_settings->GetOverrideRatioWidth() / (float)_settings->GetOverrideRatioHeight()) / (16.f / 9.f))
+#define OVERRIDEFOV _settings->GetFovOverride()
 #endif
 
 

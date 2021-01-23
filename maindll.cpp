@@ -98,7 +98,9 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     if(!_jsdptr->Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            _settingsptr->Profile[player].QuickConfigSetting = DISABLED;
+            _settingsptr->SetAssignmentForPlayer(static_cast<PLAYERS>(player), {DISCONNECTED,
+                                                                                {-1, None},
+                                                                                {-1, None}});
         }
         UpdateControllerStatus();
         return false;
@@ -107,8 +109,6 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
 
     // Use the first detected FULL controller type.
-    _settingsptr->Profile[PLAYER1].QuickConfigSetting = DEFAULT;
-    _settingsptr->Profile[PLAYER2].QuickConfigSetting = DEFAULT;
 
     auto ctrllst_full = _jsdptr->GetConnectedFullControllers();
     auto ctrllst_ljc = _jsdptr->GetConnectedLeftJoycons();
@@ -117,54 +117,51 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     /*
     if(ctrllist.empty()) {
         // No controller, just in case here
-        _settingsptr->Profile[PLAYER1].SETTINGS[CONFIG] = DISABLED;
+        player1prof.SETTINGS[CONFIG] = DISABLED;
         return false;
     }
      */
 
+    Assignment player1asgn = {FULLCONTROLLER, ctrllst_full.front(),
+                             {-1, None}};
 
-
-    // Get the first controller for testing.
-    _settingsptr->Profile[PLAYER1].ControllerMode = 0;
-    _settingsptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_full.front();
-    //_settingsptr->Profile[PLAYER1].AssignedDeviceSecondary = ctrllst_rjc.front();
-    //_settingsptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_ljc.front();
-
-    _settingsptr->Profile[PLAYER1].FreeAiming = true;
-    _settingsptr->Profile[PLAYER1].StickMode = FLICK;
-    _settingsptr->Profile[PLAYER1].UseStickToAim = false;
-    _settingsptr->Profile[PLAYER1].DS4Color = 0x0000FF;
-
-    _settingsptr->Profile[PLAYER1].AimStickSensitivity = {23000, 23000};
-    _settingsptr->Profile[PLAYER1].GyroscopeSensitivity = {400, 400};
-    _settingsptr->Profile[PLAYER1].AimstickDeadzone = {0.10, 0.10};
+    PROFILE player1prof;
     
-    _settingsptr->Profile[PLAYER1].Crosshair = 1;
-    _settingsptr->Profile[PLAYER1].PitchInverted = false;
-    _settingsptr->Profile[PLAYER1].CrouchToggle = true;
-    _settingsptr->Profile[PLAYER1].GoldeneyeAimMode = true;
-    _settingsptr->Profile[PLAYER1].PerfectDarkAimMode = true;
+    player1prof.FreeAiming = true;
+    player1prof.StickMode = FLICK;
+    player1prof.UseStickToAim = false;
+    player1prof.DS4Color = 0x0000FF;
+    player1prof.AimStickSensitivity = {23000, 23000};
+    player1prof.GyroscopeSensitivity = {400, 400};
+    player1prof.Crosshair = 1;
+    player1prof.PitchInverted = false;
+    player1prof.CrouchToggle = true;
+    player1prof.GoldeneyeAimMode = true;
+    player1prof.PerfectDarkAimMode = true;
 
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[FIRE] = JSMASK_ZR;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[AIM] = JSMASK_ZL;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[ACCEPT] = JSMASK_L;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[CANCEL] = JSMASK_R;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[START] = JSMASK_PLUS;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[CROUCH] = JSMASK_E;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[KNEEL] = JSMASK_S;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[PREVIOUSWEAPON] = JSMASK_W;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[NEXTWEAPON] = JSMASK_N;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[UP] = JSMASK_UP;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[DOWN] = JSMASK_DOWN;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[LEFT]= JSMASK_LEFT;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[RIGHT] = JSMASK_RIGHT;
-    _settingsptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
-    _settingsptr->Profile[PLAYER1].CalibrationButton = JSMASK_CAPTURE;
 
+
+    player1prof.BUTTONPRIM[FIRE] = JSMASK_ZR;
+    player1prof.BUTTONPRIM[AIM] = JSMASK_ZL;
+    player1prof.BUTTONPRIM[ACCEPT] = JSMASK_L;
+    player1prof.BUTTONPRIM[CANCEL] = JSMASK_R;
+    player1prof.BUTTONPRIM[START] = JSMASK_PLUS;
+    player1prof.BUTTONPRIM[CROUCH] = JSMASK_E;
+    player1prof.BUTTONPRIM[KNEEL] = JSMASK_S;
+    player1prof.BUTTONPRIM[PREVIOUSWEAPON] = JSMASK_W;
+    player1prof.BUTTONPRIM[NEXTWEAPON] = JSMASK_N;
+    player1prof.BUTTONPRIM[UP] = JSMASK_UP;
+    player1prof.BUTTONPRIM[DOWN] = JSMASK_DOWN;
+    player1prof.BUTTONPRIM[LEFT]= JSMASK_LEFT;
+    player1prof.BUTTONPRIM[RIGHT] = JSMASK_RIGHT;
+    player1prof.BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
+    player1prof.CalibrationButton = JSMASK_CAPTURE;
+
+    /*
     _settingsptr->Profile[PLAYER2].ControllerMode = 0;
     _settingsptr->Profile[PLAYER2].AssignedDevicePrimary = ctrllst_full.back();
-    //_settingsptr->Profile[PLAYER1].AssignedDeviceSecondary = ctrllst_rjc.front();
-    //_settingsptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_ljc.front();
+    //player1prof.AssignedDeviceSecondary = ctrllst_rjc.front();
+    //player1prof.AssignedDevicePrimary = ctrllst_ljc.front();
 
     _settingsptr->Profile[PLAYER2].FreeAiming = true;
     _settingsptr->Profile[PLAYER2].StickMode = FLICK;
@@ -197,13 +194,9 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _settingsptr->Profile[PLAYER2].BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
     _settingsptr->Profile[PLAYER2].CalibrationButton = JSMASK_CAPTURE;
 
-    // Use the first detected FULL controller type.
-    _settingsptr->Profile[PLAYER2].QuickConfigSetting = DEFAULT;
-    _settingsptr->Profile[PLAYER3].QuickConfigSetting = DISABLED;
-    _settingsptr->Profile[PLAYER4].QuickConfigSetting = DISABLED;
-
-    _settingsptr->ShowGoldeneyeCrosshair = true;
-    _settingsptr->FovOverride = 90;
+    _settingsptr->SetShowGoldeneyeCrosshair(true);
+    _settingsptr->SetFovOverride(90);
+     */
 
     UpdateControllerStatus();
     return true;
@@ -214,7 +207,8 @@ void MainDll::UpdateControllerStatus() {
         return;
 
     for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-        _ctrlptr[player].Present = _settingsptr->Profile[player].QuickConfigSetting;
+        auto asgn = _settingsptr->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+        _ctrlptr[player].Present = (asgn.ControllerMode) != DISCONNECTED;
         _ctrlptr[player].RawData = false;
         _ctrlptr[player].Plugin = player == PLAYER1 ? PLUGIN_MEMPACK : PLUGIN_NONE;
     }
