@@ -1,4 +1,18 @@
-#ifndev IDC_STATIC
-#define IDC_STATIC (-1)
+//
+// Created by robin on 1/23/2021.
+//
 
-#define IDC_CONFIGWINDOW                    1
+#include <windows.h>
+#include <commctrl.h>
+#include <richedit.h>
+#include "resource.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+IDC_PLUGINCONFIG DIALOGEX 0, 0, 470, 352
+STYLE DS_3DLOOK | DS_CENTER | DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_CLIPSIBLINGS | WS_POPUP
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "Joyshock For 1964 - Settings Window"
+FONT 8, "MS Shell Dlg", 0, 0, 0
+{
+    PUSHBUTTON      "OK", IDC_PUSHBUTTON, 0, 0, 0, 0, SS_CENTERIMAGE
+};
