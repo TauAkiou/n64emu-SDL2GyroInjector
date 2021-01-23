@@ -1,0 +1,4 @@
+#ifndev IDC_STATIC
+#define IDC_STATIC (-1)
+
+#define IDC_CONFIGWINDOW                    1
