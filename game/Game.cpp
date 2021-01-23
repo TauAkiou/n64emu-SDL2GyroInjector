@@ -41,3 +41,11 @@ Game * Game::GetInstance() {
         _instance = new Game();
     return _instance;
 }
+
+void Game::AssignRamPtr(const unsigned char **ptr) {
+        _link->SetRAMPointer(ptr);
+}
+
+void Game::AssignRomPtr(const unsigned char **ptr) {
+        _link->SetROMPointer(ptr);
+}

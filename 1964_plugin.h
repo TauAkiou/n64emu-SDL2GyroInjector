@@ -6,10 +6,8 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_1964_PLUGIN_H
 
 #include <windows.h>
-#include <plugin.h>
-
-#define DLLEXPORT __declspec(dllexport)
-#define CALL __cdecl
+#include "plugin.h"
+#include "maindll.h"
 
 extern "C" DLLEXPORT void CALL CloseDLL(void);
 extern "C" DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command);

@@ -6,6 +6,7 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_PERFECTDARK_H
 
 #include "../../input/InputHandler.h"
+#include "../../common/Helpers.h"
 #include "GameDriver.h"
 
 #define PD_ResetCrouchToggle(X) safetocrouch[X] = 1, safetostand[X] = 0, crouchstance[X] = 2 // reset crouch toggle bind
@@ -37,14 +38,17 @@ private:
 
     void _crouch(const int player);
     void _camspyslayer(const int player, const int camspyflag, const float sensitivityx, const float sensitivityy);
+    void _processOriginalInput(int player);
     void _aimmode(const int player, const int aimingflag, const float fov, const float basefov);
     void _radialmenunav(const int player);
     void _resetgyro();
     void _controller();
     void _injecthacks();
+    void _processFreeAimInput(int player);
+    void _aimmode_free(const int player, const int aimingflag, const float fov, const float basefov);
 
 public:
-    PerfectDark() = default;
+    explicit PerfectDark(EmulatorLink* linkptr);
     int Status() override;
     void Inject() override;
     void Quit() override;

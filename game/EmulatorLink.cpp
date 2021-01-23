@@ -6,16 +6,6 @@
 #include <iostream>
 #include "EmulatorLink.h"
 
-EmulatorLink* EmulatorLink::GetInstance() {
-    if(_instance == nullptr) {
-        _instance = new EmulatorLink;
-    }
-    return _instance;
-}
-
-EmulatorLink::EmulatorLink() {
-}
-
 short EmulatorLink::ReadShort(const unsigned int addr) {
     if(WITHINRANGE(addr))
         return LOAD_SHALF_PARAM(addr);

@@ -9,7 +9,7 @@
 #include <map>
 #include <windows.h>
 #include <ctime>
-#include "../common.h"
+#include "../common/common.h"
 #include "../settings/Settings.h"
 #include "../JoyShockLibrary/JoyShockLibrary.h"
 #include "../game/Game.h"
@@ -25,6 +25,8 @@ class JoyShockDriver {
         int _devicecount = 0;
         int _windowactive = 1;
         int _initialized = 0;
+        float calibration_time[ALLPLAYERS] = {};
+
         std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
         HWND _emulatorwindow = nullptr;
 
@@ -34,9 +36,6 @@ class JoyShockDriver {
 
         static DWORD WINAPI startinjectionloop(void* param);
         DWORD injectionloop();
-        float ProcessFlickStick();
-
-        // Gyro-specific methods
 
 
     public:

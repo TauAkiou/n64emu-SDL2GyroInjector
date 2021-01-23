@@ -18,7 +18,8 @@
 class Game {
     protected:
         static Game* _instance;
-        std::vector<GameDriver*> _gamedrivers = { new Goldeneye(), new PerfectDark() };
+        EmulatorLink* _link = new EmulatorLink();
+        std::vector<GameDriver*> _gamedrivers = { new Goldeneye(_link), new PerfectDark(_link) };
         GameDriver* _loadedgame = nullptr;
     public:
         static Game* GetInstance();
@@ -26,6 +27,8 @@ class Game {
         std::string Name();
         void Inject();
         void Quit();
+        void AssignRamPtr(const unsigned char** ptr);
+        void AssignRomPtr(const unsigned char** ptr);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_GAME_H

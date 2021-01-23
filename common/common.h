@@ -8,20 +8,22 @@
 #define PI 3.1415927
 #define __GYRO_INJECTOR_VERSION__ "v0.1"
 #define __CURRENTYEAR__ "2021"
+
 #define CONSOLE { AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout; )};
 
 #define FOV_MIN 40
 #define FOV_MAX 120
 
-#include "common/vec2.h"
+#include "vec2.h"
 
 
 enum CONTROLLERENUM {FORWARDS = 0, BACKWARDS, STRAFELEFT, STRAFERIGHT, FIRE, AIM, ACCEPT, CANCEL, START, CROUCH, KNEEL, PREVIOUSWEAPON, NEXTWEAPON, UP, DOWN, LEFT, RIGHT, RESETGYRO, TOGGLEGYRO, TOTALBUTTONS};
 enum VECTORSETTINGSENUM {AIMDEADZONE = 0, TOTALVECTORSETTINGS};
 enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVITYX, GYROSENSITIVITYY, ACCELERATION, CROSSHAIR, INVERTPITCH, CROUCHTOGGLE, GEAIMMODE, PDAIMMODE, STICKMODE, STICKAIMING, TOTALSETTINGS};
 enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
-enum STICKMODE {FULL = 0, XONLY, FLICK, ALLMODES};
+enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
+enum CONTROLLERMODE { };
 
 enum JSD_ControllerType {
     None = 0,
@@ -44,7 +46,9 @@ typedef struct PROFILE {
     JSDevice AssignedDevicePrimary = {-1, None, 0, 0};
     JSDevice AssignedDeviceSecondary = { -1, None, 0, 0};
     QUICKCONFIGENUM QuickConfigSetting = DISABLED;
-    enum STICKMODE StickMode = FULL;
+    enum STICKMODE StickMode = FULLSTICK;
+    int DS4Color = 0x000000;
+    int CalibrationButton = {};
     int BUTTONPRIM[TOTALBUTTONS];
     int BUTTONSEC[TOTALBUTTONS];
     // Other settings (converted from enumerator arrays
@@ -58,6 +62,7 @@ typedef struct PROFILE {
     bool GoldeneyeAimMode = {};
     bool PerfectDarkAimMode = {};
     bool UseStickToAim = {};
+    bool FreeAiming = {};
     //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
     //float FLOATSETTINGS[TOTALVECTORSETTINGS];
     //int SETTINGS[TOTALSETTINGS];

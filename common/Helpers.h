@@ -7,7 +7,8 @@
 
 class PluginHelpers {
     public:
-    inline static
+        static float ClampFloat(float value, float min, float max);
+        static int ClampInt(int value, int min, int max);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_HELPERS_H

@@ -13,10 +13,9 @@ add_library(1964_input_joyshockcpp SHARED
         plugin.h
         input/JoyShockDriver.cpp
         input/JoyShockDriver.h
-        common.h
+        common/common.h
         game/EmulatorLink.cpp
         game/EmulatorLink.h
-        game/driver/GameDriver.cpp
         game/Game.cpp
         game/Game.h
         game/driver/PerfectDark.cpp
@@ -26,7 +25,7 @@ add_library(1964_input_joyshockcpp SHARED
         game/driver/PerfectDark.h
         settings/Settings.cpp
         settings/Settings.h
-        JoyShockLibrary/JoyShockLibrary.h input/InputHandler.h input/InputHandler.cpp common/Helpers.cpp common/Helpers.h 1964_plugin.cpp 1964_plugin.h)
+        JoyShockLibrary/JoyShockLibrary.h input/InputHandler.h input/InputHandler.cpp common/Helpers.cpp common/Helpers.h 1964_plugin.cpp 1964_plugin.h common/vec2.h)
 
 target_include_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
 target_link_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)

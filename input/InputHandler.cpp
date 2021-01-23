@@ -6,15 +6,15 @@
 #include "InputHandler.h"
 
 vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
-    auto vec = vec2<float>();
-    switch(_ctrlptr->Profile[player].SETTINGS[STICKMODE]) {
+    vec2<float> vec;
+    switch(_settings->Profile[player].StickMode) {
         default:
-        case FULL:
+        case FULLSTICK:
             return HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
-                                            _ctrlptr->Profile[player].VECTORSETTINGS[AIMDEADZONE]);
+                                            _settings->Profile[player].AimstickDeadzone);
         case XONLY:
             vec = HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
-                                                _ctrlptr->Profile[player].VECTORSETTINGS[AIMDEADZONE]);
+                                                _settings->Profile[player].AimstickDeadzone);
             // Zero the y.
             vec.y = 0;
             return vec;
@@ -23,17 +23,6 @@ vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
             laststick[player] = _ctrlptr->Device[player].AIMSTICK;
             return { flick, 0 };
     }
-}
-
-
-
-float InputHandler::ClampFloat(const float value, const float min, const float max) {
-    const float test = value < min ? min : value;
-    return test > max ? max : test;
-}
-
-float InputHandler::getStickLength(float stickX, float stickY) {
-    return sqrtf(stickX * stickX + stickY * stickY);
 }
 
 // Flick Stick and smoothing code adapted from http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick
@@ -65,7 +54,7 @@ float InputHandler::getFlickState(PLAYERS player, const vec2<float> &stick) {
                 angleChange += 2.0f * PI;
             angleChange -= PI;
             result += getTieredSmoothedStickRotation(player, angleChange,
-                                                     turnsmooththreshold / 2.0, turnsmooththreshold);
+                                                     turnsmooththreshold / 2.0f, turnsmooththreshold);
         }
     }
     else {
@@ -137,13 +126,17 @@ float InputHandler::getTieredSmoothedStickRotation(PLAYERS player, float input, 
 
         float directWeight = (inputMagnitude - threshold1) /
                              (threshold2 - threshold1);
-        directWeight = ClampFloat(directWeight, 0.0, 1.0);
+        directWeight = PluginHelpers::ClampFloat(directWeight, 0.0, 1.0);
 
         return getDirectStickRotation(input * directWeight) +
                getSmoothedStickRotation(player, input * (1.0 - directWeight));
 }
 
-float InputHandler::zeroTurnSmoothing(PLAYERS player) {
+void InputHandler::zeroTurnSmoothing(PLAYERS player) {
     for(float fl : aimstickbuffer[player])
         fl = 0;
+}
+
+float InputHandler::getStickLength(float stickX, float stickY) {
+    return sqrtf(stickX * stickX + stickY * stickY);
 }

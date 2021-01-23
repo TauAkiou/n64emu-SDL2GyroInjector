@@ -1,9 +1,8 @@
 #include "maindll.h"
 
-
 MainDll* MainDll::instance = nullptr;
 
-MainDll * MainDll::getInstance(HINSTANCE hinstance) {
+MainDll * MainDll::GetInstance(HINSTANCE hinstance) {
     if(!MainDll::instance) {
         MainDll::instance = new MainDll(hinstance);
     }
@@ -15,11 +14,11 @@ bool MainDll::IsConfigDialogOpen() const {
 }
 
 MainDll::MainDll(HINSTANCE hinstance) {
-    // As part of the instantiation, also get object pointers.
-    _emusettingsptr
-    _emuctrlptr = ::getInstance();
+    // Start by initialzing all pointers.
+    _settingsptr = Settings::GetInstance();
+    _emuctrlptr = ControlState::GetInstance();
     _jsdptr = JoyShockDriver::getInstance();
-    _gameptr = Game::getInstance();
+    _gameptr = Game::GetInstance();
     _hinst = hinstance;
 
     wchar_t filepath[MAX_PATH] = {L'\0'};
@@ -60,8 +59,6 @@ void MainDll::EndInjection() {
 
 void MainDll::End() {
     _configdialogisopen = false;
-    _rdramptr = nullptr;
-    _romptr = nullptr;
     _ctrlptr = nullptr;
 }
 
@@ -74,7 +71,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     if(!Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-            _emuctrlptr->Profile[player].SETTINGS[CONFIG] = DISABLED;
+            _settingsptr->Profile[player].QuickConfigSetting = DISABLED;
         }
         UpdateControllerStatus();
         return false;
@@ -83,16 +80,16 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
 
     // Use the first detected FULL controller type.
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
+    _settingsptr->Profile[PLAYER1].QuickConfigSetting = DEFAULT;
 
-    //auto ctrllist = _jsdptr->GetConnectedFullControllers();
+    auto ctrllst_full = _jsdptr->GetConnectedFullControllers();
     auto ctrllst_ljc = _jsdptr->GetConnectedLeftJoycons();
     auto ctrllst_rjc = _jsdptr->GetConnectedRightJoycons();
 
     /*
     if(ctrllist.empty()) {
         // No controller, just in case here
-        _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DISABLED;
+        _settingsptr->Profile[PLAYER1].SETTINGS[CONFIG] = DISABLED;
         return false;
     }
      */
@@ -100,86 +97,48 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
 
     // Get the first controller for testing.
-    _emuctrlptr->Profile[PLAYER1].ControllerMode = 1;
-    _emuctrlptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_ljc.front();
-    _emuctrlptr->Profile[PLAYER1].AssignedDeviceSecondary = ctrllst_rjc.front();
-    //_emuctrlptr->Profile[PLAYER2].AssignedDevicePrimary = ctrllist.back();
+    _settingsptr->Profile[PLAYER1].ControllerMode = 0;
+    _settingsptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_full.front();
+    //_settingsptr->Profile[PLAYER1].AssignedDeviceSecondary = ctrllst_rjc.front();
+    //_settingsptr->Profile[PLAYER1].AssignedDevicePrimary = ctrllst_ljc.front();
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKMODE] = FLICK;
+    _settingsptr->Profile[PLAYER1].FreeAiming = true;
+    _settingsptr->Profile[PLAYER1].StickMode = FLICK;
+    _settingsptr->Profile[PLAYER1].UseStickToAim = false;
+    _settingsptr->Profile[PLAYER1].DS4Color = 0x0000FF;
 
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 23000;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 23000;
+    _settingsptr->Profile[PLAYER1].AimStickSensitivity = {23000, 23000};
+    _settingsptr->Profile[PLAYER1].GyroscopeSensitivity = {400, 400};
+    _settingsptr->Profile[PLAYER1].AimstickDeadzone = {0.10, 0.10};
+    
+    _settingsptr->Profile[PLAYER1].Crosshair = 1;
+    _settingsptr->Profile[PLAYER1].PitchInverted = false;
+    _settingsptr->Profile[PLAYER1].CrouchToggle = true;
+    _settingsptr->Profile[PLAYER1].GoldeneyeAimMode = true;
+    _settingsptr->Profile[PLAYER1].PerfectDarkAimMode = true;
 
-
-    //_emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYX] = 800;
-    //_emuctrlptr->Profile[PLAYER1].SETTINGS[STICKSENSITIVITYY] = 800;
-
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYX] = 400;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[GYROSENSITIVITYY] = 400;
-    _emuctrlptr->Profile[PLAYER1].VECTORSETTINGS[AIMDEADZONE] = { 0.20, 0.20 };
-
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[INVERTPITCH] = 0;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROUCHTOGGLE] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[GEAIMMODE] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CROSSHAIR] = 1;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[PDAIMMODE] = 1;
-
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[FIRE].Button = JSMASK_ZR;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[AIM].Button = JSMASK_ZL;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[ACCEPT].Button = JSMASK_L;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[CANCEL].Button = JSMASK_R;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[START].Button = JSMASK_PLUS;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[CROUCH].Button = JSMASK_E;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[KNEEL].Button = JSMASK_S;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[PREVIOUSWEAPON].Button = JSMASK_W;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[NEXTWEAPON].Button = JSMASK_N;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[UP].Button = JSMASK_UP;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[DOWN].Button = JSMASK_DOWN;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
-    _emuctrlptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[STICKAIMING] = false;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[FIRE] = JSMASK_ZR;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[AIM] = JSMASK_ZL;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[ACCEPT] = JSMASK_L;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[CANCEL] = JSMASK_R;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[START] = JSMASK_PLUS;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[CROUCH] = JSMASK_E;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[KNEEL] = JSMASK_S;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[PREVIOUSWEAPON] = JSMASK_W;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[NEXTWEAPON] = JSMASK_N;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[UP] = JSMASK_UP;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[DOWN] = JSMASK_DOWN;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[LEFT]= JSMASK_LEFT;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[RIGHT] = JSMASK_RIGHT;
+    _settingsptr->Profile[PLAYER1].BUTTONPRIM[RESETGYRO] = JSMASK_MINUS;
+    _settingsptr->Profile[PLAYER1].CalibrationButton = JSMASK_CAPTURE;
 
     // Use the first detected FULL controller type.
-    _emuctrlptr->Profile[PLAYER1].SETTINGS[CONFIG] = DEFAULT;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[CONFIG] = DEFAULT;
+    _settingsptr->Profile[PLAYER2].QuickConfigSetting = DISABLED;
+    _settingsptr->Profile[PLAYER3].QuickConfigSetting = DISABLED;
+    _settingsptr->Profile[PLAYER4].QuickConfigSetting = DISABLED;
 
-
-    // Get the first controller for testing.
-
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKMODE] = FLICK;
-
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKSENSITIVITYX] = 23000;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKSENSITIVITYY] = 23000;
-
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[GYROSENSITIVITYX] = 400;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[GYROSENSITIVITYY] = 400;
-
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROSSHAIR] = 1;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[INVERTPITCH] = 0;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROUCHTOGGLE] = 1;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[GEAIMMODE] = 1;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[CROSSHAIR] = 1;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[PDAIMMODE] = 1;
-
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[FIRE].Button = JSMASK_ZR;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[AIM].Button = JSMASK_ZL;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[ACCEPT].Button = JSMASK_L;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[CANCEL].Button = JSMASK_R;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[START].Button = JSMASK_PLUS;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[CROUCH].Button = JSMASK_E;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[KNEEL].Button = JSMASK_S;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[PREVIOUSWEAPON].Button = JSMASK_W;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[NEXTWEAPON].Button = JSMASK_N;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[UP].Button = JSMASK_UP;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[DOWN].Button = JSMASK_DOWN;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[LEFT].Button= JSMASK_LEFT;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[RIGHT].Button = JSMASK_RIGHT;
-    _emuctrlptr->Profile[PLAYER2].BUTTONPRIM[RESETGYRO].Button = JSMASK_MINUS;
-    _emuctrlptr->Profile[PLAYER2].SETTINGS[STICKAIMING] = false;
-
-    PluginSettings::getInstance()->ShowGoldeneyeCrosshair = true;
+    _settingsptr->ShowGoldeneyeCrosshair = true;
 
     UpdateControllerStatus();
     return true;
@@ -190,96 +149,9 @@ void MainDll::UpdateControllerStatus() {
         return;
 
     for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-        _ctrlptr[player].Present = _emuctrlptr->Profile->SETTINGS[CONFIG];
+        _ctrlptr[player].Present = _settingsptr->Profile[player].QuickConfigSetting;
         _ctrlptr[player].RawData = false;
         _ctrlptr[player].Plugin = player == PLAYER1 ? PLUGIN_MEMPACK : PLUGIN_NONE;
     }
 }
 
-/* N64 Emulator extern Methods */
-
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-    switch(fdwReason)
-    {
-        case DLL_PROCESS_ATTACH:
-        {
-            // Initialize all state objects.
-            MainDll::getInstance(hinstDLL);
-            AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
-            break;
-        }
-        default:
-            break;
-    }
-    return TRUE;
-}
-
-//==========================================================================
-// Purpose: called when the emulator is closing down allowing the DLL to de-initialise
-//==========================================================================
-DLLEXPORT void CALL CloseDLL(void)
-{
-    MainDll::getInstance()->End();
-}
-//==========================================================================
-// Purpose: To process the raw data that has just been sent to a specific controller
-// Input: Controller Number (0 to 3) and -1 signaling end of processing the pif ram. Pointer of data to be processed.
-// Note: This function is only needed if the DLL is allowing raw data
-// The data that is being processed looks like this
-// initialize controller: 01 03 00 FF FF FF
-// read controller:       01 04 01 FF FF FF FF
-//==========================================================================
-DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
-{
-}
-//==========================================================================
-// Purpose: Optional function that is provided to give further information about the DLL
-// Input: A handle to the window that calls this function
-//==========================================================================
-DLLEXPORT void CALL DllAbout(HWND hParent)
-{
-    //std::string message = "JoyShockLibrary Plugin for 1964 (GE/PD) " << __GYRO_INJECTOR_VERSION__ << " (Build: "<< __DATE__ << ")\nCopyright (C) " << __CURRENTYEAR__ << ", Carnivorous, TauAkiou";
-    //MessageBoxA(hParent, message.c_str() , "JoyShock Injector - About", MB_ICONINFORMATION | MB_OK);
-}
-//==========================================================================
-// Purpose: Optional function that is provided to allow the user to configure the DLL
-// Input: A handle to the window that calls this function
-// Changed Globals: configdialogopen, mousetoggle, lastinputbutton, guibusy, windowactive
-//==========================================================================
-DLLEXPORT void CALL DllConfig(HWND hParent)
-{
-    if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
-    {
-        MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
-
-        //int laststate = mousetoggle;
-        //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
-        //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
-        //UpdateControllerStatus();
-        //configdialogopen = 0, windowactive = 1, guibusy = 1;
-    }
-    else
-        MessageBoxA(hParent, "JoyShock Plugin did not detect any compatible controllers.\n\nPlease connect controllers and restart emulator." , "JoyShock Injector - Error", MB_ICONERROR | MB_OK);
-}
-//==========================================================================
-// Purpose: Optional function that is provided to allow the user to test the DLL
-// input: A handle to the window that calls this function
-//==========================================================================
-DLLEXPORT void CALL DllTest(HWND hParent)
-{
-    MessageBoxA(hParent, JoyShockDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
-}
-//==========================================================================
-// Purpose: Allows the emulator to gather information about the DLL by filling in the PluginInfo structure
-// Input: A pointer to a PLUGIN_INFO structure that needs to be filled by the function (see def above)
-//==========================================================================
-DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
-{
-    PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
-    PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    sprintf(PluginInfo->Name, "Joyshock for GE/PD (cpp) %s", __GYRO_INJECTOR_VERSION__);
-#ifdef SPEEDRUN_BUILD
-    sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
-#endif
-}

@@ -6,6 +6,7 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_GOLDENEYE_H
 
 #include "GameDriver.h"
+#include "../../common/Helpers.h"
 #include "../../common/vec2.h"
 #include "../../input/InputHandler.h"
 
@@ -26,12 +27,19 @@ private:
     void _resetgyro();
     void _controller();
     void _injecthacks();
+    void _processFreeAim(int player);
+    void _aimmode_freeaim(const int player, const int aimingflag, const float fov, const float basefov);
+    void _processOriginalAimmode(int player);
+    void _processMenu(int player);
 
 public:
-    Goldeneye() = default;
+    explicit Goldeneye(EmulatorLink *linkptr);
     int Status() override;
     void Inject() override;
     void Quit() override;
+
+
+
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_GOLDENEYE_H

@@ -4,6 +4,92 @@
 
 #include "1964_plugin.h"
 
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+{
+    switch(fdwReason)
+    {
+        case DLL_PROCESS_ATTACH:
+        {
+            // Initialize all state objects.
+            MainDll::GetInstance(hinstDLL);
+            AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
+            break;
+        }
+        default:
+            break;
+    }
+    return TRUE;
+}
+
+//==========================================================================
+// Purpose: called when the emulator is closing down allowing the DLL to de-initialise
+//==========================================================================
+DLLEXPORT void CALL CloseDLL(void)
+{
+    MainDll::GetInstance()->End();
+}
+//==========================================================================
+// Purpose: To process the raw data that has just been sent to a specific controller
+// Input: Controller Number (0 to 3) and -1 signaling end of processing the pif ram. Pointer of data to be processed.
+// Note: This function is only needed if the DLL is allowing raw data
+// The data that is being processed looks like this
+// initialize controller: 01 03 00 FF FF FF
+// read controller:       01 04 01 FF FF FF FF
+//==========================================================================
+DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
+{
+}
+//==========================================================================
+// Purpose: Optional function that is provided to give further information about the DLL
+// Input: A handle to the window that calls this function
+//==========================================================================
+DLLEXPORT void CALL DllAbout(HWND hParent)
+{
+    //std::string message = "JoyShockLibrary Plugin for 1964 (GE/PD) " << __GYRO_INJECTOR_VERSION__ << " (Build: "<< __DATE__ << ")\nCopyright (C) " << __CURRENTYEAR__ << ", Carnivorous, TauAkiou";
+    //MessageBoxA(hParent, message.c_str() , "JoyShock Injector - About", MB_ICONINFORMATION | MB_OK);
+}
+//==========================================================================
+// Purpose: Optional function that is provided to allow the user to configure the DLL
+// Input: A handle to the window that calls this function
+// Changed Globals: configdialogopen, mousetoggle, lastinputbutton, guibusy, windowactive
+//==========================================================================
+DLLEXPORT void CALL DllConfig(HWND hParent)
+{
+    if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
+    {
+        MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
+
+        //int laststate = mousetoggle;
+        //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
+        //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
+        //UpdateControllerStatus();
+        //configdialogopen = 0, windowactive = 1, guibusy = 1;
+    }
+    else
+        MessageBoxA(hParent, "JoyShock Plugin did not detect any compatible controllers.\n\nPlease connect controllers and restart emulator." , "JoyShock Injector - Error", MB_ICONERROR | MB_OK);
+}
+//==========================================================================
+// Purpose: Optional function that is provided to allow the user to test the DLL
+// input: A handle to the window that calls this function
+//==========================================================================
+DLLEXPORT void CALL DllTest(HWND hParent)
+{
+    MessageBoxA(hParent, JoyShockDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
+}
+//==========================================================================
+// Purpose: Allows the emulator to gather information about the DLL by filling in the PluginInfo structure
+// Input: A pointer to a PLUGIN_INFO structure that needs to be filled by the function (see def above)
+//==========================================================================
+DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
+{
+    PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
+    PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
+    sprintf(PluginInfo->Name, "Joyshock for GE/PD (cpp) %s", __GYRO_INJECTOR_VERSION__);
+#ifdef SPEEDRUN_BUILD
+    sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
+#endif
+}
+
 //==========================================================================
 // Purpose: Get the current state of the controllers buttons
 // Input: Controller Number (0 to 3) - A pointer to a BUTTONS structure to be filled with the controller state
@@ -13,7 +99,7 @@ DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
     if(Keys == nullptr)
         return;
 
-    Keys->Value = !MainDll::getInstance()->IsConfigDialogOpen() ? Emulator::Controller[Control].Value : 0; // ignore input if config dialog is open
+    Keys->Value = !MainDll::GetInstance()->IsConfigDialogOpen() ? Emulator::Controller[Control].Value : 0; // ignore input if config dialog is open
 }
 //==========================================================================
 // Purpose: Initializes how each of the controllers should be handled
@@ -22,11 +108,11 @@ DLLEXPORT void CALL GetKeys(int Control, BUTTONS *Keys)
 //==========================================================================
 DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Controls[4])
 {
-if(!MainDll::getInstance()->InitiateControllers(hMainWindow, Controls)) {
-MessageBoxA(hMainWindow,
-"Joyshock Input did not locate any usable controllers.\n\nPlease connect devices and restart the emulator.",
-"Joyshock Input - Error", MB_ICONERROR | MB_OK);
-}
+    if(!MainDll::GetInstance()->InitiateControllers(hMainWindow, Controls)) {
+        MessageBoxA(hMainWindow,
+                    "Joyshock Input did not locate any usable controllers.\n\nPlease connect devices and restart the emulator.",
+                    "Joyshock Input - Error", MB_ICONERROR | MB_OK);
+    }
 }
 //==========================================================================
 // Purpose: Initializes how each of the controllers should be handled
@@ -43,7 +129,7 @@ DLLEXPORT void CALL ReadController(int Control, BYTE *Command)
 //==========================================================================
 DLLEXPORT void CALL RomClosed(void)
 {
-    MainDll::getInstance()->EndInjection();
+    MainDll::GetInstance()->EndInjection();
 }
 //==========================================================================
 // Purpose: Called when a ROM is open (from the emulation thread)
@@ -52,7 +138,7 @@ DLLEXPORT void CALL RomClosed(void)
 DLLEXPORT void CALL RomOpen(void)
 {
     JoyShockDriver::getInstance()->AssignEmulatorWindow(GetForegroundWindow());
-    MainDll::getInstance()->StartInjection();
+    MainDll::GetInstance()->StartInjection();
 }
 //==========================================================================
 // Purpose: To pass the WM_KeyDown message from the emulator to the plugin
@@ -76,8 +162,8 @@ DLLEXPORT void CALL WM_KeyUp(WPARAM wParam, LPARAM lParam)
 //==========================================================================
 DLLEXPORT void CALL HookRDRAM(DWORD *Mem, int OCFactor)
 {
-EmulatorLink::getInstance()->SetRAMPointer((const unsigned char **)Mem);
-MainDll::getInstance()->SetEmulatorOverclock(OCFactor >= 3); // an overclock above 3 is guaranteed to be 60fps, so set to 0 if below 3 times overclock
+    Game::GetInstance()->AssignRamPtr((const unsigned char **)Mem);
+    MainDll::GetInstance()->SetEmulatorOverclock(OCFactor >= 3); // an overclock above 3 is guaranteed to be 60fps, so set to 0 if below 3 times overclock
 //DRP_Update(); // init and update discord rich presence (discord will limit update rate to once every 15 seconds)
 }
 //==========================================================================
@@ -87,5 +173,5 @@ MainDll::getInstance()->SetEmulatorOverclock(OCFactor >= 3); // an overclock abo
 //==========================================================================
 DLLEXPORT void CALL HookROM(DWORD *Rom)
 {
-EmulatorLink::getInstance()->SetROMPointer((const unsigned char **)Rom);
+    Game::GetInstance()->AssignRomPtr((const unsigned char **)Rom);
 }

@@ -16,6 +16,7 @@ JoyShockDriver* JoyShockDriver::getInstance() {
 
 JoyShockDriver::JoyShockDriver() {
     _gameptr = Game::GetInstance();
+    _cstateptr = ControlState::GetInstance();
     _settings = Settings::GetInstance();
 }
 
@@ -37,6 +38,22 @@ DWORD JoyShockDriver::injectionloop() {
 
     int checkwindowtick = 0;
 
+    // Set up controller player lights/colors
+    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+        auto prf = _settings->Profile[player];
+        switch(prf.ControllerMode) {
+            default:
+            case 0:
+                JslSetLightColour(prf.AssignedDevicePrimary.Handle, prf.DS4Color);
+                JslSetPlayerNumber(prf.AssignedDevicePrimary.Handle, player+1);
+                break;
+            case 1:
+                JslSetPlayerNumber(prf.AssignedDevicePrimary.Handle, player+1);
+                JslSetPlayerNumber(prf.AssignedDeviceSecondary.Handle, player+1);
+                break;
+        }
+    }
+
     // Start by calibrating all gyroscopes.
     CalibrateAllGyroscopes();
 
@@ -52,6 +69,8 @@ DWORD JoyShockDriver::injectionloop() {
             PROFILE prf = _settings->Profile[player];
             DEVICE *dev = &_cstateptr->Device[player];
 
+
+
             // Handle processing for standard cons (DS4/SPC)
             if(prf.ControllerMode == 0) {
                 jsl_buttons_primary = JslGetSimpleState(prf.AssignedDevicePrimary.Handle);
@@ -59,9 +78,25 @@ DWORD JoyShockDriver::injectionloop() {
                 // Skip over touch output for now until we can figure out how to use it properly.
                 jsl_touch = JslGetTouchState(prf.AssignedDevicePrimary.Handle);
 
+                if(!dev->GYROCALIBRATION) {
+                    if(jsl_buttons_primary.buttons & prf.CalibrationButton) {
+                        std::cout << "Player " << player+1 << " controller is calibrating." << std::endl;
+                        dev->GYROCALIBRATION = true;
+                        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                    }
+                }
+                else {
+                    if(!(jsl_buttons_primary.buttons & prf.CalibrationButton)) {
+                        std::cout << "Player " << player+1 << " calbration complete." << std::endl;
+                        dev->GYROCALIBRATION = false;
+                        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                    }
+                }
+
+
                 dev->AIMSTICK.y = -jsl_buttons_primary.stickRY;
                 dev->AIMSTICK.x = jsl_buttons_primary.stickRX;
-
 
                 dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
                 dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
@@ -98,6 +133,27 @@ DWORD JoyShockDriver::injectionloop() {
                 jsl_imu_secondary = JslGetIMUState(prf.AssignedDeviceSecondary.Handle);
                 auto combined_buttons = jsl_buttons_primary.buttons | jsl_buttons_secondary.buttons;
 
+                if(!dev->GYROCALIBRATION) {
+                    if(combined_buttons & prf.CalibrationButton) {
+                        std::cout << "Player " << player+1 << " joycons are calibrating." << std::endl;
+
+                        dev->GYROCALIBRATION = true;
+                        JslResetContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslResetContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+                        JslStartContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslStartContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+                    }
+                }
+                else {
+                    if(!(combined_buttons & prf.CalibrationButton)) {
+                        std::cout << "Player " << player+1 << " calibration complete." << std::endl;
+
+                        dev->GYROCALIBRATION = false;
+                        JslPauseContinuousCalibration(prf.AssignedDevicePrimary.Handle);
+                        JslPauseContinuousCalibration(prf.AssignedDeviceSecondary.Handle);
+                    }
+                }
+
                 dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
                 dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
                 dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
@@ -114,11 +170,7 @@ DWORD JoyShockDriver::injectionloop() {
                     dev->BUTTONPRIM[button] = (combined_buttons & prf.BUTTONPRIM[button]) != 0;
                     dev->BUTTONSEC[button] = (combined_buttons & prf.BUTTONSEC[button]) != 0;
                 }
-
             }
-
-
-
         }
 
         if(checkwindowtick > (250 / TICKRATE)) // poll every 500ms
@@ -148,7 +200,8 @@ DWORD JoyShockDriver::injectionloop() {
         Sleep(TICKRATE); // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
 
     }
-
+    _gameptr->Quit();
+    return 0;
 }
 
 int JoyShockDriver::GetConnectedDeviceCount() const {
@@ -245,7 +298,7 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
     auto clock_start = clock();
     auto clock_now = clock_start;
 
-    while((clock_now - clock_start) / CLOCKS_PER_SEC < 5)  {
+    while((clock_now - clock_start) / CLOCKS_PER_SEC < 2)  {
         clock_now = clock();
     }
 

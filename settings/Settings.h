@@ -5,7 +5,7 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
 #define INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
 
-#include "../common.h"
+#include "../common/common.h"
 #include "../plugin.h"
 
 class Settings {
@@ -34,7 +34,7 @@ private:
 
 class ControlState {
 private:
-    static ControlState* _instance;
+    inline static ControlState* _instance;
     ControlState() = default;
 public:
     static ControlState* GetInstance();

@@ -5,12 +5,15 @@
 #include <cmath>
 #include <windows.h>
 #include <commctrl.h>
-#include "common.h"
+#include "common/common.h"
 #include "plugin.h"
 #include "game/EmulatorLink.h"
 #include "input/JoyShockDriver.h"
 #include "settings/Settings.h"
 #include "game/Game.h"
+
+#define DLLEXPORT __declspec(dllexport)
+#define CALL __cdecl
 
 class MainDll {
 protected:
@@ -23,23 +26,20 @@ protected:
 
     bool _configdialogisopen = false;
     bool _threadrunning = false;
-    // Emulator pointers:
-    const unsigned char **_rdramptr = nullptr;
-    const unsigned char **_romptr = nullptr;
     CONTROL *_ctrlptr = nullptr;
 
     // Pointers to objects.
     Settings* _settingsptr = nullptr;
-    InputHandler* _emuctrlptr = nullptr;
+    ControlState* _emuctrlptr = nullptr;
     JoyShockDriver* _jsdptr = nullptr;
     Game* _gameptr = nullptr;
 
-    MainDll(HINSTANCE hinstance);
+    explicit MainDll(HINSTANCE hinstance);
     bool Initialize(const HWND hW);
     //~MainDll();
 
 public:
-    static MainDll* getInstance(HINSTANCE hinstance = nullptr);
+    static MainDll* GetInstance(HINSTANCE hinstance = nullptr);
     void End();
     [[nodiscard]] bool IsConfigDialogOpen() const;
     void SetEmulatorOverclock(bool newoverclock);
@@ -49,6 +49,8 @@ public:
     void EndInjection();
 
 };
+
+
 
 static const std::string JsonFilePathDefault = ".\\plugin\\gyroinjector.json";
 
