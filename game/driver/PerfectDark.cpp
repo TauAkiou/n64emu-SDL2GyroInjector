@@ -91,7 +91,9 @@ int PerfectDark::Status()
     return (pd_menu >= 0 && pd_menu <= 1 && pd_camera >= 0 && pd_camera <= 7 && pd_pause >= 0 && pd_pause <= 1 && pd_romcheck == 0x3E20416C); // if Perfect Dark is current game
 }
 //==========================================================================
-// Purpose: calculate mouse movement and inject into current game
+// PerfectDark::Inject()
+// Purpose: Get all necessary structs and use settings to pass to correct injection function.
+// Changes Members: playerbase
 // Changes Globals: safetocrouch, safetostand, crouchstance
 //==========================================================================
 void PerfectDark::Inject()
@@ -133,12 +135,21 @@ void PerfectDark::Inject()
     _resetgyro();
 }
 
+
+//==========================================================================
+// PerfectDark::_resetgyro(const int player, const PROFILE& profile)
+//
+// Purpose: resets camera, crosshair and other positions
+// Changes Members (original): None
+// Changes Members (Free Aim): crosshairposx, crosshairposy
+//==========================================================================
 void PerfectDark::_resetgyro() {
     for(int player = 0; player < ALLPLAYERS; player++) {
         auto profile = _settings->GetProfileForPlayer(static_cast<enum PLAYERS>(player));
         if (_cfgptr->Device[player].BUTTONPRIM[RESETGYRO]) {
             // reset aimy, guny, crosshairy to 0, which represents a flat horizontal field of view.
             if(profile.FreeAiming) {
+                // In free aim, we need to reset all position values to 0 to 'center' the disconnected crosshair.
                 crosshairposx[player] = 0;
                 crosshairposy[player] = 0;
                 _link->WriteFloat(playerbase[player] + PD_gunry, 0);
@@ -164,8 +175,10 @@ void PerfectDark::_resetgyro() {
 }
 
 //==========================================================================
+// PerfectDark::_crouch(const int player, const PROFILE& profile)
+//
 // Purpose: crouching function for Perfect Dark (2 = stand, 1 = kneel, 0 = duck)
-// Changes Globals: safetocrouch, crouchstance, safetostand
+// Changes Members: safetocrouch, crouchstance, safetostand
 //==========================================================================
 void PerfectDark::_crouch(const int player, const PROFILE& profile)
 {
@@ -197,8 +210,10 @@ void PerfectDark::_crouch(const int player, const PROFILE& profile)
     _link->WriteInt(playerbase[player] + PD_stanceflag, stance); // set in-game stance
 }
 //==========================================================================
+// PerfectDark::_aimmode(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov)
+//
 // Purpose: replicate the original aiming system, uses aimx/y to move screen when crosshair is on border of screen
-// Changes Globals: crosshairposx, crosshairposy, gunrcenter, gunlcenter, aimx, aimy
+// Changes members: crosshairposx, crosshairposy, gunrcenter, gunlcenter, aimx, aimy
 //==========================================================================
 void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov)
 {
@@ -257,8 +272,10 @@ void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int a
         crosshairposx[player] = crosshairx, crosshairposy[player] = crosshairy, gunrcenter[player] = 0, gunlcenter[player] = 0;
 }
 //==========================================================================
-// Purpose: translate mouse to analog stick
-// Changes Globals: xstick, ystick, usingstick
+// PerfectDark::_camspyslayer
+//
+// Purpose: translate mouse to analog stick for Camspy/Slayer
+// Changes Members: xstick, ystick, usingstick
 //==========================================================================
 void PerfectDark::_camspyslayer(const int player, const PROFILE& profile, const int camspyflag, const float sensitivityx, const float sensitivityy)
 {
@@ -285,8 +302,10 @@ void PerfectDark::_camspyslayer(const int player, const PROFILE& profile, const 
     usingstick[player] = 1;
 }
 //==========================================================================
+// PerfectDark::_radialmenunav()
+//
 // Purpose: translate mouse to weapon radial menu
-// Changes Globals: xmenu, ymenu, radialmenudirection
+// Changed Members: xmenu, ymenu, radialmenudirection
 //==========================================================================
 void PerfectDark::_radialmenunav(const int player, const PROFILE& profile)
 {
@@ -332,6 +351,8 @@ void PerfectDark::_radialmenunav(const int player, const PROFILE& profile)
         xmenu[player] = 0, ymenu[player] = 0;
 }
 //==========================================================================
+// PerfectDark::_controller()
+//
 // Purpose: calculate and send emulator key combo
 // Changes Globals: xstick, ystick, usingstick, radialmenudirection
 //==========================================================================
@@ -367,9 +388,11 @@ void PerfectDark::_controller()
     }
 }
 //==========================================================================
+// PerfectDark::_injecthacks()
+//
 // Purpose: inject hacks into rom before code has been cached
 //==========================================================================
-void PerfectDark::_injecthacks(void)
+void PerfectDark::_injecthacks()
 {
     const unsigned int addressarray[33] = {0x802C07B8, 0x802C07BC, 0x802C07EC, 0x802C07F0, 0x802C07FC, 0x802C0800, 0x802C0808, 0x802C0820, 0x802C0824, 0x802C082C, 0x802C0830, 0x803C7988, 0x803C798C, 0x803C7990, 0x803C7994, 0x803C7998, 0x803C799C, 0x803C79A0, 0x803C79A4, 0x803C79A8, 0x803C79AC, 0x803C79B0, 0x803C79B4, 0x803C79B8, 0x803C79BC, 0x803C79C0, 0x803C79C4, 0x803C79C8, 0x803C79CC, 0x803C79D0, 0x803C79D4, 0x803C79D8, 0x803C79DC}, codearray[33] = {0x0BC69E62, 0x8EA10120, 0x0BC69E67, 0x263107A4, 0x0BC69E6B, 0x4614C500, 0x46120682, 0x0BC69E6F, 0x26100004, 0x0BC69E73, 0x4614C500, 0x54200003, 0x00000000, 0xE6B21668, 0xE6A8166C, 0x0BC281F0, 0x8EA10120, 0x50200001, 0xE6380530, 0x0BC281FD, 0x8EA10120, 0x50200001, 0xE6340534, 0x0BC28201, 0x8EA10120, 0x50200001, 0xE6380530, 0x0BC2820A, 0x8EA10120, 0x50200001, 0xE6340534, 0x0BC2820D, 0x00000000}; // add branch to crosshair code so cursor aiming mode is absolute (without jitter)
     for(int index = 0; index < 33; index++) // inject code array
@@ -425,7 +448,7 @@ void PerfectDark::_injecthacks(void)
 // Purpose: run when emulator closes rom
 // Changes Globals: playerbase, safetocrouch, safetostand, crouchstance, xmenu, ymenu
 //==========================================================================
-void PerfectDark::Quit(void)
+void PerfectDark::Quit()
 {
     for(int player = PLAYER1; player < ALLPLAYERS; player++)
     {
@@ -439,6 +462,12 @@ PerfectDark::PerfectDark(EmulatorLink *linkptr) {
     _link = linkptr;
 }
 
+//==========================================================================
+// PerfectDark::_processOriginalInput(int player, const PROFILE& profile)
+//
+// Purpose: Inject mouse input for Original Input Scheme.
+// Changes Members: safetocrouch, safetostand, crouchstance
+//==========================================================================
 void PerfectDark::_processOriginalInput(int player, const PROFILE& profile) {
     const int camera = _link->ReadInt(PD_camera);
     const int pause = _link->ReadInt(PD_pause);
@@ -619,6 +648,7 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
         {
             _crouch(player, profile);
             if (!cursoraimingflag) { // if not aiming (or pdaimmode is off)
+                // Freeaim only uses stick input to move the camera.
                 camx += aimstickdata.x / 10.0f * sensitivity_stick_x *
                         (fov / basefov); // regular mouselook calculation
                 //camx += _cfgptr->Device[player].GYRO.x / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime *
@@ -657,7 +687,7 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                     10.0f * sensitivity_stick_y * (fov / basefov);
 
             float crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
-            if (crosshairy > 5 || crosshairy < -5) {
+            if (crosshairy > 2 || crosshairy < -2) {
                 camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y
                                                 : _cfgptr->Device[player].GYRO.y) /
                         10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov);

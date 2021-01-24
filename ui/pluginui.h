@@ -24,17 +24,35 @@
  *==========================================================================
  */
 
+
+
 /*
  * pluginui.h - UI interface for WIN32 dialog window & settings configuration.
  */
 
-
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
 #define INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
 
+#include "../1964_plugin.h"
+#include "resource.h"
+#include "ui.rc"
+#include "CallbackWrapper.h"
 
-class pluginui {
+class PluginUi {
+private:
+    bool _configdialogisopen = false;
+    bool _guibusy = false;
 
+    void _init(const HWND hW);
+    void _refresh(const HWND hW, const int revertbtn);
+    static CALLBACK BOOL _config(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static BOOL _openconfigdialog(void* param);
+
+
+public:
+    PluginUi() = default;
+    void OpenDialogWindow(HWND hW, HINSTANCE inst);
+    bool GetConfigDialogState();
 };
 
 

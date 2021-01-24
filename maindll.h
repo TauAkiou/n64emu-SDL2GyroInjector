@@ -41,6 +41,7 @@
 #include "input/JoyShockDriver.h"
 #include "settings/Settings.h"
 #include "game/Game.h"
+#include "ui/pluginui.h"
 
 #define DLLEXPORT __declspec(dllexport)
 #define CALL __cdecl
@@ -72,6 +73,7 @@ public:
     static MainDll* GetInstance(HINSTANCE hinstance = nullptr);
     void End();
     [[nodiscard]] bool IsConfigDialogOpen() const;
+    void HandleConfigWindow(HWND hW);
     void SetEmulatorOverclock(bool newoverclock);
     bool InitiateControllers(HWND window, CONTROL *ptr);
     void UpdateControllerStatus();

@@ -40,6 +40,7 @@ bool MainDll::IsConfigDialogOpen() const {
 
 MainDll::MainDll(HINSTANCE hinstance) {
     // Start by initialzing all pointers.
+    // TODO: Consider decoupling these objects from singletons.
     _settingsptr = Settings::GetInstance();
     _emuctrlptr = ControlState::GetInstance();
     _jsdptr = JoyShockDriver::getInstance();
@@ -94,7 +95,7 @@ void MainDll::SetEmulatorOverclock(bool newoverclock) {
 bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _ctrlptr = ptr;
 
-    Sleep(1000); // Sleep for a second to get everything initialize.
+    Sleep(1000); // Sleep for a second to get everything initialized.
 
     if(!_jsdptr->Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
@@ -253,5 +254,10 @@ void MainDll::UpdateControllerStatus() {
         _ctrlptr[player].RawData = false;
         _ctrlptr[player].Plugin = player == PLAYER1 ? PLUGIN_MEMPACK : PLUGIN_NONE;
     }
+}
+
+void MainDll::HandleConfigWindow(HWND hW) {
+
+
 }
 
