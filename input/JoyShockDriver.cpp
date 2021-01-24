@@ -76,7 +76,7 @@ DWORD JoyShockDriver::injectionloop() {
     }
 
     // Start by calibrating all gyroscopes.
-    CalibrateAllGyroscopes();
+    //CalibrateAllGyroscopes();
 
     while(!_terminatethread) {
         time_previous = time_current;

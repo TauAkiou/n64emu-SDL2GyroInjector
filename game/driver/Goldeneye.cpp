@@ -29,6 +29,8 @@
 
 #define GUNAIMLIMIT 6.879164696 // 0x40DC221E
 #define CROSSHAIRLIMIT 5.159373283 // 0x40A51996
+#define GUNAIMLIMITFREE 12.879164696 // 0x40DC221E
+#define CROSSHAIRLIMITFREE 10.159373283 // 0x40A51996
 #define TANKXROTATIONLIMIT 6.283185005 // 0x40C90FDA
 #define PI 3.1415927 // 0x40490FDB
 // GOLDENEYE ADDRESSES - OFFSET ADDRESSES BELOW (REQUIRES PLAYERBASE TO USE)
@@ -357,9 +359,13 @@ void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
             _link->WriteFloat(GE_tankxrot, tankx);
         }
         if(!cursoraimingflag) {
+
             camy += (!profile.PitchInverted ? -aimstickdata.y : aimstickdata.y) /
                     10.0f * sensitivity_stick_y * (fov / basefov);
-            //camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
+
+            float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
+            if(crosshairy > 25 || crosshairy < -25)
+            camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
                     10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov);
         }
         else
@@ -375,10 +381,10 @@ void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
                 gunx += _cfgptr->Device[player].GYRO.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov) * 0.019f;
                 //crosshairx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / 4 / (basefov / 4)) * 0.01912f / RATIOFACTOR;
                 crosshairx += _cfgptr->Device[player].GYRO.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * (fov / 4 / (basefov / 4)) * _cfgptr->DeltaTime * 0.01912f / RATIOFACTOR;
-                //if(aimingflag) // emulate cursor moving back to the center
-                   // gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f;
-                gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMIT, GUNAIMLIMIT);
-                crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
+                if(aimingflag) // emulate cursor moving back to the center
+                   gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f;
+                gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMITFREE, GUNAIMLIMITFREE);
+                crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
                 _link->WriteFloat(playerbase[player] + GE_gunx, gunx);
                 _link->WriteFloat(playerbase[player] + GE_crosshairx, crosshairx);
             }
@@ -389,9 +395,16 @@ void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
                 guny += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_gyro_y * (fov / basefov) * 0.025f;
                 crosshairy += (!profile.PitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.0225f;
                 crosshairy += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.y) / (!aimingflag ? 40.0f : 20.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.0225f;
+
+                if(crosshairy > 45 || crosshairy < -45) {
+                    camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
+                            10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov);
+                }
+
                 if(aimingflag)
                     guny /= _settings->GetIfEmulatorOverclocked() ? 1.15f : 1.35f, crosshairy /= _settings->GetIfEmulatorOverclocked() ? 1.15f : 1.35f;
                 guny = PluginHelpers::ClampFloat(guny, -GUNAIMLIMIT, GUNAIMLIMIT);
+
                 crosshairy = PluginHelpers::ClampFloat(crosshairy, -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
                 _link->WriteFloat(playerbase[player] + GE_guny, guny);
                 _link->WriteFloat(playerbase[player] + GE_crosshairy, crosshairy);
@@ -446,8 +459,8 @@ void Goldeneye::_aimmode_freeaim(const int player, const PROFILE& profile, const
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * (profile.GyroscopeSensitivity.x / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
         crosshairposy[player] += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
 
-        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
-        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
+        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
+        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
         if(aimingintank) // if player is aiming while driving tank with tank equipped as weapon, set x axis crosshair to 0 (like the original game - so you cannot aim across the screen because the tank barrel is locked in the center)
             crosshairposx[player] = 0;
         _link->WriteFloat(playerbase[player] + GE_crosshairx, crosshairposx[player]);

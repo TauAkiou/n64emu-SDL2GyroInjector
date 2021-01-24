@@ -194,6 +194,8 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     _settingsptr->SetProfileForPlayer(PLAYER2, player2prof);
     _settingsptr->SetAssignmentForPlayer(PLAYER2, player2asgn);
 
+    _settingsptr->SetShowGoldeneyeCrosshair(true);
+    _settingsptr->SetFovOverride(90);
 
 
     /*
