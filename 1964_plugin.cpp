@@ -78,11 +78,12 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
 {
     if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
     {
-        MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
+        //MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
 
         //int laststate = mousetoggle;
         //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
         //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
+        MainDll::GetInstance()->HandleConfigWindow(hParent);
         //UpdateControllerStatus();
         //configdialogopen = 0, windowactive = 1, guibusy = 1;
     }

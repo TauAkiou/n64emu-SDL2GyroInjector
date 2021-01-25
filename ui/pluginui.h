@@ -33,26 +33,26 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
 #define INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
 
-#include "../1964_plugin.h"
+#include <windows.h>
+#include <commctrl.h>
+#include <QtWidgets>
+#include "ui_1964_config.h"
 #include "resource.h"
-#include "ui.rc"
-#include "CallbackWrapper.h"
+
+// a vague attempt at encapsulation was made.
+// Thanks, Win32. I knew you were always there for me.
 
 class PluginUi {
 private:
-    bool _configdialogisopen = false;
-    bool _guibusy = false;
-
-    void _init(const HWND hW);
-    void _refresh(const HWND hW, const int revertbtn);
-    static CALLBACK BOOL _config(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static inline bool _configdialogisopen = false;
+    static inline bool _guibusy = false;
     static BOOL _openconfigdialog(void* param);
-
-
+    static void _init(const HWND hW);
+    static void _refresh(const HWND hW, const int revertbtn);
+    static CALLBACK BOOL _config(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam);
 public:
-    PluginUi() = default;
-    void OpenDialogWindow(HWND hW, HINSTANCE inst);
-    bool GetConfigDialogState();
+    static void OpenDialogWindow(HWND hW, HINSTANCE hinstance);
+    static bool GetConfigDialogState();
 };
 
 

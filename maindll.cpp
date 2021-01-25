@@ -257,7 +257,6 @@ void MainDll::UpdateControllerStatus() {
 }
 
 void MainDll::HandleConfigWindow(HWND hW) {
-
-
+    PluginUi::OpenDialogWindow(hW, _hinst);
 }
 

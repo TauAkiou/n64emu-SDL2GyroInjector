@@ -40,36 +40,14 @@ void PluginUi::_refresh(const HWND hW, const int revertbtn) {
 }
 
 void PluginUi::OpenDialogWindow(HWND hW, HINSTANCE hinstance) {
-    _configdialogisopen = true;
-    _guibusy = true;
-    DialogBox(hinstance, MAKEINTRESOURCE(IDC_PLUGINCONFIG), hW, (DLGPROC)&this->_config );
-    _configdialogisopen = false;
+    _configdialogisopen = true, _guibusy = true;
+    QApplication app();
+
+
+
+
+    _configdialogisopen = false, _guibusy = true;
 }
 
-BOOL CALLBACK PluginUi::_config(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch(uMsg) {
-        case WM_INITDIALOG:
-            _init(hW);
-            _refresh(hW, 0);
-        case WM_COMMAND: {
-            if (_guibusy)
-                break;
-            switch(LOWORD(wParam))
-            {
-                case IDC_PLUGINCONFIG:
-                    break;
-                case IDC_PUSHBUTTON:
-                    EndDialog(hW, FALSE);
-                    return true;
-            }
-        }
-        case WM_CLOSE:
-        case WM_DESTROY:
-            EndDialog(hW, FALSE);
-            return true;
-        default:
-            break;
-    }
-    return FALSE;
-}
+
 
