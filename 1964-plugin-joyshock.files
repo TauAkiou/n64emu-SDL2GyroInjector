@@ -26,6 +26,7 @@ plugin.h
 settings/Settings.cpp
 settings/Settings.h
 ui/1964_config.ui
+ui/configdialog.ui
 ui/pluginui.cpp
 ui/pluginui.h
 ui/resource.h

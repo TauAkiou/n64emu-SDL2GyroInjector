@@ -30,30 +30,58 @@
  * pluginui.h - UI interface for WIN32 dialog window & settings configuration.
  */
 
-#ifndef INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
-#define INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
+#ifndef INC_1964_INPUT_JOYSHOCKCPP_CONFIGDIALOG_H
+#define INC_1964_INPUT_JOYSHOCKCPP_CONFIGDIALOG_H
 
-#include <windows.h>
-#include <commctrl.h>
 #include <QtWidgets>
+#include "../settings/Settings.h"
 #include "ui_1964_config.h"
-#include "resource.h"
+#include "../input/JoyShockDriver.h"
 
-// a vague attempt at encapsulation was made.
-// Thanks, Win32. I knew you were always there for me.
+namespace Ui {
+    class ConfigDialog;
+}
 
-class PluginUi {
+class ConfigDialog : public QDialog {
+    Q_OBJECT
 private:
+    Ui::ConfigDialog* _configform;
+    Settings* _settingsptr = Settings::GetInstance();
+    JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
+    PROFILE _localprofiles[4];
+    Assignment _localassignments[4];
+
+    std::vector<JSDevice> _loadedfull;
+    std::vector<JSDevice> _loadedjoyconprimary;
+    std::vector<JSDevice> _loadedjoyconsecondary;
+
     static inline bool _configdialogisopen = false;
     static inline bool _guibusy = false;
+    void _loadDevicesIntoDeviceBox(JSD_ControllerType type);
     static BOOL _openconfigdialog(void* param);
-    static void _init(const HWND hW);
-    static void _refresh(const HWND hW, const int revertbtn);
-    static CALLBACK BOOL _config(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static void _init();
+    static void _refresh();
+    static BOOL _config();
+
+private slots:
+    void on_cancelButton_clicked();
+    void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
+    void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
+    void on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value);
+    void on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value);
+
+
+
 public:
-    static void OpenDialogWindow(HWND hW, HINSTANCE hinstance);
+    ~ConfigDialog() override;
+    explicit ConfigDialog(QDialog *parent = 0);
     static bool GetConfigDialogState();
+
+
+    void _loadProfileIntoUI(PROFILE &profile);
+
+    void _loadProfileIntoUI(PROFILE &profile, Assignment &asgn);
 };
 
 
-#endif //INC_1964_INPUT_JOYSHOCKCPP_PLUGINUI_H
+#endif //INC_1964_INPUT_JOYSHOCKCPP_CONFIGDIALOG_H

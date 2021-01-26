@@ -51,8 +51,8 @@ add_library(1964_input_joyshockcpp SHARED
         1964_plugin.h
         common/vec2.h
         ui/resource.h
-        ui/pluginui.cpp
-        ui/pluginui.h
+        ui/ConfigDialog.cpp
+        ui/ConfigDialog.h
         ui/1964_config.ui
         )
 

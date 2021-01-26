@@ -105,9 +105,8 @@ void Goldeneye::Inject() {
         const int dead = _link->ReadInt(playerbase[player] + GE_deathflag);
 
 
-        if(profile.ControllerMode == -1) // bypass disabled players
+        if(_settings->GetIfPlayerIsConnected(static_cast<enum PLAYERS>(player)) == -false) // bypass disabled players
             continue;
-
 
         if(!profile.FreeAiming) {
             _processOriginalAimmode(player, profile);

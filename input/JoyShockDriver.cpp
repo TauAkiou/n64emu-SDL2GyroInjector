@@ -287,6 +287,15 @@ std::vector<JSDevice> JoyShockDriver::GetConnectedFullControllers() {
     return val;
 }
 
+std::vector<JSDevice> JoyShockDriver::GetConnectedDS4() {
+    std::vector<JSDevice> val;
+    for(JSDevice jsd : *_devices) {
+        if(jsd.Type == Dualshock_4)
+            val.push_back(jsd);
+    }
+    return val;
+}
+
 std::vector<JSDevice> JoyShockDriver::GetConnectedLeftJoycons() {
     std::vector<JSDevice> val;
     for(JSDevice jsd : *_devices) {
@@ -332,4 +341,111 @@ void JoyShockDriver::CalibrateAllGyroscopes() {
         }
     }
     std::cout << "Calibration completed." << std::endl;
+}
+
+std::string JoyShockDriver::GetButtonLabelForController(JSDevice device, int buttonmask) {
+    if(device.Type == Dualshock_4) {
+        switch (buttonmask) {
+            case JSMASK_UP:
+                return "D-Pad Up";
+            case JSMASK_DOWN:
+                return "D-Pad Down";
+            case JSMASK_LEFT:
+                return "D-Pad Left";
+            case JSMASK_RIGHT:
+                return "D-Pad Right";
+            case JSMASK_OPTIONS:
+                return "Options";
+            case JSMASK_SHARE:
+                return "Share";
+            case JSMASK_LCLICK:
+                return "L3";
+            case JSMASK_RCLICK:
+                return "R3";
+            case JSMASK_L:
+                return "L1";
+            case JSMASK_R:
+                return "R1";
+            case JSMASK_ZL:
+                return "L2";
+            case JSMASK_ZR:
+                return "R2";
+            case JSMASK_S:
+                return "Cross";
+            case JSMASK_E:
+                return "Circle";
+            case JSMASK_W:
+                return "Square";
+            case JSMASK_N:
+                return "Triangle";
+            case JSMASK_PS:
+                return "PS";
+            case JSMASK_TOUCHPAD_CLICK:
+                return "Touchpad";
+            default:
+                return "None";
+        }
+    }
+    else if(device.Type == SwitchPro || device.Type == JoyconLeft || device.Type == JoyconRight) {
+        switch(buttonmask) {
+             case JSMASK_UP:
+                return "D-Pad Up";
+                case JSMASK_DOWN:
+                    return "D-Pad Down";
+                case JSMASK_LEFT:
+                    return "D-Pad Left";
+                case JSMASK_RIGHT:
+                    return "D-Pad Right";
+                case JSMASK_PLUS:
+                    return "+";
+                case JSMASK_MINUS:
+                    return "-";
+                case JSMASK_LCLICK:
+                    return "LS-Click";
+                case JSMASK_RCLICK:
+                    return "RS-Click";
+                case JSMASK_L:
+                    return "L";
+                case JSMASK_R:
+                    return "R";
+                case JSMASK_ZL:
+                    return "ZL";
+                case JSMASK_ZR:
+                    return "ZR";
+                case JSMASK_S:
+                    return "B";
+                case JSMASK_E:
+                    return "A";
+                case JSMASK_W:
+                    return "Y";
+                case JSMASK_N:
+                    return "X";
+                case JSMASK_HOME:
+                    return "Home";
+                case JSMASK_CAPTURE:
+                    return "Capture";
+            case JSMASK_SL:
+                return "SL";
+            case JSMASK_SR:
+                return "SR";
+                default:
+                    return "None";
+            }
+    }
+    return "None";
+}
+
+std::string JoyShockDriver::GetNameOfDevice(JSDevice &device) {
+    switch(device.Type) {
+        case SwitchPro:
+            return "Switch Pro Controller";
+        case Dualshock_4:
+            return "Dualshock 4";
+        case JoyconLeft:
+            return "Left Joycon";
+        case JoyconRight:
+            return "Right Joycon";
+        default:
+            return "Unknown";
+    }
 }

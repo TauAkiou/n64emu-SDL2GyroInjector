@@ -256,7 +256,14 @@ void MainDll::UpdateControllerStatus() {
     }
 }
 
-void MainDll::HandleConfigWindow(HWND hW) {
-    PluginUi::OpenDialogWindow(hW, _hinst);
+int MainDll::HandleConfigWindow(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+    ConfigDialog cfgdlg;
+    cfgdlg.show();
+    return app.exec();
+
+
+
+
 }
 

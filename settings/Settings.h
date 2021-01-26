@@ -40,7 +40,7 @@ private:
     static inline Settings* _instance;
 
     PROFILE Profile[4] {};
-    Assignment ControllerAssignments[4] = { };
+    Assignment ControllerAssignments[4] = {};
 
     // Plugin/Emulator settings
     bool EmulatorOverclocked = true;

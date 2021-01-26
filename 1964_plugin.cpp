@@ -76,19 +76,19 @@ DLLEXPORT void CALL DllAbout(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllConfig(HWND hParent)
 {
-    if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
-    {
+    //if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
+    //{
         //MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
 
         //int laststate = mousetoggle;
         //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
         //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
-        MainDll::GetInstance()->HandleConfigWindow(hParent);
+        MainDll::GetInstance()->HandleConfigWindow(0, nullptr);
         //UpdateControllerStatus();
         //configdialogopen = 0, windowactive = 1, guibusy = 1;
-    }
-    else
-        MessageBoxA(hParent, "JoyShock Plugin did not detect any compatible controllers.\n\nPlease connect controllers and restart emulator." , "JoyShock Injector - Error", MB_ICONERROR | MB_OK);
+    //}
+    //else
+    //    MessageBoxA(hParent, "JoyShock Plugin did not detect any compatible controllers.\n\nPlease connect controllers and restart emulator." , "JoyShock Injector - Error", MB_ICONERROR | MB_OK);
 }
 //==========================================================================
 // Purpose: Optional function that is provided to allow the user to test the DLL

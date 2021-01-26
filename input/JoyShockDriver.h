@@ -70,11 +70,12 @@ class JoyShockDriver {
         void StartInjectionThread();
         void EndInjectionThread();
         bool IsThreadRunning();
-        int GetConnectedDeviceCount() const;
+        [[nodiscard]] int GetConnectedDeviceCount() const;
         int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
         std::vector<JSDevice> GetConnectedFullControllers();
         std::vector<JSDevice> GetConnectedLeftJoycons();
         std::vector<JSDevice> GetConnectedRightJoycons();
+        static std::string GetButtonLabelForController(JSDevice device, int buttonmask);
         int GetConnectedDS4Count();
         int GetConnectedSPCCount();
         int GetConnectedJCLCount();
@@ -83,6 +84,10 @@ class JoyShockDriver {
         void SetPlayerSPCJCNumber(const int playernumber, const int number);
         void CalibrateGyroscope(JSDevice &jsd);
         void CalibrateAllGyroscopes();
+
+    std::vector<JSDevice> GetConnectedDS4();
+
+    std::string GetNameOfDevice(JSDevice &device);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H
