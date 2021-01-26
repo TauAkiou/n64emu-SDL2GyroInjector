@@ -75,8 +75,6 @@ DWORD JoyShockDriver::injectionloop() {
         }
     }
 
-    // Start by calibrating all gyroscopes.
-    //CalibrateAllGyroscopes();
 
     while(!_terminatethread) {
         time_previous = time_current;
@@ -90,8 +88,6 @@ DWORD JoyShockDriver::injectionloop() {
             PROFILE prf = _settings->GetProfileForPlayer(static_cast<PLAYERS>(player));
             Assignment asgn = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
             DEVICE *dev = &_cstateptr->Device[player];
-
-
 
             // Handle processing for standard cons (DS4/SPC)
             if(asgn.ControllerMode == FULLCONTROLLER) {
@@ -386,7 +382,7 @@ std::string JoyShockDriver::GetButtonLabelForController(JSDevice device, int but
                 return "None";
         }
     }
-    else if(device.Type == SwitchPro || device.Type == JoyconLeft || device.Type == JoyconRight) {
+    else if(device.Type == SwitchPro || device.Type == JoyconLeft || device.Type == JoyconRight || device.Type == None) {
         switch(buttonmask) {
              case JSMASK_UP:
                 return "D-Pad Up";
@@ -447,5 +443,22 @@ std::string JoyShockDriver::GetNameOfDevice(JSDevice &device) {
             return "Right Joycon";
         default:
             return "Unknown";
+    }
+}
+
+void JoyShockDriver::ReconnectControllers() {
+    _devices->clear();
+    _devicecount = JslConnectDevices();
+
+    int discoveredhandles[_devicecount];
+    JslGetConnectedDeviceHandles(discoveredhandles, _devicecount);
+
+    JSDevice deviceentry;
+
+    for(int _handleid : discoveredhandles) {
+        deviceentry.Handle = _handleid;
+        deviceentry.Type = (JSD_ControllerType)JslGetControllerType(_handleid);
+
+        _devices->push_back(deviceentry);
     }
 }

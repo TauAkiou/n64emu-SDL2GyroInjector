@@ -34,6 +34,7 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_CONFIGDIALOG_H
 
 #include <QtWidgets>
+#include <sstream>
 #include "../settings/Settings.h"
 #include "ui_1964_config.h"
 #include "../input/JoyShockDriver.h"
@@ -48,8 +49,8 @@ private:
     Ui::ConfigDialog* _configform;
     Settings* _settingsptr = Settings::GetInstance();
     JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
-    PROFILE _localprofiles[4];
-    Assignment _localassignments[4];
+    PROFILE _localprofiles[4]{};
+    Assignment _localassignments[4]{};
 
     std::vector<JSDevice> _loadedfull;
     std::vector<JSDevice> _loadedjoyconprimary;
@@ -57,20 +58,21 @@ private:
 
     static inline bool _configdialogisopen = false;
     static inline bool _guibusy = false;
-    void _loadDevicesIntoDeviceBox(JSD_ControllerType type);
-    static BOOL _openconfigdialog(void* param);
-    static void _init();
-    static void _refresh();
-    static BOOL _config();
+    PLAYERS _selectedplayer;
+    void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
+    void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
+
 
 private slots:
     void on_cancelButton_clicked();
+    void on_reconnectControllers_clicked();
     void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
     void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
     void on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value);
     void on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value);
-
-
+    void on_controllerModeBox_currentIndexChanged(int index);
+    void on_primaryDeviceBox_currentIndexChanged(int index);
+    void on_secondaryDeviceBox_currentIndexChanged(int index);
 
 public:
     ~ConfigDialog() override;
@@ -78,9 +80,9 @@ public:
     static bool GetConfigDialogState();
 
 
-    void _loadProfileIntoUI(PROFILE &profile);
+    void _selectDeviceFromAssignment();
 
-    void _loadProfileIntoUI(PROFILE &profile, Assignment &asgn);
+    void _getCurrentConfigState();
 };
 
 

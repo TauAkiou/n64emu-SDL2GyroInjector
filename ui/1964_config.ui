@@ -179,7 +179,7 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>150</x>
       <y>20</y>
       <width>181</width>
       <height>31</height>
@@ -215,7 +215,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>50</y>
       <width>351</width>
       <height>561</height>
      </rect>
@@ -234,8 +234,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>330</width>
-       <height>755</height>
+       <width>334</width>
+       <height>632</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -281,6 +281,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -324,6 +327,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -342,90 +348,28 @@
            <string>Next Weapon/Accept</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingNextWeaponAcceptPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingNextWeaponAcceptSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingStartLayout">
-        <item>
-         <widget class="QLabel" name="mappingStartLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Start</string>
-          </property>
-          <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingStartPrimaryButton">
+         <widget class="QPushButton" name="mappingNextWeaponAcceptPrimaryButton_2">
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingStartSecondaryButton">
+         <widget class="QPushButton" name="mappingNextWeaponAcceptSecondaryButton_2">
           <property name="text">
            <string/>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingCrouchLayout">
-        <item alignment="Qt::AlignHCenter">
-         <widget class="QLabel" name="mappingCrouchLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Crouch</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingCrouchPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingCrouchSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -453,6 +397,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -460,6 +407,89 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingStartLayout">
+        <item>
+         <widget class="QLabel" name="mappingStartLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Start</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingStartPrimaryButton_3">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingStartSecondaryButton_3">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingCrouchLayout">
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="mappingCrouchLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Crouch</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingCrouchPrimaryButton_4">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingCrouchSecondaryButton_4">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -489,25 +519,31 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingPDKneelPrimaryButton">
+         <widget class="QPushButton" name="mappingPDKneelPrimaryButton_5">
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingPDKneelSecondaryButton">
+         <widget class="QPushButton" name="mappingPDKneelSecondaryButton_5">
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="mappingStrafeRightLayout">
+       <layout class="QHBoxLayout" name="mappingPreviousWeaponLayout">
         <item>
-         <widget class="QLabel" name="mappingStrafeRightLabel">
+         <widget class="QLabel" name="mappingPreviousWeaponLabel">
           <property name="minimumSize">
            <size>
             <width>120</width>
@@ -515,7 +551,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Strafe Right</string>
+           <string>Previous Weapon</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -523,17 +559,103 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingStrafeRightPrimaryButton">
+         <widget class="QPushButton" name="mappingPreviousWeaponPrimaryButton">
           <property name="text">
            <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingPreviousWeaponSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingNextWeaponLayout">
+        <item>
+         <widget class="QLabel" name="mappingNextWeaponLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Next Weapon</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="mappingStrafeRightSecondaryButton">
+         <widget class="QPushButton" name="mappingNextWeaponPrimaryButton">
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingNextWeaponSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingForwardLayout">
+        <item>
+         <widget class="QLabel" name="mappingForwardLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Forward</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingForwardPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingForwardSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -561,6 +683,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -568,6 +693,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -595,6 +723,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -602,6 +733,209 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingStrafeRightLayout">
+        <item>
+         <widget class="QLabel" name="mappingStrafeRightLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Strafe Right</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingStrafeRightPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingStrafeRightSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingAnalogUpLayout">
+        <item>
+         <widget class="QLabel" name="mappingAnalogUpLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Analog Up</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogUpPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogUpSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingAnalogDownLayout">
+        <item>
+         <widget class="QLabel" name="mappingAnalogDownLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Analog Down</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogDownPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogDownSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingAnalogLeftLayout">
+        <item>
+         <widget class="QLabel" name="mappingAnalogLeftLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Analog Left</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogLeftPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogLeftSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="mappingAnalogRightLayout">
+        <item>
+         <widget class="QLabel" name="mappingAnalogRightLabel">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Analog Right</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogRightPrimaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mappingAnalogRightSecondaryButton">
+          <property name="text">
+           <string/>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -635,6 +969,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -642,244 +979,9 @@
           <property name="text">
            <string/>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingAnalogLeftLayout">
-        <item>
-         <widget class="QLabel" name="mappingAnalogLeftLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Analog Left</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogLeftPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogLeftSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingNextWeaponLayout">
-        <item>
-         <widget class="QLabel" name="mappingNextWeaponLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Next Weapon</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingNextWeaponPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingNextWeaponSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingForwardLayout">
-        <item>
-         <widget class="QLabel" name="mappingForwardLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Forward</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingForwardPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingForwardSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingAnalogUpLayout">
-        <item>
-         <widget class="QLabel" name="mappingAnalogUpLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Analog Up</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogUpPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogUpSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingAnalogDownLayout">
-        <item>
-         <widget class="QLabel" name="mappingAnalogDownLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Analog Down</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogDownPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogDownSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingAnalogRightLayout">
-        <item>
-         <widget class="QLabel" name="mappingAnalogRightLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Analog Right</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogRightPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingAnalogRightSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="mappingPreviousWeaponLayout">
-        <item>
-         <widget class="QLabel" name="mappingPreviousWeaponLabel">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Previous Weapon</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingPreviousWeaponPrimaryButton">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mappingPreviousWeaponSecondaryButton">
-          <property name="text">
-           <string/>
-          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -913,6 +1015,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -920,6 +1025,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -953,6 +1061,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingPrimaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -960,6 +1071,9 @@
           <property name="text">
            <string/>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">mappingSecondaryButtonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -984,9 +1098,9 @@
   <widget class="QWidget" name="formLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>50</y>
-     <width>351</width>
+     <width>371</width>
      <height>57</height>
     </rect>
    </property>
@@ -1019,7 +1133,7 @@
        <widget class="QComboBox" name="controllerModeBox">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>260</width>
           <height>0</height>
          </size>
         </property>
@@ -1041,7 +1155,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Joycons</string>
+          <string>Joycon Pair</string>
          </property>
         </item>
        </widget>
@@ -1064,7 +1178,7 @@
        <widget class="QComboBox" name="profileBox">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>260</width>
           <height>0</height>
          </size>
         </property>
@@ -1136,7 +1250,13 @@
         <property name="minimumSize">
          <size>
           <width>200</width>
-          <height>0</height>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>20</height>
          </size>
         </property>
         <property name="baseSize">
@@ -1200,7 +1320,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -1487,19 +1607,6 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
           <widget class="QSlider" name="playerSettingsTabStickAimSensitivityXSlider">
            <property name="minimumSize">
             <size>
@@ -1523,19 +1630,6 @@
             <enum>QSlider::TicksBelow</enum>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="playerSettingsTabStickAimSensitivityXSpinbox">
@@ -1575,19 +1669,6 @@
             <bool>true</bool>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item>
           <widget class="QSlider" name="playerSettingsTabStickAimSensitivityYSlider">
@@ -2121,19 +2202,6 @@
       </layout>
      </item>
      <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <layout class="QVBoxLayout" name="globalFovLayout">
        <item>
         <layout class="QHBoxLayout" name="globalFovTopLayout">
@@ -2165,6 +2233,19 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <layout class="QHBoxLayout" name="globalFovSliderLayout">
@@ -2264,8 +2345,8 @@
   <widget class="QPushButton" name="revertSettings">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>770</y>
+     <x>100</x>
+     <y>760</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -2277,8 +2358,8 @@
   <widget class="QPushButton" name="clearSettings">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>770</y>
+     <x>20</x>
+     <y>760</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -2292,5 +2373,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="playerSelectionButtonGroup"/>
+  <buttongroup name="mappingPrimaryButtonGroup"/>
+  <buttongroup name="mappingSecondaryButtonGroup"/>
  </buttongroups>
 </ui>

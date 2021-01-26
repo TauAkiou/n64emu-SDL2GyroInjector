@@ -8,7 +8,7 @@ if(MINGW)
             "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
 endif(MINGW)
 
-set(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.12.10\\5.12.10\\mingw73_32\\")
+set(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.12.10\\5.12.10\\mingw73_32")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
