@@ -26,6 +26,83 @@
 
 #include "ConfigDialog.h"
 
+void ConfigDialog::_processPrimaryLayout(int value) {
+    std::cout << "Buton " << value << " pressed" << std::endl;
+}
+
+void ConfigDialog::_processSecondaryLayout(int value) {
+    std::cout << "Buton " << value << " pressed" << std::endl;
+
+}
+
+void ConfigDialog::_createPrimaryButtonLayouts() {
+    auto vlayout = new QVBoxLayout(_configform->scrollAreaWidgetContents);
+    _configform->scrollAreaWidgetContents->setLayout(vlayout);
+
+    for(int entry = 0; entry < TOTALBUTTONS; entry++) {
+        auto layout = new QHBoxLayout();
+        layout->setSpacing(6);
+        auto label = new QLabel(_getNameFromButtonIndex(static_cast<CONTROLLERENUM>(entry)));
+        auto sizepolicy = QSizePolicy();
+        //sizepolicy.setVerticalPolicy(QSizePolicy::Preferred);
+        //sizepolicy.setHorizontalPolicy(QSizePolicy::Minimum);
+        //label->setSizePolicy(sizepolicy);
+        //label->setMinimumHeight(120);
+        layout->addWidget(label);
+        layout->addWidget(_mappingButtonListPrimary[entry]);
+        layout->addWidget(_mappingButtonListSecondary[entry]);
+        vlayout->addLayout(layout);
+    }
+}
+
+QString ConfigDialog::_getNameFromButtonIndex(CONTROLLERENUM index) {
+    switch(index) {
+        case FIRE:
+            return QString::fromStdString("Fire");
+        case AIM:
+            return QString::fromStdString("Aim");
+        case ACCEPT:
+            return QString::fromStdString("Next Weapon/Accept");
+        case CANCEL:
+            return QString::fromStdString("Reload/Use/Cancel");
+        case START:
+            return QString::fromStdString("Start");
+        case CROUCH:
+            return QString::fromStdString("Crouch");
+        case KNEEL:
+            return QString::fromStdString("Kneel (Perfect Dark)");
+        case PREVIOUSWEAPON:
+            return QString::fromStdString("Previous Weapon");
+        case NEXTWEAPON:
+            return QString::fromStdString("Next Weapon");
+        case FORWARDS:
+            return QString::fromStdString("Forwards");
+        case BACKWARDS:
+            return QString::fromStdString("Backwards");
+        case STRAFELEFT:
+            return QString::fromStdString("Strafe Left");
+        case STRAFERIGHT:
+            return QString::fromStdString("Strafe Right");
+        case UP:
+            return QString::fromStdString("Analog Up");
+        case DOWN:
+            return QString::fromStdString("Analog Down");
+        case LEFT:
+            return QString::fromStdString("Analog Left");
+        case RIGHT:
+            return QString::fromStdString("Analog Right");
+        case RESETGYRO:
+            return QString::fromStdString("Center Viewpoint");
+        case TOGGLEGYRO:
+            return QString::fromStdString("Toggle Gyroscope");
+        case CALIBRATEGYRO:
+            return QString::fromStdString("Calibrate Gyrsoscope");
+        case TOTALBUTTONS:
+        default:
+            return QString::fromStdString("Invalid");
+    }
+}
+
 bool ConfigDialog::GetConfigDialogState() {
     return _configdialogisopen;
 }
@@ -96,6 +173,30 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _configform(new U
 
     _getCurrentConfigState();
 
+    // Dynamically generate all mapper buttons and assign them to the ScrollBox
+    auto *mapperPrimary = new QSignalMapper(this);
+    auto *mapperSecondary = new QSignalMapper(this);
+    connect(mapperPrimary, SIGNAL(mapped(int)), this, SIGNAL(primaryClicked(int)));
+    connect(mapperSecondary, SIGNAL(mapped(int)), this, SIGNAL(secondaryClicked(int)));
+
+    for(int index = 0; index < TOTALBUTTONS; index++) {
+        auto primaryButton = new QPushButton(this);
+        auto secondaryButton = new QPushButton(this);
+        primaryButton->setText(QString::fromStdString("None"));
+        secondaryButton->setText(QString::fromStdString("None"));
+        _mappingButtonListPrimary.append(primaryButton);
+        _mappingButtonListSecondary.append(secondaryButton);
+        mapperPrimary->setMapping(primaryButton, index);
+        mapperSecondary->setMapping(secondaryButton, index);
+
+        connect(primaryButton, SIGNAL(clicked()), mapperPrimary, SLOT(map()));
+        connect(secondaryButton, SIGNAL(clicked()), mapperSecondary, SLOT(map()));
+
+    }
+
+    connect(this, SIGNAL(primaryClicked(int)), this, SLOT(_processPrimaryLayout(int)));
+    _createPrimaryButtonLayouts();
+
     _loadedfull = _jsdriver->GetConnectedFullControllers();
     _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
     _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
@@ -122,13 +223,13 @@ void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
     // we 'read' from.
 
     // Fire
+    /*
     _configform->mappingFirePrimaryButton->setText(
             QString::fromStdString(
                     _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[FIRE])));
     _configform->mappingFireSecondaryButton->setText(
             QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
                                                                           profile.BUTTONSEC[FIRE])));
-
     // Aim
     _configform->mappingAimPrimaryButton->setText(
             QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[AIM])));
@@ -259,6 +360,7 @@ void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
     _configform->mappingCalibrateGyroscopeSecondaryButton->setText(
             QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
                                                                           profile.BUTTONSEC[CALIBRATEGYRO])));
+                                                                          */
 }
 
 ConfigDialog::~ConfigDialog() {
@@ -273,10 +375,6 @@ void ConfigDialog::on_cancelButton_clicked() {
 // -----------------------------------------------------------------------------------------------
 // Slots & Signals
 // -----------------------------------------------------------------------------------------------
-
-void ConfigDialog::_mapButtonToPrimaryCommand() {
-
-}
 
 void ConfigDialog::on_primaryDeviceBox_currentIndexChanged(int index) {
     auto cmode = _localassignments[_selectedplayer].ControllerMode;

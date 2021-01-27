@@ -54,6 +54,7 @@ add_library(1964_input_joyshockcpp SHARED
         ui/ConfigDialog.cpp
         ui/ConfigDialog.h
         ui/1964_config.ui
+        ui/MappingButton.h
         )
 
 target_include_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)

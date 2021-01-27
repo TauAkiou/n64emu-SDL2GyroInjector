@@ -1,0 +1,12 @@
+//
+// Created by robin on 1/26/2021.
+//
+
+#ifndef INC_1964_INPUT_JOYSHOCKCPP_MAPPINGBUTTON_H
+#define INC_1964_INPUT_JOYSHOCKCPP_MAPPINGBUTTON_H
+
+class MappingButton : QPushButton {
+
+};
+
+#endif //INC_1964_INPUT_JOYSHOCKCPP_MAPPINGBUTTON_H

@@ -35,6 +35,7 @@
 
 #include <QtWidgets>
 #include <sstream>
+#include <iostream>
 #include "../settings/Settings.h"
 #include "ui_1964_config.h"
 #include "../input/JoyShockDriver.h"
@@ -46,7 +47,12 @@ namespace Ui {
 class ConfigDialog : public QDialog {
     Q_OBJECT
 private:
+
     Ui::ConfigDialog* _configform;
+
+    QList<QPushButton*> _mappingButtonListPrimary;
+    QList<QPushButton*> _mappingButtonListSecondary;
+
     Settings* _settingsptr = Settings::GetInstance();
     JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
     PROFILE _localprofiles[4]{};
@@ -62,8 +68,16 @@ private:
     void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
     void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
 
+    void _mapButtonToCommand(CONTROLLERENUM command, bool isSecondary);
+    void _processSecondaryLayout(int value);
+
+
+signals:
+    void primaryClicked(int value);
+    void secondaryClicked(int value);
 
 private slots:
+    void _processPrimaryLayout(int value);
     void on_cancelButton_clicked();
     void on_reconnectControllers_clicked();
     void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
@@ -74,6 +88,18 @@ private slots:
     void on_primaryDeviceBox_currentIndexChanged(int index);
     void on_secondaryDeviceBox_currentIndexChanged(int index);
 
+    // Why can't qt designer have an easy way of assigning large groups of buttons in a way that doesn't require:
+    // - Subclassing, which causes issues in the editor & extra programming overhead
+    // - ID Extraction, which turns any edits to the button chain into a tiresome manual nightmare of adjusting numbers
+    // - ButtonGroups, which have no way of assigning the ID or relative order in designer, because reasons?
+    // - Manually creating 44(!) on_<whatever>_clicked() functions and having them call a function
+    // - Dynamically creating the buttons with appropriate names, which defeats the point of the designer
+    //
+    // Someone please find a better, more maintainable way for this that works in tandem with qt designer.
+
+
+
+
 public:
     ~ConfigDialog() override;
     explicit ConfigDialog(QDialog *parent = 0);
@@ -83,6 +109,12 @@ public:
     void _selectDeviceFromAssignment();
 
     void _getCurrentConfigState();
+
+    static QString _getNameFromButtonIndex(CONTROLLERENUM index);
+
+    void _createPrimaryButtonLayouts();
+
+
 };
 
 

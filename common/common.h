@@ -45,7 +45,27 @@
 
 // Why change the order of CONTROLLERENUM? On controllers, players are going to be generally using the left stick to move, making the movement keys redundant.
 // I keep them just in case, but i'd say a vast majority of people will be using the left stick to move.
-enum CONTROLLERENUM {FIRE = 0, AIM, ACCEPT, CANCEL, START, CROUCH, KNEEL, PREVIOUSWEAPON, NEXTWEAPON, FORWARDS, BACKWARDS, STRAFELEFT, STRAFERIGHT, UP, DOWN, LEFT, RIGHT, RESETGYRO, TOGGLEGYRO, CALIBRATEGYRO, TOTALBUTTONS};
+enum CONTROLLERENUM {FIRE = 0,
+                     AIM,
+                     ACCEPT,
+                     CANCEL,
+                     START,
+                     CROUCH,
+                     KNEEL,
+                     PREVIOUSWEAPON,
+                     NEXTWEAPON,
+                     FORWARDS,
+                     BACKWARDS,
+                     STRAFELEFT,
+                     STRAFERIGHT,
+                     UP,
+                     DOWN,
+                     LEFT,
+                     RIGHT,
+                     RESETGYRO,
+                     TOGGLEGYRO,
+                     CALIBRATEGYRO,
+                     TOTALBUTTONS};
 
 enum VECTORSETTINGSENUM {AIMDEADZONE = 0, TOTALVECTORSETTINGS};
 enum CONFIGENUM {CONFIG = 0, STICKSENSITIVITYX, STICKSENSITIVITYY, GYROSENSITIVITYX, GYROSENSITIVITYY, ACCELERATION, CROSSHAIR, INVERTPITCH, CROUCHTOGGLE, GEAIMMODE, PDAIMMODE, STICKMODE, STICKAIMING, TOTALSETTINGS};
