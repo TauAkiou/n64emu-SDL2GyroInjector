@@ -28,6 +28,18 @@
 #include <iostream>
 #include "InputHandler.h"
 
+vec2<float> InputHandler::GetBaseFactorForStickType(enum STICKMODE mode) {
+    switch(mode) {
+        default:
+        case FULLSTICK:
+            return {400, 400 };
+        case XONLY:
+            return {400, 0};
+        case FLICK:
+            return {23000, 0};
+    }
+}
+
 vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
     vec2<float> vec;
     auto profile = _settings->GetProfileForPlayer(player);

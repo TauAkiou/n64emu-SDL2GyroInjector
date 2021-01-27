@@ -8,13 +8,13 @@ if(MINGW)
             "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
 endif(MINGW)
 
-set(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.12.10\\5.12.10\\mingw73_32")
+set(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.12.10-msvc\\5.12.10\\msvc2017")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Gui)
 
 # used for automatic deployment & debugging purposes.
 SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
@@ -50,19 +50,17 @@ add_library(1964_input_joyshockcpp SHARED
         1964_plugin.cpp
         1964_plugin.h
         common/vec2.h
-        ui/resource.h
         ui/ConfigDialog.cpp
         ui/ConfigDialog.h
         ui/1964_config.ui
-        ui/MappingButton.h
         )
 
 target_include_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
 target_link_directories(1964_input_joyshockcpp PUBLIC JoyShockLibrary/)
-target_link_libraries(1964_input_joyshockcpp JoyShockLibrary Qt5::Widgets)
+target_link_libraries(1964_input_joyshockcpp JoyShockLibrary Qt5::Gui Qt5::Core Qt5::Widgets)
 
 
 add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_CURRENT_BINARY_DIR}/lib1964_input_joyshockcpp.dll
-         ${1964_PLUGIN_DIRECTORY}/)
+        ${CMAKE_CURRENT_BINARY_DIR}/lib1964_input_joyshockcpp.dll
+        ${1964_PLUGIN_DIRECTORY}/)

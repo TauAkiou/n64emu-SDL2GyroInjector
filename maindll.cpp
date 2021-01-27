@@ -135,8 +135,8 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     player1prof.StickMode = FLICK;
     player1prof.UseStickToAim = false;
     player1prof.DS4Color = 0x0000FF;
-    player1prof.AimStickSensitivity = {23000, 23000};
-    player1prof.GyroscopeSensitivity = {400, 400};
+    player1prof.AimStickSensitivity = {1.0, 1.0};
+    player1prof.GyroscopeSensitivity = {1.0, 1.0};
     player1prof.Crosshair = 1;
     player1prof.PitchInverted = false;
     player1prof.CrouchToggle = true;

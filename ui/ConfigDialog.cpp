@@ -27,11 +27,20 @@
 #include "ConfigDialog.h"
 
 void ConfigDialog::_processPrimaryLayout(int value) {
-    std::cout << "Buton " << value << " pressed" << std::endl;
+    if (!_locked) {
+        _locked = true;
+        _mapButtonToCommand(static_cast<CONTROLLERENUM>(value), false);
+        _locked = false;
+    }
 }
 
 void ConfigDialog::_processSecondaryLayout(int value) {
-    std::cout << "Buton " << value << " pressed" << std::endl;
+    if (!_locked) {
+        _locked = true;
+        _mapButtonToCommand(static_cast<CONTROLLERENUM>(value), true);
+        _locked = false;
+
+    }
 
 }
 
@@ -44,10 +53,10 @@ void ConfigDialog::_createPrimaryButtonLayouts() {
         layout->setSpacing(6);
         auto label = new QLabel(_getNameFromButtonIndex(static_cast<CONTROLLERENUM>(entry)));
         auto sizepolicy = QSizePolicy();
-        //sizepolicy.setVerticalPolicy(QSizePolicy::Preferred);
-        //sizepolicy.setHorizontalPolicy(QSizePolicy::Minimum);
-        //label->setSizePolicy(sizepolicy);
-        //label->setMinimumHeight(120);
+        sizepolicy.setVerticalPolicy(QSizePolicy::Preferred);
+        sizepolicy.setHorizontalPolicy(QSizePolicy::Minimum);
+        label->setSizePolicy(sizepolicy);
+        label->setMinimumWidth(120);
         layout->addWidget(label);
         layout->addWidget(_mappingButtonListPrimary[entry]);
         layout->addWidget(_mappingButtonListSecondary[entry]);
@@ -96,7 +105,7 @@ QString ConfigDialog::_getNameFromButtonIndex(CONTROLLERENUM index) {
         case TOGGLEGYRO:
             return QString::fromStdString("Toggle Gyroscope");
         case CALIBRATEGYRO:
-            return QString::fromStdString("Calibrate Gyrsoscope");
+            return QString::fromStdString("Calibrate Gyroscope");
         case TOTALBUTTONS:
         default:
             return QString::fromStdString("Invalid");
@@ -161,12 +170,6 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
     }
 }
 
-void ConfigDialog::_selectDeviceFromAssignment() {
-    for(int players = 0; players < ALLPLAYERS; players++) {
-
-    }
-}
-
 ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _configform(new Ui::ConfigDialog) {
     _configform->setupUi(this);
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
@@ -195,6 +198,8 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _configform(new U
     }
 
     connect(this, SIGNAL(primaryClicked(int)), this, SLOT(_processPrimaryLayout(int)));
+    connect(this, SIGNAL(secondaryClicked(int)), this, SLOT(_processSecondaryLayout(int)));
+
     _createPrimaryButtonLayouts();
 
     _loadedfull = _jsdriver->GetConnectedFullControllers();
@@ -217,164 +222,26 @@ void ConfigDialog::_getCurrentConfigState() {
 
 void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
 
-    // Mappings
-
     // Only use the primary device. We merge the joycon input into one mask anyway, so it doesn't matter what controller
     // we 'read' from.
 
-    // Fire
-    /*
-    _configform->mappingFirePrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[FIRE])));
-    _configform->mappingFireSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[FIRE])));
-    // Aim
-    _configform->mappingAimPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[AIM])));
-    _configform->mappingAimSecondaryButton->setText(
-            QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[AIM])));
-    // Next Weapon/Accept
-    _configform->mappingNextWeaponAcceptPrimaryButton->setText(
-            QString::fromStdString(
-                    JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[ACCEPT])));
-    _configform->mappingNextWeaponAcceptSecondaryButton->setText(
-            QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[ACCEPT])));
-    // Reload/Cancel
-    _configform->mappingReloadUseCancelPrimaryButton->setText(
-            QString::fromStdString(
-                    JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[CANCEL])));
-    _configform->mappingReloadUseCancelSecondaryButton->setText(
-            QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[CANCEL])));
-    // Start
-    _configform->mappingStartPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[START])));
-    _configform->mappingStartSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[START])));
-    // Crouch
-    _configform->mappingCrouchPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[CROUCH])));
-    _configform->mappingCrouchSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[CROUCH])));
-    // Kneel
-    _configform->mappingPDKneelPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[KNEEL])));
-    _configform->mappingPDKneelSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[KNEEL])));
-
-    // Forwards
-    _configform->mappingForwardPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[FORWARDS])));
-    _configform->mappingForwardSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[FORWARDS])));
-    // Backwards
-    _configform->mappingBackwardsPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[BACKWARDS])));
-    _configform->mappingBackwardsSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[BACKWARDS])));
-
-    // Strafe Left
-    _configform->mappingStrafeLeftPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[STRAFELEFT])));
-    _configform->mappingStrafeLeftSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[STRAFERIGHT])));
-    // Strafe Right
-    _configform->mappingStrafeRightPrimaryButton->setText(
-            QString::fromStdString(
-                    _jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[STRAFERIGHT])));
-    _configform->mappingStrafeRightSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[STRAFERIGHT])));
-
-    // Analog Up
-    _configform->mappingAnalogUpPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[UP])));
-    _configform->mappingAnalogUpSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[UP])));
-
-    // Analog Down
-    _configform->mappingAnalogDownPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[DOWN])));
-    _configform->mappingAnalogDownSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[DOWN])));
-
-    // Analog Left
-    _configform->mappingAnalogLeftPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[LEFT])));
-    _configform->mappingAnalogLeftSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[LEFT])));
-
-    // Analog Right
-    _configform->mappingAnalogRightPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[RIGHT])));
-    _configform->mappingAnalogRightSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[RIGHT])));
-
-    // Next Weapon
-    _configform->mappingNextWeaponPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[NEXTWEAPON])));
-    _configform->mappingNextWeaponSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[NEXTWEAPON])));
-    // Previous Weapon
-    _configform->mappingPreviousWeaponPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[PREVIOUSWEAPON])));
-    _configform->mappingPreviousWeaponSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[PREVIOUSWEAPON])));
-    // Toggle Gyroscope
-    _configform->mappingToggleGyroscopePrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[TOGGLEGYRO])));
-    _configform->mappingToggleGyroscopeSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[TOGGLEGYRO])));
-
-    _configform->mappingCenterAimPrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[RESETGYRO])));
-    _configform->mappingCenterAimSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[RESETGYRO])));
-
-    _configform->mappingCalibrateGyroscopePrimaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,profile.BUTTONPRIM[CALIBRATEGYRO])));
-    _configform->mappingCalibrateGyroscopeSecondaryButton->setText(
-            QString::fromStdString(_jsdriver->GetButtonLabelForController(asgn.PrimaryDevice,
-                                                                          profile.BUTTONSEC[CALIBRATEGYRO])));
-                                                                          */
+    for(int index = 0; index < TOTALBUTTONS; index++) {
+        _mappingButtonListPrimary[index]->setText(QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[index])));
+        _mappingButtonListSecondary[index]->setText(QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.SecondaryDevice, profile.BUTTONSEC[index])));
+    }
 }
 
 ConfigDialog::~ConfigDialog() {
     delete _configform;
 }
 
+// -----------------------------------------------------------------------------------------------
+// Slots & Signals
+// -----------------------------------------------------------------------------------------------
 
 void ConfigDialog::on_cancelButton_clicked() {
     this->close();
 }
-
-// -----------------------------------------------------------------------------------------------
-// Slots & Signals
-// -----------------------------------------------------------------------------------------------
 
 void ConfigDialog::on_primaryDeviceBox_currentIndexChanged(int index) {
     auto cmode = _localassignments[_selectedplayer].ControllerMode;
@@ -426,11 +293,10 @@ void ConfigDialog::on_controllerModeBox_currentIndexChanged(int index) {
         default:
         case DISCONNECTED:
             _loadDevicesIntoDeviceBox(DISCONNECTED);
-            _localassignments[_selectedplayer].ControllerMode = JOYCONS;
+            _localassignments[_selectedplayer].ControllerMode = DISCONNECTED;
             _localassignments[_selectedplayer].PrimaryDevice = {-1, None};
             _localassignments[_selectedplayer].SecondaryDevice = {-1, None};
             _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
-
             break;
         case FULLCONTROLLER:
             _loadDevicesIntoDeviceBox(FULLCONTROLLER);
@@ -446,7 +312,6 @@ void ConfigDialog::on_controllerModeBox_currentIndexChanged(int index) {
             _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
             break;
     }
-
 }
 
 // insane boilerplate for linking all of the sliders to their respective textboxes...
@@ -458,15 +323,18 @@ void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(i
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value) {
     _configform->playerSettingsTabGyroXAxisSensitivitySlider->setValue(value * 100);
     _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (float)value;
-
 }
 
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value) {
     _configform->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = value / 100.0;
+
 }
 
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value) {
     _configform->playerSettingsTabGyroYAxisSensitivitySlider->setValue(value * 100);
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = (float)value;
+
 }
 
 void ConfigDialog::on_reconnectControllers_clicked() {
@@ -478,9 +346,69 @@ void ConfigDialog::on_reconnectControllers_clicked() {
 
     on_primaryDeviceBox_currentIndexChanged(0);
     on_secondaryDeviceBox_currentIndexChanged(0);
-
-
 }
 
+void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary) {
+    _locked = true;
+    auto asgn = _localassignments[_selectedplayer];
+    auto start = std::chrono::steady_clock::now();
+    auto now = start;
+    QList<QPushButton*> buttonlist;
 
+    if(!isSecondary)
+        buttonlist = _mappingButtonListPrimary;
+    else
+        buttonlist = _mappingButtonListSecondary;
 
+    if (asgn.ControllerMode == DISCONNECTED) {
+        return;
+    }
+
+    std::chrono::duration<float> dur = start - now;
+    buttonlist[command]->setText(QString::fromStdString("5..."));
+    while (dur.count() < 5.0f) {
+        QApplication::processEvents();
+        if (asgn.ControllerMode == FULLCONTROLLER) {
+            auto btn = JoyShockDriver::GetFirstButtonFromDevice(asgn.PrimaryDevice);
+            if (btn != 0) {
+
+                if(isSecondary) _localprofiles[_selectedplayer].BUTTONSEC[command] = btn;
+                else _localprofiles[_selectedplayer].BUTTONPRIM[command] = btn;
+
+                buttonlist[command]->setText(QString::fromStdString(
+                        JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, btn)));
+                return;
+            }
+        }
+        else if(asgn.ControllerMode == JOYCONS) {
+            auto btn_primary = JoyShockDriver::GetFirstButtonFromDevice(asgn.PrimaryDevice);
+            auto btn_secondary = JoyShockDriver::GetFirstButtonFromDevice(asgn.SecondaryDevice);
+            auto btn = btn_primary & btn_secondary;
+
+            if (btn != 0) {
+
+                if(isSecondary) _localprofiles[_selectedplayer].BUTTONSEC[command] = btn;
+                else _localprofiles[_selectedplayer].BUTTONPRIM[command] = btn;
+
+                buttonlist[command]->setText(QString::fromStdString(
+                        JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, btn)));
+                return;
+            }
+        }
+            if (dur.count() > 4.0f)
+                buttonlist[command]->setText(QString::fromStdString("1..."));
+            else if (dur.count() > 3.0f)
+                buttonlist[command]->setText(QString::fromStdString("2..."));
+            else if (dur.count() > 2.0f)
+                buttonlist[command]->setText(QString::fromStdString("3..."));
+            else if (dur.count() > 1.0f)
+                buttonlist[command]->setText(QString::fromStdString("4..."));
+
+            now = std::chrono::steady_clock::now();
+            dur = now - start;
+    }
+    if(isSecondary) _localprofiles[_selectedplayer].BUTTONSEC[command] = 0;
+    else _localprofiles[_selectedplayer].BUTTONPRIM[command] = 0;
+    buttonlist[command]->setText(
+            QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, -1)));
+}

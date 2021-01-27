@@ -83,6 +83,8 @@ class JoyShockDriver {
         std::vector<JSDevice> GetConnectedDS4();
         std::string GetNameOfDevice(JSDevice &device);
         void ReconnectControllers();
+
+    static int GetFirstButtonFromDevice(JSDevice jsd);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H

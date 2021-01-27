@@ -116,10 +116,6 @@ DWORD JoyShockDriver::injectionloop() {
                 dev->AIMSTICK.y = -jsl_buttons_primary.stickRY;
                 dev->AIMSTICK.x = jsl_buttons_primary.stickRX;
 
-                dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
-                dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
-                dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
-                dev->BUTTONPRIM[STRAFERIGHT] = jsl_buttons_primary.stickLX > 0.25;
 
                 // TODO: Assign variable thresholds rather then using a constant value.
                 if (jsl_buttons_primary.lTrigger >= 0.50) // Ensure button bits are set based on threshold.
@@ -141,6 +137,12 @@ DWORD JoyShockDriver::injectionloop() {
                     dev->BUTTONPRIM[button] = (jsl_buttons_primary.buttons & prf.BUTTONPRIM[button]) != 0;
                     dev->BUTTONSEC[button] = (jsl_buttons_primary.buttons & prf.BUTTONSEC[button]) != 0;
                 }
+
+                // Process stick logic last to get around the button overwrite for movement.
+                dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
+                dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
+                dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
+                dev->BUTTONPRIM[STRAFERIGHT] = jsl_buttons_primary.stickLX > 0.25;
 
             }
             else if(asgn.ControllerMode == JOYCONS) {
@@ -172,11 +174,6 @@ DWORD JoyShockDriver::injectionloop() {
                     }
                 }
 
-                dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
-                dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
-                dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
-                dev->BUTTONPRIM[STRAFERIGHT] = jsl_buttons_primary.stickLX > 0.25;
-
                 // Aimstick is typically on the secondary device.
                 dev->AIMSTICK.y = -jsl_buttons_secondary.stickRY;
                 dev->AIMSTICK.x = jsl_buttons_secondary.stickRX;
@@ -188,6 +185,11 @@ DWORD JoyShockDriver::injectionloop() {
                     dev->BUTTONPRIM[button] = (combined_buttons & prf.BUTTONPRIM[button]) != 0;
                     dev->BUTTONSEC[button] = (combined_buttons & prf.BUTTONSEC[button]) != 0;
                 }
+
+                dev->BUTTONPRIM[FORWARDS] = jsl_buttons_primary.stickLY > 0.25;
+                dev->BUTTONPRIM[BACKWARDS] = jsl_buttons_primary.stickLY < -0.25;
+                dev->BUTTONPRIM[STRAFELEFT] = jsl_buttons_primary.stickLX < -0.25;
+                dev->BUTTONPRIM[STRAFERIGHT] = jsl_buttons_primary.stickLX > 0.25;
             }
         }
 
@@ -199,9 +201,9 @@ DWORD JoyShockDriver::injectionloop() {
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
-                memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
-                _gameptr->Inject(); // ship empty input to game
-                _windowactive = 0;
+                //memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
+                //_gameptr->Inject(); // ship empty input to game
+                //_windowactive = 0;
             }
             else {
                 _windowactive = 1;
@@ -230,17 +232,18 @@ int JoyShockDriver::Initialize(const HWND hw) {
     if(!_initialized) {
         _devicecount = JslConnectDevices();
 
-        int discoveredhandles[_devicecount];
+        int* discoveredhandles = new int[_devicecount];
         JslGetConnectedDeviceHandles(discoveredhandles, _devicecount);
 
         JSDevice deviceentry;
 
-        for(int _handleid : discoveredhandles) {
+        for(int _handleid = 0; _handleid < _devicecount; _handleid++) {
             deviceentry.Handle = _handleid;
             deviceentry.Type = (JSD_ControllerType)JslGetControllerType(_handleid);
 
             _devices->push_back(deviceentry);
         }
+        delete discoveredhandles;
         _initialized = true;
     }
     return _devicecount;
@@ -450,15 +453,28 @@ void JoyShockDriver::ReconnectControllers() {
     _devices->clear();
     _devicecount = JslConnectDevices();
 
-    int discoveredhandles[_devicecount];
+    int* discoveredhandles = new int[_devicecount];
     JslGetConnectedDeviceHandles(discoveredhandles, _devicecount);
 
     JSDevice deviceentry;
 
-    for(int _handleid : discoveredhandles) {
+    for(int _handleid; _handleid < _devicecount; _handleid++) {
         deviceentry.Handle = _handleid;
         deviceentry.Type = (JSD_ControllerType)JslGetControllerType(_handleid);
 
         _devices->push_back(deviceentry);
     }
+    delete discoveredhandles;
+}
+
+int JoyShockDriver::GetFirstButtonFromDevice(JSDevice jsd) {
+    auto btns = JslGetButtons(jsd.Handle);
+    int index = 1;
+
+    while((index << 1) <= JSMASK_SR ) {
+        if(btns & index)
+            return index;
+        index = index << 1;
+    }
+    return 0;
 }

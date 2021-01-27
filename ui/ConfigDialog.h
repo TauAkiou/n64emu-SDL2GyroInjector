@@ -36,6 +36,8 @@
 #include <QtWidgets>
 #include <sstream>
 #include <iostream>
+#include <chrono>
+#include <future>
 #include "../settings/Settings.h"
 #include "ui_1964_config.h"
 #include "../input/JoyShockDriver.h"
@@ -47,7 +49,6 @@ namespace Ui {
 class ConfigDialog : public QDialog {
     Q_OBJECT
 private:
-
     Ui::ConfigDialog* _configform;
 
     QList<QPushButton*> _mappingButtonListPrimary;
@@ -62,14 +63,13 @@ private:
     std::vector<JSDevice> _loadedjoyconprimary;
     std::vector<JSDevice> _loadedjoyconsecondary;
 
+    bool _locked = false;
     static inline bool _configdialogisopen = false;
     static inline bool _guibusy = false;
     PLAYERS _selectedplayer;
     void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
     void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
-
     void _mapButtonToCommand(CONTROLLERENUM command, bool isSecondary);
-    void _processSecondaryLayout(int value);
 
 
 signals:
@@ -78,6 +78,8 @@ signals:
 
 private slots:
     void _processPrimaryLayout(int value);
+    void _processSecondaryLayout(int value);
+
     void on_cancelButton_clicked();
     void on_reconnectControllers_clicked();
     void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
@@ -88,17 +90,14 @@ private slots:
     void on_primaryDeviceBox_currentIndexChanged(int index);
     void on_secondaryDeviceBox_currentIndexChanged(int index);
 
-    // Why can't qt designer have an easy way of assigning large groups of buttons in a way that doesn't require:
+    // Why can't qt designer have an easy way of assigning large groups of buttons in a way that is straightforward and works...
+    // unlike the following...
+    //
     // - Subclassing, which causes issues in the editor & extra programming overhead
     // - ID Extraction, which turns any edits to the button chain into a tiresome manual nightmare of adjusting numbers
     // - ButtonGroups, which have no way of assigning the ID or relative order in designer, because reasons?
     // - Manually creating 44(!) on_<whatever>_clicked() functions and having them call a function
-    // - Dynamically creating the buttons with appropriate names, which defeats the point of the designer
-    //
-    // Someone please find a better, more maintainable way for this that works in tandem with qt designer.
-
-
-
+    // - Dynamically creating the buttons and linking them myself, which defeats the point of the designer
 
 public:
     ~ConfigDialog() override;

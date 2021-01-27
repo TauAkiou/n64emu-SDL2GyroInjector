@@ -74,6 +74,7 @@ class InputHandler {
         vec2<float> ProcessAimStickInputForPlayer(PLAYERS player);
         static vec2<float> HandleDeadZoneStickInput(vec2<float> stick, vec2<float> deadzone);
 
+    static vec2<float> GetBaseFactorForStickType(enum STICKMODE mode);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_INPUTHANDLER_H
