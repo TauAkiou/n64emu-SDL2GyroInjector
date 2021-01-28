@@ -83,7 +83,7 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
         //int laststate = mousetoggle;
         //configdialogopen = 1, mousetoggle = 0, lastinputbutton = 0, guibusy = 1;
         //DialogBox(hInst, MAKEINTRESOURCE(IDC_CONFIGWINDOW), hParent, (DLGPROC)GUI_Config);
-        //MainDll::GetInstance()->HandleConfigWindow(0, nullptr);
+        MainDll::GetInstance()->HandleConfigWindow(0, nullptr);
         //UpdateControllerStatus();
         //configdialogopen = 0, windowactive = 1, guibusy = 1;
     //}

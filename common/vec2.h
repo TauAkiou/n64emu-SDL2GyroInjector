@@ -99,7 +99,7 @@ public:
     }
 
     void rotate(double deg) {
-        double theta = deg / 180.0 * M_PI;
+        double theta = deg / 180.0 * PI;
         double c = cos(theta);
         double s = sin(theta);
         double tx = x * c - y * s;
