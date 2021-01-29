@@ -26,6 +26,149 @@
 
 #include "ConfigDialog.h"
 
+/*
+ * ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new Ui::ConfigDialog)
+ *
+ * Constructor for configuration dialog.
+ *
+ */
+ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new Ui::ConfigDialog) {
+    _baseDialog->setupUi(this);
+    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
+    _baseDialog->playerSelectionButtonGroup->addButton(_baseDialog->player1Radio, 0);
+    _baseDialog->playerSelectionButtonGroup->addButton(_baseDialog->player2Radio, 1);
+    _baseDialog->playerSelectionButtonGroup->addButton(_baseDialog->player3Radio, 2);
+    _baseDialog->playerSelectionButtonGroup->addButton(_baseDialog->player4Radio, 3);
+
+    _getCurrentConfigState();
+
+    // Dynamically generate all mapper buttons and assign them to the ScrollBox
+    auto *mapperPrimary = new QSignalMapper(this);
+    auto *mapperSecondary = new QSignalMapper(this);
+    connect(mapperPrimary, SIGNAL(mapped(int)), this, SIGNAL(primaryClicked(int)));
+    connect(mapperSecondary, SIGNAL(mapped(int)), this, SIGNAL(secondaryClicked(int)));
+
+    for(int index = 0; index < TOTALBUTTONS; index++) {
+        auto primaryButton = new QPushButton(this);
+        auto secondaryButton = new QPushButton(this);
+        primaryButton->setText(QString::fromStdString("None"));
+        secondaryButton->setText(QString::fromStdString("None"));
+        _mappingButtonListPrimary.append(primaryButton);
+        _mappingButtonListSecondary.append(secondaryButton);
+        mapperPrimary->setMapping(primaryButton, index);
+        mapperSecondary->setMapping(secondaryButton, index);
+
+        connect(primaryButton, SIGNAL(clicked()), mapperPrimary, SLOT(map()));
+        connect(secondaryButton, SIGNAL(clicked()), mapperSecondary, SLOT(map()));
+
+    }
+
+    connect(this, SIGNAL(primaryClicked(int)), this, SLOT(_processPrimaryLayout(int)));
+    connect(this, SIGNAL(secondaryClicked(int)), this, SLOT(_processSecondaryLayout(int)));
+
+    _createPrimaryButtonLayouts();
+
+    _loadedfull = _jsdriver->GetConnectedFullControllers();
+    _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
+    _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
+    _selectedplayer = PLAYER1;
+
+    _baseDialog->controllerModeBox->setCurrentIndex(_localassignments[_selectedplayer].ControllerMode);
+
+    _loadProfileSettingsIntoUi(_localprofiles[_selectedplayer]);
+    _loadDevicesIntoDeviceBox(_localassignments[_selectedplayer].ControllerMode);
+    _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+}
+
+void ConfigDialog::_setPlayerColorAndDefaultNumber(PROFILE prf, Assignment asgn) {
+    switch(asgn.ControllerMode) {
+        default:
+        case DISCONNECTED:
+            return;
+        case JOYCONS:
+            // JSL is smart enough to ignore a line for controllers that don't have a particular feature.
+            _jsdriver->SetDS4Color(asgn.SecondaryDevice, 15);
+        case FULLCONTROLLER:
+            _jsdriver->SetSPCJCNumber(asgn.PrimaryDevice, 15);
+            _jsdriver->SetDS4Color(asgn.PrimaryDevice, prf.DS4Color);
+            return;
+    }
+}
+
+void ConfigDialog::_getCurrentConfigState() {
+    // Set up our profiles and global states here.
+    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+        _localprofiles[player] = _settingsptr->GetProfileForPlayer(static_cast<PLAYERS>(player));
+        _localassignments[player] = _settingsptr->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+    }
+    // I hate ternaries, but this is a place where they are actually quite useful.
+    _baseDialog->globalGoldeneyeCrosshairCheckbox->setCheckState
+    (_settingsptr->GetShowGoldeneyeCrosshair() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    auto gratio = _settingsptr->GetOverrideRatio();
+    _baseDialog->globalRatioHorizontalSpinbox->setValue(gratio.x);
+    _baseDialog->globalRatioVerticalSpinbox->setValue(gratio.y);
+    _baseDialog->globalFovSlider->setValue(_settingsptr->GetFovOverride());
+}
+
+Color ConfigDialog::_getColorFromInt(int color) {
+    // https://math.stackexchange.com/questions/1635999/algorithm-to-convert-integer-to-3-variables-rgb
+    Color ret;
+    ret.r = color / 0x10000;
+    ret.g = (color / 0x100);
+    ret.b = color % 0x100;
+    return ret;
+}
+
+int ConfigDialog::_getIntFromColor(Color color) {
+    https://stackoverflow.com/questions/4801366/convert-rgb-values-to-integer
+    int rgb = color.r;
+    rgb = (rgb << 8) + color.g;
+    return (rgb << 8) + color.b;
+}
+
+void ConfigDialog::_loadProfileSettingsIntoUi(PROFILE profile) {
+    //
+    _baseDialog->playerSettingsTabStickAimStickLayoutBox->setCurrentIndex(profile.AimStick);
+    _baseDialog->playerSettingsTabStickAimStickModeBox->setCurrentIndex(profile.StickMode);
+    _baseDialog->playerSettingsTabOtherReverseGyroPitchCheckbox->setChecked(profile.GyroPitchInverted);
+    _baseDialog->playerSettingsTabOtherReverseAimStickPitchCheckbox->setChecked(profile.StickPitchInverted);
+    _baseDialog->playerSettingsTabOtherCursorAimingPDCheckbox->setChecked(profile.PerfectDarkAimMode);
+    _baseDialog->playerSettingsTabOtherCursorAimingGeCheckbox->setChecked(profile.GoldeneyeAimMode);
+
+    auto ds4color = _getColorFromInt(profile.DS4Color);
+    _baseDialog->playerrSettingsTabOtherDS4RedSpinbox->setValue(ds4color.r);
+    _baseDialog->playerrSettingsTabOtherDS4GreenSpinbox->setValue(ds4color.g);
+    _baseDialog->playerrSettingsTabOtherDS4BlueSpinbox->setValue(ds4color.b);
+
+    //auto colorrole = _baseDialog->colorwidget.
+
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(profile.AimStickSensitivity.x);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue(profile.AimStickSensitivity.x * 100);
+
+    _baseDialog->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(profile.GyroscopeSensitivity.y);
+    _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue(profile.GyroscopeSensitivity.y * 100);
+
+    _baseDialog->playerSettingsTabStickAimSensitivityXSpinbox->setValue(profile.AimStickSensitivity.x);
+    _baseDialog->playerSettingsTabStickAimSensitivityXSlider->setValue(profile.AimStickSensitivity.x * 100);
+
+    _baseDialog->playerSettingsTabStickAimSensitivityYSpinbox->setValue(profile.AimStickSensitivity.y);
+    _baseDialog->playerSettingsTabStickAimSensitivityYSlider->setValue(profile.AimStickSensitivity.y * 100);
+
+    _baseDialog->playerSettingsTabStickAimDeadzoneXSpinbox->setValue(profile.AimstickDeadzone.x);
+    _baseDialog->playerSettingsTabStickAimDeadzoneXSlider->setValue(profile.AimstickDeadzone.x * 100);
+
+    _baseDialog->playerSettingsTabStickAimDeadzoneYSpinbox->setValue(profile.AimstickDeadzone.y);
+    _baseDialog->playerSettingsTabStickAimDeadzoneYSlider->setValue(profile.AimstickDeadzone.y * 100);
+
+    _baseDialog->playerSettingsTabStickMoveDeadzoneXSpinbox->setValue(profile.MoveStickDeadzone.x);
+    _baseDialog->playerSettingsTabStickMoveDeadzoneXSlider->setValue(profile.MoveStickDeadzone.x * 100);
+
+    _baseDialog->playerSettingsTabStickMoveDeadzoneYSpinbox->setValue(profile.MoveStickDeadzone.y);
+    _baseDialog->playerSettingsTabStickMoveDeadzoneYSlider->setValue(profile.MoveStickDeadzone.y * 100);
+
+}
+
 void ConfigDialog::_processPrimaryLayout(int value) {
     if (!_locked) {
         _locked = true;
@@ -39,14 +182,13 @@ void ConfigDialog::_processSecondaryLayout(int value) {
         _locked = true;
         _mapButtonToCommand(static_cast<CONTROLLERENUM>(value), true);
         _locked = false;
-
     }
 
 }
 
 void ConfigDialog::_createPrimaryButtonLayouts() {
-    auto vlayout = new QVBoxLayout(_configform->scrollAreaWidgetContents);
-    _configform->scrollAreaWidgetContents->setLayout(vlayout);
+    auto vlayout = new QVBoxLayout(_baseDialog->scrollAreaWidgetContents);
+    _baseDialog->scrollAreaWidgetContents->setLayout(vlayout);
 
     for(int entry = 0; entry < TOTALBUTTONS; entry++) {
         auto layout = new QHBoxLayout();
@@ -121,33 +263,33 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
     switch(mode) {
         case FULLCONTROLLER:
         // Disable and clear secondary device box.
-        _configform->secondaryDeviceBox->clear();
-        _configform->secondaryDeviceBox->setDisabled(true);
+        _baseDialog->secondaryDeviceBox->clear();
+        _baseDialog->secondaryDeviceBox->setDisabled(true);
 
-        _configform->primaryDeviceBox->clear();
-        _configform->primaryDeviceBox->setEnabled(true);
+        _baseDialog->primaryDeviceBox->clear();
+        _baseDialog->primaryDeviceBox->setEnabled(true);
 
         for(JSDevice dev : _loadedfull) {
             auto strbuild = std::stringstream();
             deviceno++;
             strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
-            _configform->primaryDeviceBox->addItem(
+            _baseDialog->primaryDeviceBox->addItem(
                     QString::fromStdString(strbuild.str()));
         }
         break;
         case JOYCONS:
             // Disable and clear secondary device box.
-            _configform->secondaryDeviceBox->clear();
-            _configform->secondaryDeviceBox->setEnabled(true);
+            _baseDialog->secondaryDeviceBox->clear();
+            _baseDialog->secondaryDeviceBox->setEnabled(true);
 
-            _configform->primaryDeviceBox->clear();
-            _configform->primaryDeviceBox->setEnabled(true);
+            _baseDialog->primaryDeviceBox->clear();
+            _baseDialog->primaryDeviceBox->setEnabled(true);
 
             for(JSDevice dev : _loadedjoyconprimary) {
                 auto strbuild = std::stringstream();
                 deviceno++;
                 strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
-                _configform->primaryDeviceBox->addItem(
+                _baseDialog->primaryDeviceBox->addItem(
                         QString::fromStdString(strbuild.str()));
             }
 
@@ -156,67 +298,17 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
                 auto strbuild = std::stringstream();
                 deviceno++;
                 strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
-                _configform->secondaryDeviceBox->addItem(
+                _baseDialog->secondaryDeviceBox->addItem(
                         QString::fromStdString(strbuild.str()));
             }
             break;
         case DISCONNECTED:
         default:
-            _configform->secondaryDeviceBox->clear();
-            _configform->secondaryDeviceBox->setEnabled(false);
+            _baseDialog->secondaryDeviceBox->clear();
+            _baseDialog->secondaryDeviceBox->setEnabled(false);
 
-            _configform->primaryDeviceBox->clear();
-            _configform->primaryDeviceBox->setEnabled(false);
-    }
-}
-
-ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _configform(new Ui::ConfigDialog) {
-    _configform->setupUi(this);
-    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
-
-    _getCurrentConfigState();
-
-    // Dynamically generate all mapper buttons and assign them to the ScrollBox
-    auto *mapperPrimary = new QSignalMapper(this);
-    auto *mapperSecondary = new QSignalMapper(this);
-    connect(mapperPrimary, SIGNAL(mapped(int)), this, SIGNAL(primaryClicked(int)));
-    connect(mapperSecondary, SIGNAL(mapped(int)), this, SIGNAL(secondaryClicked(int)));
-
-    for(int index = 0; index < TOTALBUTTONS; index++) {
-        auto primaryButton = new QPushButton(this);
-        auto secondaryButton = new QPushButton(this);
-        primaryButton->setText(QString::fromStdString("None"));
-        secondaryButton->setText(QString::fromStdString("None"));
-        _mappingButtonListPrimary.append(primaryButton);
-        _mappingButtonListSecondary.append(secondaryButton);
-        mapperPrimary->setMapping(primaryButton, index);
-        mapperSecondary->setMapping(secondaryButton, index);
-
-        connect(primaryButton, SIGNAL(clicked()), mapperPrimary, SLOT(map()));
-        connect(secondaryButton, SIGNAL(clicked()), mapperSecondary, SLOT(map()));
-
-    }
-
-    connect(this, SIGNAL(primaryClicked(int)), this, SLOT(_processPrimaryLayout(int)));
-    connect(this, SIGNAL(secondaryClicked(int)), this, SLOT(_processSecondaryLayout(int)));
-
-    _createPrimaryButtonLayouts();
-
-    _loadedfull = _jsdriver->GetConnectedFullControllers();
-    _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
-    _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
-    _selectedplayer = PLAYER1;
-
-    _configform->controllerModeBox->setCurrentIndex(_localassignments[_selectedplayer].ControllerMode);
-
-    _loadDevicesIntoDeviceBox(_localassignments[_selectedplayer].ControllerMode);
-    _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
-}
-
-void ConfigDialog::_getCurrentConfigState() {
-    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-        _localprofiles[player] = _settingsptr->GetProfileForPlayer(static_cast<PLAYERS>(player));
-        _localassignments[player] = _settingsptr->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
+            _baseDialog->primaryDeviceBox->clear();
+            _baseDialog->primaryDeviceBox->setEnabled(false);
     }
 }
 
@@ -231,8 +323,10 @@ void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
     }
 }
 
+//void ConfigDialog::_disconnectDevices()
+
 ConfigDialog::~ConfigDialog() {
-    delete _configform;
+    delete _baseDialog;
 }
 
 // -----------------------------------------------------------------------------------------------
@@ -240,6 +334,13 @@ ConfigDialog::~ConfigDialog() {
 // -----------------------------------------------------------------------------------------------
 
 void ConfigDialog::on_cancelButton_clicked() {
+    this->close();
+}
+
+void ConfigDialog::on_okButton_clicked() {
+    _commitAssignments();
+    _commitProfiles();
+    _commitGlobals();
     this->close();
 }
 
@@ -287,54 +388,152 @@ void ConfigDialog::on_secondaryDeviceBox_currentIndexChanged(int index) {
     }
 }
 
-
 void ConfigDialog::on_controllerModeBox_currentIndexChanged(int index) {
+    // jumping to default switch statements on conditions is one of the only valid uses for goto.
+    // simply, you cannot have a player attached to a device if they do not have any controllers
+    // of that class connected. Treat an empty controller list as though it was DISCONNECTED.
+    // TODO: Consider refactoring this single, horrible decision out.
     switch(index) {
-        default:
-        case DISCONNECTED:
-            _loadDevicesIntoDeviceBox(DISCONNECTED);
-            _localassignments[_selectedplayer].ControllerMode = DISCONNECTED;
-            _localassignments[_selectedplayer].PrimaryDevice = {-1, None};
-            _localassignments[_selectedplayer].SecondaryDevice = {-1, None};
-            _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
-            break;
         case FULLCONTROLLER:
+            if (_loadedfull.empty())
+                goto ListEmpty; // no full controllers; treat as DISCONNECTED.
             _loadDevicesIntoDeviceBox(FULLCONTROLLER);
             _localassignments[_selectedplayer].ControllerMode = FULLCONTROLLER;
             _localassignments[_selectedplayer].PrimaryDevice = _loadedfull.front(); // Always select the first con.
-            _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
+            _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
         case JOYCONS:
+            if(_loadedjoyconprimary.empty() || _loadedjoyconsecondary.empty())
+                goto ListEmpty; // no joycons; treat as DISCONNECTED.
             _loadDevicesIntoDeviceBox(JOYCONS);
             _localassignments[_selectedplayer].ControllerMode = JOYCONS;
             _localassignments[_selectedplayer].PrimaryDevice = _loadedjoyconprimary.front(); // Always select the first con.
             _localassignments[_selectedplayer].SecondaryDevice = _loadedjoyconsecondary.front();
             _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
             break;
+        default:
+        case DISCONNECTED:
+        ListEmpty:
+            _loadDevicesIntoDeviceBox(DISCONNECTED);
+            _localassignments[_selectedplayer].ControllerMode = DISCONNECTED;
+            _localassignments[_selectedplayer].PrimaryDevice = {-1, None};
+            _localassignments[_selectedplayer].SecondaryDevice = {-1, None};
+            _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+            break;
     }
 }
 
 // insane boilerplate for linking all of the sliders to their respective textboxes...
+
+// Gyro Aim X
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value) {
-    _configform->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(value / 100.0);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (value / 100.0);
 }
 
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value) {
-    _configform->playerSettingsTabGyroXAxisSensitivitySlider->setValue(value * 100);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue(value * 100.0);
     _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (float)value;
 }
 
+// Y
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value) {
-    _configform->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(value / 100.0);
+    _baseDialog->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].GyroscopeSensitivity.y = value / 100.0;
-
 }
 
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value) {
-    _configform->playerSettingsTabGyroYAxisSensitivitySlider->setValue(value * 100);
+    _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue(value * 100.0);
     _localprofiles[_selectedplayer].GyroscopeSensitivity.y = (float)value;
+}
 
+// Stick Aim X
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickAimSensitivityXSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].AimStickSensitivity.x = (value / 100.0);
+}
+
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickAimSensitivityXSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].AimStickSensitivity.x = (float) value;
+}
+
+// Y
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickAimSensitivityYSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].AimStickSensitivity.y = (value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickAimSensitivityYSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].AimStickSensitivity.y = (float) value;
+}
+
+// Stick Aim Deadzone X
+
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickAimDeadzoneXSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].AimstickDeadzone.x = (value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickAimDeadzoneXSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].AimstickDeadzone.x = (float) value;
+}
+
+// Y
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickAimDeadzoneYSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].AimstickDeadzone.y = (value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickAimDeadzoneYSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].AimstickDeadzone.y = (float) value;
+}
+
+// Stick Move X
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickMoveDeadzoneXSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.x = (value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickMoveDeadzoneXSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.x = (float) value;
+}
+
+// Y
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSlider_valueChanged(int value) {
+    _baseDialog->playerSettingsTabStickMoveDeadzoneYSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.y = (value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabStickMoveDeadzoneYSlider->setValue(value * 100.0);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.y = (float) value;
+}
+
+void ConfigDialog::on_globalFovSpinbox_valueChanged(int value) {
+    _baseDialog->globalFovSlider->setValue(value);
+    _settingsptr->SetFovOverride(value);
+}
+
+void ConfigDialog::on_globalFovSlider_valueChanged(int value) {
+    _baseDialog->globalFovSpinbox->setValue(value);
+    _settingsptr->SetFovOverride(value);
+}
+
+void ConfigDialog::on_playerSettingsTabGyroAimingStyleBox(int index) {
+    switch(index) {
+        default:
+        case 0:
+            _localprofiles->FreeAiming = true;
+            break;
+        case 1:
+            _localprofiles->FreeAiming = false;
+            break;
+    }
 }
 
 void ConfigDialog::on_reconnectControllers_clicked() {
@@ -342,10 +541,62 @@ void ConfigDialog::on_reconnectControllers_clicked() {
     _loadedfull = _jsdriver->GetConnectedFullControllers();
     _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
     _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
-    _getCurrentConfigState();
 
-    on_primaryDeviceBox_currentIndexChanged(0);
-    on_secondaryDeviceBox_currentIndexChanged(0);
+    // Reset all controllers to disconnected.
+    _loadDevicesIntoDeviceBox(DISCONNECTED);
+    for(int ctrl = PLAYER1; ctrl < ALLPLAYERS; ctrl++) {
+        _localassignments[_selectedplayer].ControllerMode = DISCONNECTED;
+        _localassignments[_selectedplayer].PrimaryDevice = {-1, None};
+        _localassignments[_selectedplayer].SecondaryDevice = {-1, None};
+    }
+    _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+    _loadDevicesIntoDeviceBox(DISCONNECTED);
+    _baseDialog->controllerModeBox->setCurrentIndex(DISCONNECTED);
+
+    // Commit assignments as all original assignments may now be invalid.
+    _commitAssignments();
+}
+
+void ConfigDialog::on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* button) {
+    switch(_baseDialog->playerSelectionButtonGroup->id(button)) {
+        case 0:
+            _selectedplayer = PLAYER1;
+            break;
+        case 1:
+            _selectedplayer = PLAYER2;
+            break;
+        case 2:
+            _selectedplayer = PLAYER3;
+            break;
+        case 3:
+            _selectedplayer = PLAYER4;
+            break;
+    }
+
+
+    _loadProfileSettingsIntoUi(_localprofiles[_selectedplayer]);
+    _loadDevicesIntoDeviceBox(_localassignments[_selectedplayer].ControllerMode);
+    _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+}
+
+// ---------------------------------------------------------------------------------------------------------
+
+void ConfigDialog::_commitAssignments() {
+    for(int ctrl = PLAYER1; ctrl < ALLPLAYERS; ctrl++) {
+        _settingsptr->SetAssignmentForPlayer(static_cast<PLAYERS>(ctrl), _localassignments[ctrl]);
+    }
+}
+
+void ConfigDialog::_commitProfiles() {
+    for(int ctrl = PLAYER1; ctrl < ALLPLAYERS; ctrl++) {
+        _settingsptr->SetProfileForPlayer(static_cast<PLAYERS>(ctrl), _localprofiles[ctrl]);
+    }
+}
+
+void ConfigDialog::_commitGlobals() {
+    _settingsptr->SetShowGoldeneyeCrosshair(_baseDialog->globalGoldeneyeCrosshairCheckbox->isChecked());
+    _settingsptr->SetOverrideRatio(vec2<int>{_baseDialog->globalRatioHorizontalSpinbox->value(), _baseDialog->globalRatioVerticalSpinbox->value() });
+    _settingsptr->SetFovOverride(_baseDialog->globalFovSpinbox->value());
 }
 
 void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary) {

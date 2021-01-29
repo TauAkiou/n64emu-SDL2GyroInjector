@@ -45,24 +45,30 @@ private:
     // Plugin/Emulator settings
     bool EmulatorOverclocked = true;
     int FovOverride = 60;
-    int OverrideRatioWidth = 16;
-    int OverrideRatioHeight = 9;
+    vec2<int> _overrideRatio = {16, 9 };
     bool ShowGoldeneyeCrosshair = false;
 
 public:
+    // Instance
     static Settings* GetInstance();
+
+    // Getters/Setters for profiles
     PROFILE GetProfileForPlayer(enum PLAYERS player);
-    bool GetIfPlayerIsConnected(enum PLAYERS player);
+    void SetProfileForPlayer(enum PLAYERS player, PROFILE profile);
     Assignment GetAssignmentForPlayer(enum PLAYERS player);
     void SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn);
     [[nodiscard]] bool GetIfEmulatorOverclocked() const;
-    void SetIfEmulatorOverclocked(bool val);
-    int GetFovOverride() const;
-    void SetFovOverride(int fov);
-    int GetOverrideRatioWidth() const;
-    [[nodiscard]] int GetOverrideRatioHeight() const;
+    void SetIfEmulatorOverclocked(bool foviwd);
+    [[nodiscard]] int GetFovOverride() const;
+    void SetFovOverride(int fovoverride);
+    vec2<int> GetOverrideRatio();
+    void SetOverrideRatio(const vec2<int>& overrideratio);
+
+
+
+    bool GetIfPlayerIsConnected(enum PLAYERS player);
+
     [[nodiscard]] bool GetShowGoldeneyeCrosshair() const;
-    void SetProfileForPlayer(enum PLAYERS player, PROFILE profile);
     void SetShowGoldeneyeCrosshair(bool val);
 };
 

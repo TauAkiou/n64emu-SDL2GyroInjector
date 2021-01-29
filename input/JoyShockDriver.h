@@ -76,8 +76,8 @@ class JoyShockDriver {
         std::vector<JSDevice> GetConnectedLeftJoycons();
         std::vector<JSDevice> GetConnectedRightJoycons();
         static std::string GetButtonLabelForController(JSDevice device, int buttonmask);
-        void SetPlayerDS4Color(const int playernumber, const int color);
-        void SetPlayerSPCJCNumber(const int playernumber, const int number);
+        static void SetDS4Color(JSDevice dev, int color);
+        void SetSPCJCNumber(JSDevice dev, const int number);
         void CalibrateGyroscope(JSDevice &jsd);
         void CalibrateAllGyroscopes();
         std::vector<JSDevice> GetConnectedDS4();

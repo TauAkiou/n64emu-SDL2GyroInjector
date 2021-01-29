@@ -49,7 +49,7 @@ namespace Ui {
 class ConfigDialog : public QDialog {
     Q_OBJECT
 private:
-    Ui::ConfigDialog* _configform;
+    Ui::ConfigDialog* _baseDialog;
 
     QList<QPushButton*> _mappingButtonListPrimary;
     QList<QPushButton*> _mappingButtonListSecondary;
@@ -70,7 +70,17 @@ private:
     void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
     void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
     void _mapButtonToCommand(CONTROLLERENUM command, bool isSecondary);
-
+    void _selectDeviceFromAssignment();
+    void _getCurrentConfigState();
+    static QString _getNameFromButtonIndex(CONTROLLERENUM index);
+    void _createPrimaryButtonLayouts();
+    void _commitAssignments();
+    void _commitProfiles();
+    void _commitGlobals();
+    void _loadProfileSettingsIntoUi(PROFILE profile);
+    static Color _getColorFromInt(int color);
+    int _getIntFromColor(Color color);
+    void _setPlayerColorAndDefaultNumber(PROFILE prf, Assignment asgn);
 
 signals:
     void primaryClicked(int value);
@@ -81,14 +91,32 @@ private slots:
     void _processSecondaryLayout(int value);
 
     void on_cancelButton_clicked();
+    void on_okButton_clicked();
     void on_reconnectControllers_clicked();
     void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
     void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
     void on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value);
     void on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickAimSensitivityXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimSensitivityXSpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickAimSensitivityYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimSensitivityYSpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickAimDeadzoneXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimDeadzoneYSpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickAimDeadzoneYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimDeadzoneXSpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickMoveDeadzoneXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(double value);
+    void on_playerSettingsTabStickMoveDeadzoneYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value);
     void on_controllerModeBox_currentIndexChanged(int index);
     void on_primaryDeviceBox_currentIndexChanged(int index);
     void on_secondaryDeviceBox_currentIndexChanged(int index);
+    void on_globalFovSpinbox_valueChanged(int value);
+    void on_globalFovSlider_valueChanged(int value);
+    void on_playerSettingsTabGyroAimingStyleBox(int index);
+    void on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* button);
+
 
     // Why can't qt designer have an easy way of assigning large groups of buttons in a way that is straightforward and works...
     // unlike the following...
@@ -104,14 +132,6 @@ public:
     explicit ConfigDialog(QDialog *parent = 0);
     static bool GetConfigDialogState();
 
-
-    void _selectDeviceFromAssignment();
-
-    void _getCurrentConfigState();
-
-    static QString _getNameFromButtonIndex(CONTROLLERENUM index);
-
-    void _createPrimaryButtonLayouts();
 
 
 };

@@ -25,7 +25,6 @@
  */
 
 #include "Settings.h"
-
 #include <utility>
 
 Settings* Settings::GetInstance() {
@@ -47,10 +46,6 @@ void Settings::SetProfileForPlayer(enum PLAYERS player, PROFILE profile) {
     Profile[player] = std::move(profile);
 }
 
-int Settings::GetOverrideRatioHeight() const {
-    return OverrideRatioHeight;
-}
-
 bool Settings::GetShowGoldeneyeCrosshair() const {
     return ShowGoldeneyeCrosshair;
 }
@@ -68,28 +63,31 @@ bool Settings::GetIfPlayerIsConnected(enum PLAYERS player) {
         case JOYCONS:
             return true;
     }
-
-
 }
 
 Assignment Settings::GetAssignmentForPlayer(enum PLAYERS player) {
     return ControllerAssignments[player];
 }
 
+
 int Settings::GetFovOverride() const {
     return FovOverride;
 }
 
-int Settings::GetOverrideRatioWidth() const {
-    return OverrideRatioWidth;
+void Settings::SetFovOverride(int fov) {
+    FovOverride = fov;
+}
+
+vec2<int> Settings::GetOverrideRatio() {
+    return _overrideRatio;
+}
+
+void Settings::SetOverrideRatio(const vec2<int>& overrideratio) {
+    _overrideRatio = overrideratio;
 }
 
 void Settings::SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn) {
     ControllerAssignments[player] = asgn;
-}
-
-void Settings::SetFovOverride(int fov) {
-    FovOverride = fov;
 }
 
 ControlState* ControlState::GetInstance() {

@@ -46,7 +46,7 @@
 #define RATIOFACTOR 1.f
 #define OVERRIDEFOV 60
 #else
-#define RATIOFACTOR (((float)_settings->GetOverrideRatioWidth() / (float)_settings->GetOverrideRatioHeight()) / (16.f / 9.f))
+#define RATIOFACTOR (((float)_settings->GetOverrideRatio().x / (float)_settings->GetOverrideRatio().y) / (16.f / 9.f))
 #define OVERRIDEFOV _settings->GetFovOverride()
 #endif
 

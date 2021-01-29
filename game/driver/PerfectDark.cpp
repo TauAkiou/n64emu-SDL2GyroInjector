@@ -229,11 +229,11 @@ void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int a
         //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
         if(profile.UseStickToAim) {
             crosshairposx[player] += _cfgptr->Device[player].AIMSTICK.x / 10.0f * (profile.AimStickSensitivity.x / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
-            crosshairposy[player] += (!profile.PitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * (profile.AimStickSensitivity.y / sensitivity); // * fmax(mouseaccel, 1);
+            crosshairposy[player] += (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * (profile.AimStickSensitivity.y / sensitivity); // * fmax(mouseaccel, 1);
 
         }
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
+        crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
         crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
         _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
@@ -286,18 +286,18 @@ void PerfectDark::_camspyslayer(const int player, const PROFILE& profile, const 
     {
         if(!_cfgptr->Device[player].BUTTONPRIM[AIM] && !_cfgptr->Device[player].BUTTONSEC[AIM]) // camspy
         {
-            xstick[player] = (int)((!profile.PitchInverted ? -_cfgptr->Device[player].AIMSTICK.y : _cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 8.0f);
+            xstick[player] = (int)((!profile.StickPitchInverted ? -_cfgptr->Device[player].AIMSTICK.y : _cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 8.0f);
             ystick[player] = (int)(_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 16.0f);
         }
         else // camspy (aiming mode)
         {
-            xstick[player] = (int)((!profile.PitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 15.0f);
+            xstick[player] = (int)((!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 15.0f);
             ystick[player] = (int)(_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 15.0f);
         }
     }
     else // slayer
     {
-        xstick[player] = (int)((!profile.PitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 17.0f);
+        xstick[player] = (int)((!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 17.0f);
         ystick[player] = (int)(_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 17.0f);
     }
     xstick[player] = PluginHelpers::ClampInt(xstick[player], -128, 127);
@@ -397,6 +397,7 @@ void PerfectDark::_controller()
 //==========================================================================
 void PerfectDark::_injecthacks()
 {
+    auto override_ratio = _settings->GetOverrideRatio();
     const unsigned int addressarray[33] = {0x802C07B8, 0x802C07BC, 0x802C07EC, 0x802C07F0, 0x802C07FC, 0x802C0800, 0x802C0808, 0x802C0820, 0x802C0824, 0x802C082C, 0x802C0830, 0x803C7988, 0x803C798C, 0x803C7990, 0x803C7994, 0x803C7998, 0x803C799C, 0x803C79A0, 0x803C79A4, 0x803C79A8, 0x803C79AC, 0x803C79B0, 0x803C79B4, 0x803C79B8, 0x803C79BC, 0x803C79C0, 0x803C79C4, 0x803C79C8, 0x803C79CC, 0x803C79D0, 0x803C79D4, 0x803C79D8, 0x803C79DC}, codearray[33] = {0x0BC69E62, 0x8EA10120, 0x0BC69E67, 0x263107A4, 0x0BC69E6B, 0x4614C500, 0x46120682, 0x0BC69E6F, 0x26100004, 0x0BC69E73, 0x4614C500, 0x54200003, 0x00000000, 0xE6B21668, 0xE6A8166C, 0x0BC281F0, 0x8EA10120, 0x50200001, 0xE6380530, 0x0BC281FD, 0x8EA10120, 0x50200001, 0xE6340534, 0x0BC28201, 0x8EA10120, 0x50200001, 0xE6380530, 0x0BC2820A, 0x8EA10120, 0x50200001, 0xE6340534, 0x0BC2820D, 0x00000000}; // add branch to crosshair code so cursor aiming mode is absolute (without jitter)
     for(int index = 0; index < 33; index++) // inject code array
         _link->WriteInt(addressarray[index], codearray[index]);
@@ -441,8 +442,8 @@ void PerfectDark::_injecthacks()
             _link->WriteInt(PD_defaultzoomoutspeed, 0x3C010000 + (short)(unsignedinteger / 0x10000)); // adjust zoom out speed default (30.f)
         }
     }
-    if((unsigned int)_link->ReadInt(PD_defaultratio) == 0x3FAAAAAB && ((float)_settings->GetOverrideRatioWidth() != 16 || (float)_settings->GetOverrideRatioHeight() != 9)) // override default 16:9 ratio
-        _link->WriteFloat(PD_defaultratio, ((float)_settings->GetOverrideRatioWidth() / (float)_settings->GetOverrideRatioHeight()) / (4.f / 3.f));
+    if((unsigned int)_link->ReadInt(PD_defaultratio) == 0x3FAAAAAB && ((float)override_ratio.x != 16 || (float)override_ratio.y != 9)) // override default 16:9 ratio
+        _link->WriteFloat(PD_defaultratio, ((float)override_ratio.x / (float)override_ratio.y) / (4.f / 3.f));
 #endif
     if(Emulator::Controller[PLAYER1].Z_TRIG && Emulator::Controller[PLAYER1].R_TRIG) // skip intros if holding down fire + aim
         _link->WriteInt(PD_introcounter, 0x00001000);
@@ -555,9 +556,9 @@ void PerfectDark::_processOriginalInput(int player, const PROFILE& profile) {
                 _link->WriteFloat(bikebase + PD_bikeroll, bikeroll);
             }
             if(!cursoraimingflag) {
-                camy += (!profile.PitchInverted ? -aimstickdata.y : aimstickdata.y) /
+                camy += (!profile.StickPitchInverted ? -aimstickdata.y : aimstickdata.y) /
                         10.0f * sensitivity_stick_x * (fov / basefov);
-                camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
+                camy += (!profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
                         10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov);
             }
             else {
@@ -584,11 +585,11 @@ void PerfectDark::_processOriginalInput(int player, const PROFILE& profile) {
                 if(camy > -90 && camy < 90) // only allow player's gun to pitch within a valid range
                 {
                     float guny = _link->ReadFloat(playerbase[player] + PD_gunry), crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
-                    guny += (!profile.PitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_y * (fov / basefov) * 0.075f;
-                    guny += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov) * 0.075f;
+                    guny += (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_y * (fov / basefov) * 0.075f;
+                    guny += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov) * 0.075f;
 
-                    crosshairy += (!profile.PitchInverted ? aimstickdata.y : -aimstickdata.x) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.1f;
-                    crosshairy += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.x) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.1f;
+                    crosshairy += (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.x) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.1f;
+                    crosshairy += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.x) / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.1f;
                     if(aimingflag)
                         guny /= _settings->GetIfEmulatorOverclocked() ? 1.15f : 1.35f, crosshairy /= _settings->GetIfEmulatorOverclocked() ? 1.15f : 1.35f;
                     guny = PluginHelpers::ClampFloat(guny, -GUNAIMLIMIT, GUNAIMLIMIT);
@@ -691,12 +692,12 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
             _link->WriteFloat(bikebase + PD_bikeroll, bikeroll);
         }
         if (!cursoraimingflag) {
-            camy += (!profile.PitchInverted ? -aimstickdata.y : aimstickdata.y) /
+            camy += (!profile.StickPitchInverted ? -aimstickdata.y : aimstickdata.y) /
                     10.0f * sensitivity_stick_y * (fov / basefov);
 
             float crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
             if (crosshairy > 2 || crosshairy < -2) {
-                camy += (!profile.PitchInverted ? -_cfgptr->Device[player].GYRO.y
+                camy += (!profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y
                                                 : _cfgptr->Device[player].GYRO.y) /
                         10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov);
             }
@@ -737,17 +738,17 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
             {
                 float guny = _link->ReadFloat(playerbase[player] + PD_gunry), crosshairy = _link->ReadFloat(
                         playerbase[player] + PD_crosshairy);
-                guny += (!profile.PitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 10.0f : 40.0f) *
+                guny += (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 10.0f : 40.0f) *
                         gunsensitivity_stick_y * (fov / basefov) * 0.075f;
-                guny += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) /
+                guny += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) /
                         (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov) *
                         0.075f;
 
                 crosshairy +=
-                        (!profile.PitchInverted ? aimstickdata.y : -aimstickdata.x) / (!aimingflag ? 10.0f : 40.0f) *
+                        (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.x) / (!aimingflag ? 10.0f : 40.0f) *
                         gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.1f;
                 crosshairy +=
-                        (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.x) /
+                        (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.x) /
                         (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime *
                         (fov / 4 / (basefov / 4)) * 0.1f;
 
@@ -779,7 +780,7 @@ void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const 
 
         //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!profile.PitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
+        crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
         crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
         _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);

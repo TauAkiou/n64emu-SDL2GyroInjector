@@ -1,0 +1,10 @@
+.
+cmake-build-debug/1964_input_joyshockcpp_autogen
+cmake-build-debug/1964_input_joyshockcpp_autogen/include
+common
+game
+game/driver
+input
+JoyShockLibrary
+settings
+ui

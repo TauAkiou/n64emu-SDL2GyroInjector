@@ -89,35 +89,44 @@ typedef struct {
 } JSDevice;
 
 typedef struct {
-    enum CONTROLLERMODE ControllerMode;
-    JSDevice PrimaryDevice;
-    JSDevice SecondaryDevice;
+    enum CONTROLLERMODE ControllerMode = DISCONNECTED;
+    JSDevice PrimaryDevice = {-1, None};
+    JSDevice SecondaryDevice {-1, None};
 } Assignment;
+
+typedef struct {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+} Color;
 
 typedef struct PROFILE {
     // Secondary devices are used when we are in Joycon mode.
-    int ControllerMode; // -1 = Disabled, 0 = Controller, 1 = Joycon
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
-    int CalibrationButton = {};
-    int BUTTONPRIM[TOTALBUTTONS];
-    int BUTTONSEC[TOTALBUTTONS];
+    int CalibrationButton = { 0x20000 };
+    int BUTTONPRIM[TOTALBUTTONS] = {0x00800, 0x00400, 0x00200, 0x00100, 0x00010, 0x02000, 0x01000, 0x04000, 0x08000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00001, 0x00002, 0x00003, 0x00004, 0x00010, 0x00000, 0x00000};
+    int BUTTONSEC[TOTALBUTTONS] = {};
     // Other settings (converted from enumerator arrays
-    vec2<float> AimstickDeadzone = {};
-    vec2<float> MoveStickSensitivity = {};
-    vec2<float> AimStickSensitivity = {};
-    vec2<float> GyroscopeSensitivity = {};
-    float Crosshair = {};
-    bool PitchInverted = {};
-    bool CrouchToggle = {};
-    bool GoldeneyeAimMode = {};
-    bool PerfectDarkAimMode = {};
-    bool UseStickToAim = {};
-    bool FreeAiming = {};
+    vec2<float> AimstickDeadzone = {0.10, 0.10};
+    vec2<float> MoveStickDeadzone = {0.10, 0.10};
+    vec2<float> AimStickSensitivity = {1.00, 1.00};
+    vec2<float> GyroscopeSensitivity = {1.00, 1.00};
+    float Crosshair = {1.00};
+    bool GyroPitchInverted = {false};
+    bool StickPitchInverted = {false};
+    bool CrouchToggle = {true};
+    bool GoldeneyeAimMode = {true};
+    bool PerfectDarkAimMode = {true};
+    bool UseStickToAim = {false};
+    bool FreeAiming = {false};
+    bool AimStick = false; // True: Left, False: Right
     //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
     //float FLOATSETTINGS[TOTALVECTORSETTINGS];
     //int SETTINGS[TOTALSETTINGS];
 } PROFILE;
+
+
 
 typedef struct {
     vec2<float> AIMSTICK, GYRO;

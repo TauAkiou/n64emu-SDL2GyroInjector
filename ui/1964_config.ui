@@ -473,7 +473,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -1117,10 +1117,10 @@
      <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>311</width>
-        <height>71</height>
+        <x>0</x>
+        <y>0</y>
+        <width>332</width>
+        <height>101</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabOtherLayout">
@@ -1196,6 +1196,45 @@
          </item>
         </layout>
        </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabOtherCursorAimingPdLayout">
+         <item>
+          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingPDCheckbox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabOtherCursorAimingPDLabel">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Cursor Aiming (Perfect Dark)</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="playerSettingsTabOtherReverseAimStickPitchLayout">
          <property name="rightMargin">
@@ -1232,40 +1271,80 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherCursorAimingPdLayout">
+       <item row="2" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="playerSettingsTabOtherDS4ColorLayout">
          <item>
-          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingGeCheckbox_2">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
+          <widget class="QLabel" name="playerSettingsTabOtherDS4ColorHeaderLabel">
            <property name="text">
-            <string/>
+            <string>Colorbar (DS4)</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="playerSettingsTabOtherCursorAimingGeLabel_2">
-           <property name="minimumSize">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
             <size>
-             <width>120</width>
-             <height>0</height>
+             <width>40</width>
+             <height>20</height>
             </size>
            </property>
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QWidget" name="colorwidget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
            </property>
            <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Cursor Aiming (Perfect Dark)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="wordWrap">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabOtherDS4ColorRedLabel">
+           <property name="text">
+            <string>Red:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4RedSpinbox">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Green</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4GreenSpinbox">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4BlueSpinbox">
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </item>
@@ -1302,6 +1381,12 @@
       <layout class="QHBoxLayout" name="globalRatioLayout">
        <item>
         <widget class="QLabel" name="globalRatioLabel">
+         <property name="minimumSize">
+          <size>
+           <width>76</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -1314,12 +1399,34 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="globalRatioHorizontalBox">
-         <property name="maximumSize">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="globalRatioHorizontalSpinbox">
+         <property name="minimumSize">
           <size>
            <width>50</width>
-           <height>25</height>
+           <height>0</height>
           </size>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="value">
+          <number>16</number>
          </property>
         </widget>
        </item>
@@ -1337,18 +1444,21 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="globalRatioVerticalBox">
+        <widget class="QSpinBox" name="globalRatioVerticalSpinbox">
          <property name="minimumSize">
           <size>
            <width>50</width>
            <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>25</height>
-          </size>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="value">
+          <number>9</number>
          </property>
         </widget>
        </item>
@@ -1388,19 +1498,6 @@
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="globalFovSliderLayout">
          <property name="leftMargin">
           <number>5</number>
@@ -1410,6 +1507,12 @@
          </property>
          <item>
           <widget class="QSlider" name="globalFovSlider">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="minimum">
             <number>40</number>
            </property>
@@ -1424,6 +1527,35 @@
            </property>
            <property name="tickPosition">
             <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>10</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="globalFovSpinbox">
+           <property name="minimum">
+            <number>40</number>
+           </property>
+           <property name="maximum">
+            <number>120</number>
+           </property>
+           <property name="value">
+            <number>60</number>
            </property>
           </widget>
          </item>
@@ -1529,7 +1661,5 @@
  </slots>
  <buttongroups>
   <buttongroup name="playerSelectionButtonGroup"/>
-  <buttongroup name="mappingSecondaryButtonGroup"/>
-  <buttongroup name="mappingPrimaryButtonGroup"/>
  </buttongroups>
 </ui>

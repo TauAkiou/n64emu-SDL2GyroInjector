@@ -50,10 +50,9 @@ DWORD JoyShockDriver::injectionloop() {
 
     TOUCH_STATE jsl_touch;
 
-    // Allocate variables for system clock.
+    // TODO: Replace with chrono::steady_clock
     clock_t time_current = clock();
     clock_t time_previous;
-    float delta;
 
     int checkwindowtick = 0;
 
@@ -74,7 +73,6 @@ DWORD JoyShockDriver::injectionloop() {
                 break;
         }
     }
-
 
     while(!_terminatethread) {
         time_previous = time_current;
@@ -464,7 +462,7 @@ void JoyShockDriver::ReconnectControllers() {
 
         _devices->push_back(deviceentry);
     }
-    delete discoveredhandles;
+    delete[] discoveredhandles;
 }
 
 int JoyShockDriver::GetFirstButtonFromDevice(JSDevice jsd) {
@@ -477,4 +475,14 @@ int JoyShockDriver::GetFirstButtonFromDevice(JSDevice jsd) {
         index = index << 1;
     }
     return 0;
+}
+
+void JoyShockDriver::SetDS4Color(JSDevice dev, int color) {
+    if(dev.Handle > -1)
+        JslSetLightColour(dev.Handle, color);
+}
+
+void JoyShockDriver::SetSPCJCNumber(JSDevice dev, const int number) {
+    if(dev.Handle > -1)
+        JslSetPlayerNumber(dev.Handle, number);
 }
