@@ -241,7 +241,7 @@ int JoyShockDriver::Initialize(const HWND hw) {
 
             _devices->push_back(deviceentry);
         }
-        delete discoveredhandles;
+        delete[] discoveredhandles;
         _initialized = true;
     }
     return _devicecount;

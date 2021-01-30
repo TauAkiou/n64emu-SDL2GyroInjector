@@ -31,6 +31,31 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
 #define INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
 
+#define JSL_UP 0x00001
+#define JSL_DOWN 0x00002
+#define JSL_LEFT 0x00004
+#define JSL_RIGHT 0x00008
+#define JSL_PLUS 0x00010
+#define JSL_OPTIONS 0x00010
+#define JSL_MINUS 0x00020
+#define JSL_SHARE 0x00020
+#define JSL_LCLICK 0x00040
+#define JSL_RCLICK 0x00080
+#define JSL_L 0x00100
+#define JSL_R 0x00200
+#define JSL_ZL 0x00400
+#define JSL_ZR 0x00800
+#define JSL_S 0x01000
+#define JSL_E 0x02000
+#define JSL_W 0x04000
+#define JSL_N 0x08000
+#define JSL_HOME 0x10000
+#define JSL_PS 0x10000
+#define JSL_CAPTURE 0x20000
+#define JSL_TOUCHPAD_CLICK 0x20000
+#define JSL_SL 0x40000
+#define JSL_SR 0x80000
+
 #define GYRO_BASEFACTOR 400.0f
 #define PI 3.1415927
 #define __GYRO_INJECTOR_VERSION__ "v0.1"
@@ -105,7 +130,7 @@ typedef struct PROFILE {
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
     int CalibrationButton = { 0x20000 };
-    int BUTTONPRIM[TOTALBUTTONS] = {0x00800, 0x00400, 0x00200, 0x00100, 0x00010, 0x02000, 0x01000, 0x04000, 0x08000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00001, 0x00002, 0x00003, 0x00004, 0x00010, 0x00000, 0x00000};
+    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, 0x00010, 0x00000, 0x00000};
     int BUTTONSEC[TOTALBUTTONS] = {};
     // Other settings (converted from enumerator arrays
     vec2<float> AimstickDeadzone = {0.10, 0.10};

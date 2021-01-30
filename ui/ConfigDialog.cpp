@@ -88,7 +88,7 @@ void ConfigDialog::_setPlayerColorAndDefaultNumber(PROFILE prf, Assignment asgn)
             return;
         case JOYCONS:
             // JSL is smart enough to ignore a line for controllers that don't have a particular feature.
-            _jsdriver->SetDS4Color(asgn.SecondaryDevice, 15);
+            _jsdriver->SetSPCJCNumber(asgn.SecondaryDevice, 15);
         case FULLCONTROLLER:
             _jsdriver->SetSPCJCNumber(asgn.PrimaryDevice, 15);
             _jsdriver->SetDS4Color(asgn.PrimaryDevice, prf.DS4Color);
@@ -269,13 +269,24 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
         _baseDialog->primaryDeviceBox->clear();
         _baseDialog->primaryDeviceBox->setEnabled(true);
 
-        for(JSDevice dev : _loadedfull) {
+        for(auto & dev : _loadedfull) {
             auto strbuild = std::stringstream();
+
+            strbuild << deviceno+1 << ": " << _jsdriver->GetNameOfDevice(dev);
+            _baseDialog->primaryDeviceBox->addItem(QString::fromStdString(strbuild.str()));
+
+            if(dev.Handle == _localassignments[_selectedplayer].PrimaryDevice.Handle) {
+                _baseDialog->primaryDeviceBox->setCurrentIndex(deviceno);
+            }
+
             deviceno++;
-            strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
-            _baseDialog->primaryDeviceBox->addItem(
-                    QString::fromStdString(strbuild.str()));
         }
+
+            for(int dev = 0; dev < _loadedfull.size(); dev++) {
+
+            }
+        // Remember to set the devices appropriately.
+
         break;
         case JOYCONS:
             // Disable and clear secondary device box.
@@ -285,21 +296,35 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
             _baseDialog->primaryDeviceBox->clear();
             _baseDialog->primaryDeviceBox->setEnabled(true);
 
-            for(JSDevice dev : _loadedjoyconprimary) {
+            for(int dev = 0; dev < _loadedjoyconprimary.size(); dev++) {
                 auto strbuild = std::stringstream();
                 deviceno++;
-                strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
+                strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(_loadedjoyconprimary[dev]);
                 _baseDialog->primaryDeviceBox->addItem(
                         QString::fromStdString(strbuild.str()));
             }
 
+            for(int dev = 0; dev < _loadedjoyconprimary.size(); dev++) {
+                if(_localassignments[_selectedplayer].PrimaryDevice.Handle == _loadedjoyconprimary[dev].Handle) {
+                    _baseDialog->primaryDeviceBox->setCurrentIndex(dev);
+
+                }
+            }
+
             deviceno = 0;
-            for(JSDevice dev : _loadedjoyconsecondary) {
+            for(int dev = 0; dev < _loadedjoyconsecondary.size(); dev++) {
                 auto strbuild = std::stringstream();
                 deviceno++;
-                strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(dev);
+                strbuild << deviceno << ": " << _jsdriver->GetNameOfDevice(_loadedjoyconsecondary[dev]);
                 _baseDialog->secondaryDeviceBox->addItem(
                         QString::fromStdString(strbuild.str()));
+            }
+
+            for(int dev = 0; dev < _loadedjoyconprimary.size(); dev++) {
+                if(_localassignments[_selectedplayer].SecondaryDevice.Handle == _loadedjoyconprimary[dev].Handle) {
+                    _baseDialog->secondaryDeviceBox->setCurrentIndex(dev);
+
+                }
             }
             break;
         case DISCONNECTED:
@@ -344,7 +369,7 @@ void ConfigDialog::on_okButton_clicked() {
     this->close();
 }
 
-void ConfigDialog::on_primaryDeviceBox_currentIndexChanged(int index) {
+void ConfigDialog::on_primaryDeviceBox_activated(int index) {
     auto cmode = _localassignments[_selectedplayer].ControllerMode;
 
     // bounds checking
@@ -369,7 +394,7 @@ void ConfigDialog::on_primaryDeviceBox_currentIndexChanged(int index) {
     }
 }
 
-void ConfigDialog::on_secondaryDeviceBox_currentIndexChanged(int index) {
+void ConfigDialog::on_secondaryDeviceBox_activated(int index) {
     auto cmode = _localassignments[_selectedplayer].ControllerMode;
 
     // bounds checking
@@ -388,7 +413,7 @@ void ConfigDialog::on_secondaryDeviceBox_currentIndexChanged(int index) {
     }
 }
 
-void ConfigDialog::on_controllerModeBox_currentIndexChanged(int index) {
+void ConfigDialog::on_controllerModeBox_activated(int index) {
     // jumping to default switch statements on conditions is one of the only valid uses for goto.
     // simply, you cannot have a player attached to a device if they do not have any controllers
     // of that class connected. Treat an empty controller list as though it was DISCONNECTED.
@@ -573,6 +598,7 @@ void ConfigDialog::on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* 
             break;
     }
 
+    _baseDialog->controllerModeBox->setCurrentIndex(_localassignments[_selectedplayer].ControllerMode);
 
     _loadProfileSettingsIntoUi(_localprofiles[_selectedplayer]);
     _loadDevicesIntoDeviceBox(_localassignments[_selectedplayer].ControllerMode);

@@ -58,6 +58,7 @@ private:
     JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
     PROFILE _localprofiles[4]{};
     Assignment _localassignments[4]{};
+    int _deviceindex[2][4];
 
     std::vector<JSDevice> _loadedfull;
     std::vector<JSDevice> _loadedjoyconprimary;
@@ -109,9 +110,9 @@ private slots:
     void on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(double value);
     void on_playerSettingsTabStickMoveDeadzoneYSlider_valueChanged(int value);
     void on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value);
-    void on_controllerModeBox_currentIndexChanged(int index);
-    void on_primaryDeviceBox_currentIndexChanged(int index);
-    void on_secondaryDeviceBox_currentIndexChanged(int index);
+    void on_controllerModeBox_activated(int index);
+    void on_primaryDeviceBox_activated(int index);
+    void on_secondaryDeviceBox_activated(int index);
     void on_globalFovSpinbox_valueChanged(int value);
     void on_globalFovSlider_valueChanged(int value);
     void on_playerSettingsTabGyroAimingStyleBox(int index);
