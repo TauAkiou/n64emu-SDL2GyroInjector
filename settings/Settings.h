@@ -58,7 +58,7 @@ public:
     Assignment GetAssignmentForPlayer(enum PLAYERS player);
     void SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn);
     [[nodiscard]] bool GetIfEmulatorOverclocked() const;
-    void SetIfEmulatorOverclocked(bool foviwd);
+    void SetIfEmulatorOverclocked(bool isoverclocked);
     [[nodiscard]] int GetFovOverride() const;
     void SetFovOverride(int fovoverride);
     vec2<int> GetOverrideRatio();

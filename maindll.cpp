@@ -89,7 +89,7 @@ void MainDll::End() {
 }
 
 void MainDll::SetEmulatorOverclock(bool newoverclock) {
-    _emuoverclock = newoverclock;
+    _settingsptr->SetIfEmulatorOverclocked(newoverclock);
 }
 
 bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
@@ -174,9 +174,12 @@ void MainDll::UpdateControllerStatus() {
 int MainDll::HandleConfigWindow(int argc, char* argv[]) {
     QApplication app(argc, argv);
     ConfigDialog cfgdlg;
+    _jsdptr->PauseInjection();
     cfgdlg.show();
     auto result = app.exec();
+    app.exit();
     UpdateControllerStatus();
+    _jsdptr->UnpauseInjection();
     return result;
 
 

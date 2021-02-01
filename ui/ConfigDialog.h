@@ -58,6 +58,12 @@ private:
     JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
     PROFILE _localprofiles[4]{};
     Assignment _localassignments[4]{};
+
+    bool _ge_crosshair;
+    int _aspect_x;
+    int _aspect_y;
+    int fov;
+
     int _deviceindex[2][4];
 
     std::vector<JSDevice> _loadedfull;
@@ -78,10 +84,10 @@ private:
     void _commitAssignments();
     void _commitProfiles();
     void _commitGlobals();
-    void _loadProfileSettingsIntoUi(PROFILE profile);
+    void _loadProfileSettingsIntoUi(const PROFILE& profile);
     static Color _getColorFromInt(int color);
     int _getIntFromColor(Color color);
-    void _setPlayerColorAndDefaultNumber(PROFILE prf, Assignment asgn);
+    void _setPlayerColorAndDefaultNumber(const PROFILE& prf, Assignment asgn);
 
 signals:
     void primaryClicked(int value);
@@ -94,29 +100,30 @@ private slots:
     void on_cancelButton_clicked();
     void on_okButton_clicked();
     void on_reconnectControllers_clicked();
-    void on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value);
+    void on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(int value);
     void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
-    void on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value);
+    void on_playerSettingsTabGyroYAxisSensitivitySlider_sliderMoved(int value);
     void on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickAimSensitivityXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimSensitivityXSlider_sliderMoved(int value);
     void on_playerSettingsTabStickAimSensitivityXSpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickAimSensitivityYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimSensitivityYSlider_sliderMoved(int value);
     void on_playerSettingsTabStickAimSensitivityYSpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickAimDeadzoneXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimDeadzoneXSlider_sliderMoved(int value);
     void on_playerSettingsTabStickAimDeadzoneYSpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickAimDeadzoneYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickAimDeadzoneYSlider_sliderMoved(int value);
     void on_playerSettingsTabStickAimDeadzoneXSpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickMoveDeadzoneXSlider_valueChanged(int value);
+    void on_playerSettingsTabStickMoveDeadzoneXSlider_sliderMoved(int value);
     void on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(double value);
-    void on_playerSettingsTabStickMoveDeadzoneYSlider_valueChanged(int value);
+    void on_playerSettingsTabStickMoveDeadzoneYSlider_sliderMoved(int value);
     void on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value);
     void on_controllerModeBox_activated(int index);
     void on_primaryDeviceBox_activated(int index);
     void on_secondaryDeviceBox_activated(int index);
     void on_globalFovSpinbox_valueChanged(int value);
     void on_globalFovSlider_valueChanged(int value);
-    void on_playerSettingsTabGyroAimingStyleBox(int index);
+    void on_playerSettingsTabGyroAimingStyleBox_activated(int index);
     void on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* button);
+    void on_playerSettingsTabStickAimStickModeBox_activated(int index);
 
 
     // Why can't qt designer have an easy way of assigning large groups of buttons in a way that is straightforward and works...
@@ -132,7 +139,6 @@ public:
     ~ConfigDialog() override;
     explicit ConfigDialog(QDialog *parent = 0);
     static bool GetConfigDialogState();
-
 
 
 };

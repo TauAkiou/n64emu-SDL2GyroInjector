@@ -81,7 +81,7 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new U
     _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
 }
 
-void ConfigDialog::_setPlayerColorAndDefaultNumber(PROFILE prf, Assignment asgn) {
+void ConfigDialog::_setPlayerColorAndDefaultNumber(const PROFILE& prf, Assignment asgn) {
     switch(asgn.ControllerMode) {
         default:
         case DISCONNECTED:
@@ -127,10 +127,11 @@ int ConfigDialog::_getIntFromColor(Color color) {
     return (rgb << 8) + color.b;
 }
 
-void ConfigDialog::_loadProfileSettingsIntoUi(PROFILE profile) {
+void ConfigDialog::_loadProfileSettingsIntoUi(const PROFILE& profile) {
     //
     _baseDialog->playerSettingsTabStickAimStickLayoutBox->setCurrentIndex(profile.AimStick);
     _baseDialog->playerSettingsTabStickAimStickModeBox->setCurrentIndex(profile.StickMode);
+    _baseDialog->playerSettingsTabGyroAimingStyleBox->setCurrentIndex(profile.FreeAiming);
     _baseDialog->playerSettingsTabOtherReverseGyroPitchCheckbox->setChecked(profile.GyroPitchInverted);
     _baseDialog->playerSettingsTabOtherReverseAimStickPitchCheckbox->setChecked(profile.StickPitchInverted);
     _baseDialog->playerSettingsTabOtherCursorAimingPDCheckbox->setChecked(profile.PerfectDarkAimMode);
@@ -143,8 +144,8 @@ void ConfigDialog::_loadProfileSettingsIntoUi(PROFILE profile) {
 
     //auto colorrole = _baseDialog->colorwidget.
 
-    _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(profile.AimStickSensitivity.x);
-    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue(profile.AimStickSensitivity.x * 100);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(profile.GyroscopeSensitivity.x);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue(profile.GyroscopeSensitivity.x * 100);
 
     _baseDialog->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(profile.GyroscopeSensitivity.y);
     _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue(profile.GyroscopeSensitivity.y * 100);
@@ -451,29 +452,29 @@ void ConfigDialog::on_controllerModeBox_activated(int index) {
 // insane boilerplate for linking all of the sliders to their respective textboxes...
 
 // Gyro Aim X
-void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (value / 100.0);
+    //_localprofiles[_selectedplayer].GyroscopeSensitivity.x = roundf(((float)value/100) * 100 / 100) / 100.0;
 }
 
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue(value * 100.0);
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (float)value;
+    _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue((int)(value * 100.0f));
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = roundf((float)value * 100 / 100);
 }
 
 // Y
-void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = value / 100.0;
+    //_localprofiles[_selectedplayer].GyroscopeSensitivity.y = value / 100.0;
 }
 
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value) {
     _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue(value * 100.0);
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = (float)value;
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = roundf((float)value * 100 / 100);
 }
 
 // Stick Aim X
-void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimSensitivityXSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].AimStickSensitivity.x = (value / 100.0);
 }
@@ -484,7 +485,7 @@ void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSpinbox_valueChanged(
 }
 
 // Y
-void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimSensitivityYSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].AimStickSensitivity.y = (value / 100.0f);
 }
@@ -496,7 +497,7 @@ void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSpinbox_valueChanged(
 
 // Stick Aim Deadzone X
 
-void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimDeadzoneXSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].AimstickDeadzone.x = (value / 100.0f);
 }
@@ -507,7 +508,7 @@ void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSpinbox_valueChanged(dou
 }
 
 // Y
-void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimDeadzoneYSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].AimstickDeadzone.y = (value / 100.0f);
 }
@@ -518,7 +519,7 @@ void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSpinbox_valueChanged(dou
 }
 
 // Stick Move X
-void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickMoveDeadzoneXSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].MoveStickDeadzone.x = (value / 100.0f);
 }
@@ -529,7 +530,7 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(do
 }
 
 // Y
-void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSlider_valueChanged(int value) {
+void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickMoveDeadzoneYSpinbox->setValue(value / 100.0);
     _localprofiles[_selectedplayer].MoveStickDeadzone.y = (value / 100.0f);
 }
@@ -541,22 +542,37 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(do
 
 void ConfigDialog::on_globalFovSpinbox_valueChanged(int value) {
     _baseDialog->globalFovSlider->setValue(value);
-    _settingsptr->SetFovOverride(value);
+    //_settingsptr->SetFovOverride(value);
 }
 
 void ConfigDialog::on_globalFovSlider_valueChanged(int value) {
     _baseDialog->globalFovSpinbox->setValue(value);
-    _settingsptr->SetFovOverride(value);
+    //_settingsptr->SetFovOverride(value);
 }
 
-void ConfigDialog::on_playerSettingsTabGyroAimingStyleBox(int index) {
+void ConfigDialog::on_playerSettingsTabGyroAimingStyleBox_activated(int index) {
     switch(index) {
         default:
         case 0:
-            _localprofiles->FreeAiming = true;
+            _localprofiles[_selectedplayer].FreeAiming = false;
             break;
         case 1:
-            _localprofiles->FreeAiming = false;
+            _localprofiles[_selectedplayer].FreeAiming = true;
+            break;
+    }
+}
+
+void ConfigDialog::on_playerSettingsTabStickAimStickModeBox_activated(int index) {
+    switch(index) {
+        default:
+        case FULLSTICK:
+            _localprofiles[_selectedplayer].StickMode = FULLSTICK;
+            break;
+        case XONLY:
+            _localprofiles[_selectedplayer].StickMode = XONLY;
+            break;
+        case FLICK:
+            _localprofiles[_selectedplayer].StickMode = FLICK;
             break;
     }
 }

@@ -51,8 +51,8 @@ DWORD JoyShockDriver::injectionloop() {
     TOUCH_STATE jsl_touch;
 
     // TODO: Replace with chrono::steady_clock
-    clock_t time_current = clock();
-    clock_t time_previous;
+    auto time_current = std::chrono::steady_clock::now();
+    auto time_previous = time_current;
 
     int checkwindowtick = 0;
 
@@ -76,8 +76,10 @@ DWORD JoyShockDriver::injectionloop() {
 
     while(!_terminatethread) {
         time_previous = time_current;
-        time_current = clock();
-        _cstateptr->DeltaTime = ((float)time_current - (float)time_previous) / CLOCKS_PER_SEC;
+        time_current = std::chrono::steady_clock::now();
+        std::chrono::duration<float> dur = time_current - time_previous;
+
+        _cstateptr->DeltaTime = dur.count();
 
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
             if(!_settings->GetIfPlayerIsConnected(static_cast<PLAYERS>(player)))
@@ -197,11 +199,11 @@ DWORD JoyShockDriver::injectionloop() {
 
             //std::cout << "GyroX: " << _ctrlptr->Device[PLAYER1].GYROX << " GyroY: " << _ctrlptr->Device[PLAYER1].GYROY << std::endl;
             checkwindowtick = 0;
-            if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
+            if(_emulatorwindow != GetForegroundWindow() || _looppaused) // don't send input if the window is inactive.
             {
-                //memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
-                //_gameptr->Inject(); // ship empty input to game
-                //_windowactive = 0;
+                memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
+                _gameptr->Inject(); // ship empty input to game
+                _windowactive = 0;
             }
             else {
                 _windowactive = 1;
@@ -211,7 +213,7 @@ DWORD JoyShockDriver::injectionloop() {
             checkwindowtick++;
 
 
-        if(_windowactive && _gameptr->Status()) { // if emulator is focused, game is valid and config dialog isn't open
+        if(_windowactive && _gameptr->Status() && !_looppaused) { // if emulator is focused, game is valid and config dialog isn't open
 
             _gameptr->Inject(); // send input to game driver
         }
@@ -485,4 +487,12 @@ void JoyShockDriver::SetDS4Color(JSDevice dev, int color) {
 void JoyShockDriver::SetSPCJCNumber(JSDevice dev, const int number) {
     if(dev.Handle > -1)
         JslSetPlayerNumber(dev.Handle, number);
+}
+
+void JoyShockDriver::UnpauseInjection() {
+    _looppaused = false;
+}
+
+void JoyShockDriver::PauseInjection() {
+    _looppaused = true;
 }

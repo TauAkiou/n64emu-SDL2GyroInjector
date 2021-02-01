@@ -26,17 +26,17 @@
 
 #include "PerfectDark.h"
 
-#define GUNAIMLIMIT 14.12940025 // 0x41621206
-#define GUNAIMLIMITFREE 22.12940025
-#define CROSSHAIRLIMIT 18.76135635 // 0x41961742
-#define CROSSHAIRLIMITFREE 26.76135635
-#define GUNRECOILXLIMIT 756.1247559 // 0x443D07FC
-#define GUNRECOILYLIMIT 57.63883972 // 0x42668E2C
-#define GUNRECOILXLIMITFREE 756.1247559 // 0x443D07FC
-#define GUNRECOILYLIMITFREE 57.63883972 // 0x42668E2C
-#define BIKEXROTATIONLIMIT 6.282184601 // 0x40C907A8
-#define BIKEROLLLIMIT 0.7852724195 // 0xBF49079D/0x3F49079D
-#define PI 3.1415927 // 0x40490FDB
+#define GUNAIMLIMIT 14.12940025f // 0x41621206
+#define GUNAIMLIMITFREE 22.12940025f
+#define CROSSHAIRLIMIT 18.76135635f // 0x41961742
+#define CROSSHAIRLIMITFREE 26.76135635f
+#define GUNRECOILXLIMIT 756.1247559f // 0x443D07FC
+#define GUNRECOILYLIMIT 57.63883972f // 0x42668E2C
+#define GUNRECOILXLIMITFREE 756.1247559f // 0x443D07FC
+#define GUNRECOILYLIMITFREE 57.63883972f // 0x42668E2C
+#define BIKEXROTATIONLIMIT 6.282184601f // 0x40C907A8
+#define BIKEROLLLIMIT 0.7852724195f // 0xBF49079D/0x3F49079D
+#define PI 3.1415927f // 0x40490FDB
 // PERFECT DARK ADDRESSES - OFFSET ADDRESSES BELOW (REQUIRES PLAYERBASE/BIKEBASE TO USE)
 #define PD_stanceflag 0x801BB74C - 0x801BB6A0
 #define PD_deathflag 0x801BB778 - 0x801BB6A0
@@ -232,8 +232,8 @@ void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int a
             crosshairposy[player] += (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * (profile.AimStickSensitivity.y / sensitivity); // * fmax(mouseaccel, 1);
 
         }
-        crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * (profile.GyroscopeSensitivity.y / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
+        crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / (sensitivity) / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
+        crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
         crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
         _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
@@ -625,18 +625,23 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
     const float fov = _link->ReadFloat(playerbase[player] + PD_fov);
     const float basefov = fov > 60.0f ? (float) OVERRIDEFOV : 60.0f;
     // const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
+
     const vec2<float> sensitivity_basefactor_stick = _ihandler.GetBaseFactorForStickType(profile.StickMode);
 
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_x = profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_y = profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_x = (profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_y = (profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
 
 
     const float gunsensitivity_stick_x = sensitivity_stick_x * (profile.Crosshair / 2.5f);
     const float gunsensitivity_stick_y = sensitivity_stick_y * (profile.Crosshair / 2.5f);
     const float gunsensitivity_gyro_x = sensitivity_gyro_x * (profile.Crosshair / 2.5f);
     const float gunsensitivity_gyro_y = sensitivity_gyro_y * (profile.Crosshair / 2.5f);
+
+    //const float gunsensitivity_gyro_x = 100.f * basefov / 60.0f;
+    //const float gunsensitivity_gyro_y = 100.f * basefov / 60.0f;
+
     float camx = _link->ReadFloat(playerbase[player] + PD_camx), camy = _link->ReadFloat(playerbase[player] + PD_camy);
     if (camx >= 0 && camx <= 360 && camy >= -90 && camy <= 90 && fov >= 1 && fov <= FOV_MAX && dead == 0 && menu == 1 &&
         pause == 0 && mppause == 0 && camera == 1 &&
@@ -706,6 +711,8 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
         }
         camy = PluginHelpers::ClampFloat(camy, -90, 90);
         _link->WriteFloat(playerbase[player] + PD_camy, camy);
+
+
         if (profile.Crosshair &&
             !cursoraimingflag) // if crosshair movement is enabled and player isn't aiming (don't calculate weapon movement while the player is in aim mode)
         {
@@ -716,23 +723,26 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                     RATIOFACTOR;
             gunx += _cfgptr->Device[player].GYRO.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x *
                     _cfgptr->DeltaTime * (fov / basefov) * 0.05f / RATIOFACTOR;
+
             crosshairx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x *
                           (fov / 4 / (basefov / 4)) * 0.05f / RATIOFACTOR;
+
             crosshairx += _cfgptr->Device[player].GYRO.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x *
                           _cfgptr->DeltaTime * (fov / 4 / (basefov / 4)) * 0.05f / RATIOFACTOR;
+
             if (aimingflag) // emulate cursor moving back to the center
                 gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f
                                                               : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked()
                                                                                      ? 1.03f : 1.07f;
 
-            gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMITFREE, GUNAIMLIMITFREE);
-            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
+            gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMIT, GUNAIMLIMIT);
+            crosshairx = PluginHelpers::ClampFloat(crosshairx, -CROSSHAIRLIMIT, CROSSHAIRLIMITFREE);
             _link->WriteFloat(playerbase[player] + PD_gunrx, gunx);
             _link->WriteFloat(playerbase[player] + PD_gunrxrecoil,
-                              crosshairx * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE));
+                              crosshairx * (GUNRECOILXLIMIT / CROSSHAIRLIMITFREE));
             _link->WriteFloat(playerbase[player] + PD_gunlx, gunx);
             _link->WriteFloat(playerbase[player] + PD_gunlxrecoil,
-                              crosshairx * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE));
+                              crosshairx * (GUNRECOILXLIMIT / CROSSHAIRLIMITFREE));
             _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairx);
             if (camy > -90 && camy < 90) // only allow player's gun to pitch within a valid range
             {
@@ -745,10 +755,10 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                         0.075f;
 
                 crosshairy +=
-                        (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.x) / (!aimingflag ? 10.0f : 40.0f) *
+                        (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.y) / (!aimingflag ? 10.0f : 40.0f) *
                         gunsensitivity_stick_y * (fov / 4 / (basefov / 4)) * 0.1f;
                 crosshairy +=
-                        (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.x : -_cfgptr->Device[player].GYRO.x) /
+                        (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) /
                         (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime *
                         (fov / 4 / (basefov / 4)) * 0.1f;
 
@@ -760,9 +770,9 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
                 guny = PluginHelpers::ClampFloat(guny, -GUNAIMLIMIT, GUNAIMLIMIT);
                 crosshairy = PluginHelpers::ClampFloat(crosshairy, -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
                 _link->WriteFloat(playerbase[player] + PD_gunry, guny);
-                _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairy * (GUNRECOILYLIMIT / CROSSHAIRLIMIT));
+                _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairy * (GUNRECOILYLIMIT / CROSSHAIRLIMITFREE));
                 _link->WriteFloat(playerbase[player] + PD_gunly, guny);
-                _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairy * (GUNRECOILYLIMIT / CROSSHAIRLIMIT));
+                _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairy * (GUNRECOILYLIMIT / CROSSHAIRLIMITFREE));
                 _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairy);
             }
         }
@@ -773,48 +783,60 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
 void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
     const float crosshairx = _link->ReadFloat(playerbase[player] + PD_crosshairx);
     const float crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
-    const int gunrreload = _link->ReadInt(playerbase[player] + PD_gunrstate) == 1, gunlreload = _link->ReadInt(playerbase[player] + PD_gunlstate) == 1, unarmed = _link->ReadInt(playerbase[player] + PD_currentweapon) < 2;
+    const int gunrreload = _link->ReadInt(playerbase[player] + PD_gunrstate) == 1;
+    const int gunlreload = _link->ReadInt(playerbase[player] + PD_gunlstate) == 1;
+    const int unarmed = _link->ReadInt(playerbase[player] + PD_currentweapon) < 2;
+
     const float fovratio = fov / basefov, fovmodifier = basefov / 60.f; // basefov is 60 unless override is above 60
     const float threshold = 0.72f, speed = 475.f, sensitivity = 100.f * fovmodifier, centertime = 60.f;
     // In free aim, the aimer is always unlocked and tied to the gyro exclusively.
 
-        //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
-        crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
-        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
-        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
-        _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
-        _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
-        if(unarmed || gunrreload) // if unarmed or reloading right weapon, remove from gunrcenter
-            gunrcenter[player] -= _settings->GetIfEmulatorOverclocked() ? 1 : 2;
-        else if(gunrcenter[player] < (int)centertime) // increase gunrcenter over time until it equals centertime
-            gunrcenter[player] += _settings->GetIfEmulatorOverclocked() ? 1 : 2;
-        if(gunlreload) // if reloading left weapon, remove from gunlcenter
-            gunlcenter[player] -= _settings->GetIfEmulatorOverclocked() ? 1 : 2;
-        else if(gunlcenter[player] < (int)centertime)
-            gunlcenter[player] += _settings->GetIfEmulatorOverclocked() ? 1 : 2;
-        if(gunrcenter[player] < 0)
-            gunrcenter[player] = 0;
-        if(gunlcenter[player] < 0)
-            gunlcenter[player] = 0;
-        _link->WriteFloat(playerbase[player] + PD_gunrx, (gunrcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1); // calculate and inject the gun angles
-        _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairposx[player] * (GUNRECOILXLIMIT / CROSSHAIRLIMIT) * fovmodifier * RATIOFACTOR); // set the recoil to the correct rotation (if we don't, then the recoil is always z axis aligned)
-        _link->WriteFloat(playerbase[player] + PD_gunry, (gunrcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
-        _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairposy[player] * (GUNRECOILYLIMIT / CROSSHAIRLIMIT) * fovmodifier);
-        _link->WriteFloat(playerbase[player] + PD_gunlx, (gunlcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1);
-        _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairposx[player] * (GUNRECOILXLIMIT / CROSSHAIRLIMIT) * fovmodifier * RATIOFACTOR);
-        _link->WriteFloat(playerbase[player] + PD_gunly, (gunlcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
-        _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairposy[player] * (GUNRECOILYLIMIT / CROSSHAIRLIMIT) * fovmodifier);
-        if(crosshairx > 0 && crosshairx / CROSSHAIRLIMIT > threshold) // if crosshair is within threshold of the border then calculate a linear scrolling speed and enable mouselook
+    //const float mouseaccel = PROFILE[player].SETTINGS[ACCELERATION] ? sqrt(DEVICE[player].XPOS * DEVICE[player].XPOS + DEVICE[player].YPOS * DEVICE[player].YPOS) / TICKRATE / 12.0f * PROFILE[player].SETTINGS[ACCELERATION] : 0;
+    crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
+    crosshairposy[player] += (profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
+    // * fmax(mouseaccel, 1);
+    crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
+    crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
+
+    _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
+    _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
+
+    if(unarmed || gunrreload) // if unarmed or reloading right weapon, remove from gunrcenter
+        gunrcenter[player] -= _settings->GetIfEmulatorOverclocked() ? 1 : 2;
+    else if(gunrcenter[player] < (int)centertime) // increase gunrcenter over time until it equals centertime
+        gunrcenter[player] += _settings->GetIfEmulatorOverclocked() ? 1 : 2;
+    if(gunlreload) // if reloading left weapon, remove from gunlcenter
+        gunlcenter[player] -= _settings->GetIfEmulatorOverclocked() ? 1 : 2;
+    else if(gunlcenter[player] < (int)centertime)
+        gunlcenter[player] += _settings->GetIfEmulatorOverclocked() ? 1 : 2;
+    if(gunrcenter[player] < 0)
+        gunrcenter[player] = 0;
+    if(gunlcenter[player] < 0)
+        gunlcenter[player] = 0;
+
+    _link->WriteFloat(playerbase[player] + PD_gunrx, ((float)gunrcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1); // calculate and inject the gun angles
+    _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairposx[player] * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier * RATIOFACTOR); // set the recoil to the correct rotation (if we don't, then the recoil is always z axis aligned)
+    _link->WriteFloat(playerbase[player] + PD_gunry, ((float)gunrcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
+    _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairposy[player] * (GUNRECOILYLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier);
+    _link->WriteFloat(playerbase[player] + PD_gunlx, ((float)gunlcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1);
+    _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairposx[player] * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier * RATIOFACTOR);
+    _link->WriteFloat(playerbase[player] + PD_gunly, ((float)gunlcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
+    _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairposy[player] * (GUNRECOILYLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier);
+
+
+    if(aimingflag) {
+        if (crosshairx > 0 && crosshairx / CROSSHAIRLIMIT >
+                              threshold) // if crosshair is within threshold of the border then calculate a linear scrolling speed and enable mouselook
             aimx[player] = (crosshairx / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
-        else if(crosshairx < 0 && crosshairx / CROSSHAIRLIMIT < -threshold)
+        else if (crosshairx < 0 && crosshairx / CROSSHAIRLIMIT < -threshold)
             aimx[player] = (crosshairx / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
         else
             aimx[player] = 0;
-        if(crosshairy > 0 && crosshairy / CROSSHAIRLIMIT > threshold)
+        if (crosshairy > 0 && crosshairy / CROSSHAIRLIMIT > threshold)
             aimy[player] = (crosshairy / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
-        else if(crosshairy < 0 && crosshairy / CROSSHAIRLIMIT < -threshold)
+        else if (crosshairy < 0 && crosshairy / CROSSHAIRLIMIT < -threshold)
             aimy[player] = (crosshairy / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
         else
             aimy[player] = 0;
+    }
 }

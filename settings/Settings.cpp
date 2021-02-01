@@ -90,6 +90,10 @@ void Settings::SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn) {
     ControllerAssignments[player] = asgn;
 }
 
+void Settings::SetIfEmulatorOverclocked(bool isoverclocked) {
+    EmulatorOverclocked = isoverclocked;
+}
+
 ControlState* ControlState::GetInstance() {
     if(_instance == nullptr)
         _instance = new ControlState();

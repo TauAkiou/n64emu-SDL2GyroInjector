@@ -33,7 +33,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
         {
             // Initialize all state objects.
             MainDll::GetInstance(hinstDLL);
-            AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
+            //AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
             break;
         }
         default:

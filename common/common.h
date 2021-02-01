@@ -56,7 +56,7 @@
 #define JSL_SL 0x40000
 #define JSL_SR 0x80000
 
-#define GYRO_BASEFACTOR 400.0f
+#define GYRO_BASEFACTOR 400
 #define PI 3.1415927
 #define __GYRO_INJECTOR_VERSION__ "v0.1"
 #define __CURRENTYEAR__ "2021"
@@ -130,7 +130,7 @@ typedef struct PROFILE {
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
     int CalibrationButton = { 0x20000 };
-    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, 0x00010, 0x00000, 0x00000};
+    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, JSL_MINUS, 0x00000, 0x00000};
     int BUTTONSEC[TOTALBUTTONS] = {};
     // Other settings (converted from enumerator arrays
     vec2<float> AimstickDeadzone = {0.10, 0.10};
@@ -144,7 +144,7 @@ typedef struct PROFILE {
     bool GoldeneyeAimMode = {true};
     bool PerfectDarkAimMode = {true};
     bool UseStickToAim = {false};
-    bool FreeAiming = {false};
+    bool FreeAiming = {true};
     bool AimStick = false; // True: Left, False: Right
     //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
     //float FLOATSETTINGS[TOTALVECTORSETTINGS];

@@ -53,6 +53,7 @@ class JoyShockDriver {
         int _windowactive = 1;
         bool _initialized = false;
         float calibration_time[ALLPLAYERS] = {};
+        bool _looppaused = false;
 
         std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
         HWND _emulatorwindow = nullptr;
@@ -83,6 +84,8 @@ class JoyShockDriver {
         std::vector<JSDevice> GetConnectedDS4();
         std::string GetNameOfDevice(JSDevice &device);
         void ReconnectControllers();
+        void PauseInjection();
+        void UnpauseInjection();
 
     static int GetFirstButtonFromDevice(JSDevice jsd);
 };
