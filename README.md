@@ -6,23 +6,34 @@ This plugin works with the custom, overclocked version of the 1964 Emulator rele
 
 While this entire plugin was effectively rewritten, the code was primarily copied and readapted from Stolen and Carnivorous' work. A majority of the credit for this project goes to them and the ShootersForever community.
 
+The code has some strange, unusual bugs which will be detailed below, and is still very incomplete. I am working on a version that uses SDL2 rather then JoyShockLibrary.
+
 ##Features:
 * Mouse-style Gyro aiming for the following controllers:
     - Dualshock 4
     - DualSense
     - Switch Pro Controller
     - Joycon Pairs
-    
+* Player Identification (Color bar for DS4, Player Lights for SPC/Joycon, both for DS5)    
 * Extensive input customization.
 * Support for up to 4 players.
-* Some experimental features:
-    - Free Aim (Always-Active Aim Mode)
+* Some Gyro-Exclusive Features:
+    - Free Aim (Always-Active Aim Mode - experimental)
+    - X-Axis and Flick Stick Aim Stick Modes
+  
+##Potential Future Features
+* A less buggy Input library (JoyShockLibrary is great and very easy to work with, but has some issues.)
+* Force Feedback (Potentially possible if we can poke the moments the game is supposed to have rumble.)
+* Analog Movement (Also requires poking the game's player struct for info.)
 
 ##Dependencies & Requirements
 This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link above to find it.
-
-    - QT Framework 5.15.2
+    - MinGW64 (32-bit, x86)
+    - QT Framework 5.15.2 (preferably statically built)
     - JoyShockLibrary
 
+Currently, you will have to configure cmakelists.txt yourself.
 
+## Bugs
 
+Bugs are present in the issue tracker.
