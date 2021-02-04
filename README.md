@@ -8,7 +8,7 @@ While this entire plugin was effectively rewritten, the code was primarily copie
 
 The code has some strange, unusual bugs which will be detailed in the Issue tracker, and is still very incomplete. Build and use at your own risk. Pull requests and suggestions to improve the code would be greatly appreciated.
 
-##Features:
+#Features:
 * Mouse-style Gyro aiming for the following controllers:
     - Dualshock 4
     - DualSense
@@ -21,12 +21,12 @@ The code has some strange, unusual bugs which will be detailed in the Issue trac
     - Free Aim (Always-Active Aim Mode - experimental)
     - [Flick Stick](http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick)
   
-##Potential Future Features
+#Potential Future Features
 * A less buggy Input library (JoyShockLibrary is great and very easy to work with, but has some issues.)
 * Force Feedback (Potentially possible if we can poke the moments the game is supposed to have rumble.)
 * Analog Movement (Also requires poking the game's player struct for info.)
 
-##Dependencies & Requirements
+#Dependencies & Requirements
 This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link above to find it.
     - MinGW64 (32-bit, x86)
     - QT Framework 5.15.2 (preferably statically built)
@@ -34,6 +34,6 @@ This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link abov
 
 Currently, you will have to configure ```cmakelist.txt``` and your build environment yourself.
 
-## Bugs
+# Bugs
 
 Bugs are present in the issue tracker.
