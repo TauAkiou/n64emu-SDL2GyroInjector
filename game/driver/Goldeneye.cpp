@@ -363,7 +363,7 @@ void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
                     10.0f * sensitivity_stick_y * (fov / basefov);
 
             float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
-            if(crosshairy > 5 || crosshairy < -5)
+            if(crosshairy > 2 || crosshairy < -2)
             camy += (!profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) /
                     10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov);
         }

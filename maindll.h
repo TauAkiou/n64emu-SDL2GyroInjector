@@ -51,25 +51,23 @@ protected:
     inline static MainDll* instance;
     HINSTANCE _hinst = nullptr;
     std::wstring _jsonfilepath = {L'\0'};
-    bool _guibusy = true;
-    int _changeratio = 0;
-    bool _emuoverclock = true;
-
     bool _configdialogisopen = false;
-    bool _threadrunning = false;
     CONTROL *_ctrlptr = nullptr;
-
+    bool _romloaded = false;
     // Pointers to objects.
     Settings* _settingsptr = nullptr;
-    ControlState* _emuctrlptr = nullptr;
     JoyShockDriver* _jsdptr = nullptr;
-    Game* _gameptr = nullptr;
+
 
     explicit MainDll(HINSTANCE hinstance);
     bool Initialize(const HWND hW);
-    //~MainDll();
+    ~MainDll();
 
 public:
+
+public:
+    bool isRomloaded() const;
+    void setRomloaded(bool romloaded);
     static MainDll* GetInstance(HINSTANCE hinstance = nullptr);
     void End();
     [[nodiscard]] bool IsConfigDialogOpen() const;

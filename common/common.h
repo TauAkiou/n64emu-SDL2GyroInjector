@@ -66,6 +66,7 @@
 #define FOV_MIN 40
 #define FOV_MAX 120
 
+#include <chrono>
 #include "vec2.h"
 
 
@@ -105,21 +106,22 @@ enum JSD_ControllerType {
     JoyconLeft = 1,
     JoyconRight = 2,
     SwitchPro = 3,
-    Dualshock_4 = 4
+    Dualshock_4 = 4,
+    Dualsense = 5
 };
 
-typedef struct {
+typedef struct jsdev {
     int Handle;
     JSD_ControllerType Type;
 } JSDevice;
 
-typedef struct {
+typedef struct assgn {
     enum CONTROLLERMODE ControllerMode = DISCONNECTED;
     JSDevice PrimaryDevice = {-1, None};
     JSDevice SecondaryDevice {-1, None};
 } Assignment;
 
-typedef struct {
+typedef struct clr {
     unsigned char r;
     unsigned char g;
     unsigned char b;
@@ -130,7 +132,7 @@ typedef struct PROFILE {
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
     int CalibrationButton = { 0x20000 };
-    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, JSL_MINUS, 0x00000, 0x00000};
+    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, JSL_MINUS, 0x00000, JSL_CAPTURE};
     int BUTTONSEC[TOTALBUTTONS] = {};
     // Other settings (converted from enumerator arrays
     vec2<float> AimstickDeadzone = {0.10, 0.10};
@@ -161,7 +163,8 @@ typedef struct {
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROSTATE;
-    bool GYROCALIBRATION;
+    bool CALIBRATING;
+    std::chrono::time_point<std::chrono::steady_clock> CALIBRATIONSTARTTIME;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H

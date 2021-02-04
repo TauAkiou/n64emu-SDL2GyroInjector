@@ -26,6 +26,8 @@
 
 #include "maindll.h"
 
+#include <memory>
+
 
 MainDll * MainDll::GetInstance(HINSTANCE hinstance) {
     if(!MainDll::instance) {
@@ -42,9 +44,9 @@ MainDll::MainDll(HINSTANCE hinstance) {
     // Start by initialzing all pointers.
     // TODO: Consider decoupling these objects from singletons.
     _settingsptr = Settings::GetInstance();
-    _emuctrlptr = ControlState::GetInstance();
+    //_emuctrlptr = ControlState::GetInstance();
     _jsdptr = JoyShockDriver::getInstance();
-    _gameptr = Game::GetInstance();
+    //_gameptr = Game::GetInstance();
     _hinst = hinstance;
 
     wchar_t filepath[MAX_PATH] = {L'\0'};
@@ -68,6 +70,10 @@ MainDll::MainDll(HINSTANCE hinstance) {
     }
 }
 
+MainDll::~MainDll() {
+    // Delete all pointers.
+}
+
 bool MainDll::Initialize(const HWND hW) {
     auto count = _jsdptr->Initialize(hW);
     if(!count)
@@ -84,6 +90,9 @@ void MainDll::EndInjection() {
 }
 
 void MainDll::End() {
+    EndInjection();
+    delete _settingsptr;
+    delete _jsdptr;
     _configdialogisopen = false;
     _ctrlptr = nullptr;
 }
@@ -171,19 +180,37 @@ void MainDll::UpdateControllerStatus() {
     }
 }
 
+
 int MainDll::HandleConfigWindow(int argc, char* argv[]) {
-    QApplication app(argc, argv);
+    std::unique_ptr<QApplication> pQApp;
+    QCoreApplication* pApp = QCoreApplication::instance();
+    // Stop the injection thread while we are in settings.
+    if(_romloaded && _jsdptr->IsThreadRunning()) {
+        _jsdptr->EndInjectionThread();
+    }
+
+    if(pApp == nullptr) {
+        pQApp = std::make_unique<QApplication>(argc, argv);
+        pApp = pQApp.get();
+    }
+
     ConfigDialog cfgdlg;
-    _jsdptr->PauseInjection();
     cfgdlg.show();
-    auto result = app.exec();
-    app.exit();
+    int res = pQApp ? pQApp->exec() : cfgdlg.exec();
+
     UpdateControllerStatus();
-    _jsdptr->UnpauseInjection();
-    return result;
-
-
-
-
+    if(_romloaded && !_jsdptr->IsThreadRunning()) {
+        _jsdptr->StartInjectionThread();
+    }
+    return res;
 }
+
+bool MainDll::isRomloaded() const {
+    return _romloaded;
+}
+
+void MainDll::setRomloaded(bool romloaded) {
+    _romloaded = romloaded;
+}
+
 

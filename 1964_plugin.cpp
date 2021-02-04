@@ -33,7 +33,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
         {
             // Initialize all state objects.
             MainDll::GetInstance(hinstDLL);
-            //AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
+            AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout );
             break;
         }
         default:
@@ -59,6 +59,7 @@ DLLEXPORT void CALL CloseDLL(void)
 //==========================================================================
 DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
 {
+   // std::cout << "read" << std::endl;
 }
 //==========================================================================
 // Purpose: Optional function that is provided to give further information about the DLL
@@ -136,6 +137,7 @@ DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Controls[4])
                     "Joyshock Input - Error", MB_ICONERROR | MB_OK);
     }
 }
+
 //==========================================================================
 // Purpose: Initializes how each of the controllers should be handled
 // Input: Controller Number (0 to 3) and -1 signaling end of processing the pif ram - Pointer of data to be processed
@@ -143,7 +145,6 @@ DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Controls[4])
 //==========================================================================
 DLLEXPORT void CALL ReadController(int Control, BYTE *Command)
 {
-    return;
 }
 //==========================================================================
 // Purpose: Called when a ROM is closed
@@ -152,6 +153,7 @@ DLLEXPORT void CALL ReadController(int Control, BYTE *Command)
 DLLEXPORT void CALL RomClosed(void)
 {
     MainDll::GetInstance()->EndInjection();
+    MainDll::GetInstance()->setRomloaded(false);
 }
 //==========================================================================
 // Purpose: Called when a ROM is open (from the emulation thread)
@@ -161,6 +163,8 @@ DLLEXPORT void CALL RomOpen(void)
 {
     JoyShockDriver::getInstance()->AssignEmulatorWindow(GetForegroundWindow());
     MainDll::GetInstance()->StartInjection();
+    MainDll::GetInstance()->setRomloaded(true);
+
 }
 //==========================================================================
 // Purpose: To pass the WM_KeyDown message from the emulator to the plugin

@@ -36,6 +36,7 @@
 #include <map>
 #include <windows.h>
 #include <ctime>
+#include <iostream>
 #include "../common/common.h"
 #include "../settings/Settings.h"
 #include "../JoyShockLibrary/JoyShockLibrary.h"
@@ -52,7 +53,6 @@ class JoyShockDriver {
         int _devicecount = 0;
         int _windowactive = 1;
         bool _initialized = false;
-        float calibration_time[ALLPLAYERS] = {};
         bool _looppaused = false;
 
         std::vector<JSDevice> *_devices = new std::vector<JSDevice>();

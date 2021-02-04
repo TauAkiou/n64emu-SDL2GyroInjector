@@ -46,7 +46,7 @@ extern "C" DLLEXPORT void CALL InitiateControllers(HWND hMainWindow, CONTROL Con
 extern "C" DLLEXPORT void CALL ReadController(int Control, BYTE *Command);
 extern "C" DLLEXPORT void CALL RomClosed(void);
 extern "C" DLLEXPORT void CALL RomOpen(void);
-extern "C" DLLEXPORT void CALL WM_KeydwDown(WPARAM wParam, LPARAM lParam);
+extern "C" DLLEXPORT void CALL WM_KeyDown(WPARAM wParam, LPARAM lParam);
 extern "C" DLLEXPORT void CALL WM_KeyUp(WPARAM wParam, LPARAM lParam);
 extern "C" DLLEXPORT void CALL HookRDRAM(DWORD *Mem, int OCFactor);
 extern "C" DLLEXPORT void CALL HookROM(DWORD *Rom);

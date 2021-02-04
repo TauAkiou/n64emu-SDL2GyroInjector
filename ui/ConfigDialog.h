@@ -42,6 +42,7 @@
 #include "ui_1964_config.h"
 #include "../input/JoyShockDriver.h"
 
+
 namespace Ui {
     class ConfigDialog;
 }
