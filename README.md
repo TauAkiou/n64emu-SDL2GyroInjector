@@ -6,7 +6,7 @@ This plugin works with the custom, overclocked version of the 1964 Emulator rele
 
 While this entire plugin was effectively rewritten, the code was primarily copied and readapted from Stolen and Carnivorous' work. A majority of the credit for this project goes to them and the ShootersForever community.
 
-The code has some strange, unusual bugs which will be detailed below, and is still very incomplete. I am working on a version that uses SDL2 rather then JoyShockLibrary.
+The code has some strange, unusual bugs which will be detailed in the Issue tracker, and is still very incomplete. Build and use at your own risk. Pull requests and suggestions to improve the code would be greatly appreciated.
 
 ##Features:
 * Mouse-style Gyro aiming for the following controllers:
@@ -19,7 +19,7 @@ The code has some strange, unusual bugs which will be detailed below, and is sti
 * Support for up to 4 players.
 * Some Gyro-Exclusive Features:
     - Free Aim (Always-Active Aim Mode - experimental)
-    - X-Axis and Flick Stick Aim Stick Modes
+    - [Flick Stick](http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick)
   
 ##Potential Future Features
 * A less buggy Input library (JoyShockLibrary is great and very easy to work with, but has some issues.)
@@ -32,7 +32,7 @@ This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link abov
     - QT Framework 5.15.2 (preferably statically built)
     - JoyShockLibrary
 
-Currently, you will have to configure cmakelists.txt yourself.
+Currently, you will have to configure ```cmakelist.txt``` and your build environment yourself.
 
 ## Bugs
 
