@@ -28,9 +28,9 @@ The code has some strange, unusual bugs which will be detailed in the Issue trac
 
 ## Dependencies & Requirements
 This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link above to find it.
-    - MinGW64 (32-bit, x86)
-    - QT Framework 5.15.2 (preferably statically built)
-    - JoyShockLibrary
+- MinGW64 (32-bit, x86)
+- QT Framework 5.15.2 (preferably statically built)
+- JoyShockLibrary (JoyShockLibrary.dll - preferably built from source right now as it has the Wireless DS4 and DS5 support)
 
 Currently, you will have to configure ```cmakelist.txt``` and your build environment yourself.
 
