@@ -31,31 +31,6 @@
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
 #define INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
 
-#define JSL_UP 0x00001
-#define JSL_DOWN 0x00002
-#define JSL_LEFT 0x00004
-#define JSL_RIGHT 0x00008
-#define JSL_PLUS 0x00010
-#define JSL_OPTIONS 0x00010
-#define JSL_MINUS 0x00020
-#define JSL_SHARE 0x00020
-#define JSL_LCLICK 0x00040
-#define JSL_RCLICK 0x00080
-#define JSL_L 0x00100
-#define JSL_R 0x00200
-#define JSL_ZL 0x00400
-#define JSL_ZR 0x00800
-#define JSL_S 0x01000
-#define JSL_E 0x02000
-#define JSL_W 0x04000
-#define JSL_N 0x08000
-#define JSL_HOME 0x10000
-#define JSL_PS 0x10000
-#define JSL_CAPTURE 0x20000
-#define JSL_TOUCHPAD_CLICK 0x20000
-#define JSL_SL 0x40000
-#define JSL_SR 0x80000
-
 #define GYRO_BASEFACTOR 400
 #define PI 3.1415927
 #define __GYRO_INJECTOR_VERSION__ "v0.1"
@@ -69,6 +44,54 @@
 #include <chrono>
 #include "vec2.h"
 
+// Bitmask defines for buttons.
+#define GAMEPAD_A 1
+#define GAMEPAD_B 2
+#define GAMEPAD_X 4
+#define GAMEPAD_Y 8
+#define GAMEPAD_BACK 16
+#define GAMEPAD_GUIDE 32
+#define GAMEPAD_START 64
+#define GAMEPAD_LEFTSTICK 128
+#define GAMEPAD_RIGHTSTICK 256
+#define GAMEPAD_LEFTSHOULDER 512
+#define GAMEPAD_RIGHTSHOULDER 1024
+#define GAMEPAD_DPAD_UP 2048
+#define GAMEPAD_DPAD_DOWN 4096
+#define GAMEPAD_DPAD_LEFT 8192
+#define GAMEPAD_DPAD_RIGHT 16384
+#define GAMEPAD_MISC1 32768
+#define GAMEPAD_PADDLE1 65536
+#define GAMEPAD_PADDLE2 131072
+#define GAMEPAD_PADDLE3 262144
+#define GAMEPAD_PADDLE4 524288
+#define GAMEPAD_TOUCHPAD 1048576
+#define GAMEPAD_TRIGGER_LEFT 2097152
+#define GAMEPAD_TRIGGER_RIGHT 4194304
+
+#define GAMEPAD_OFFSET_A 0
+#define GAMEPAD_OFFSET_B 1
+#define GAMEPAD_OFFSET_X 2
+#define GAMEPAD_OFFSET_Y 3
+#define GAMEPAD_OFFSET_BACK 4
+#define GAMEPAD_OFFSET_GUIDE 5
+#define GAMEPAD_OFFSET_START 6
+#define GAMEPAD_OFFSET_LEFTSTICK 7
+#define GAMEPAD_OFFSET_RIGHTSTICK 8
+#define GAMEPAD_OFFSET_LEFTSHOULDER 9
+#define GAMEPAD_OFFSET_RIGHTSHOULDER 10
+#define GAMEPAD_OFFSET_DPAD_UP 11
+#define GAMEPAD_OFFSET_DPAD_DOWN 12
+#define GAMEPAD_OFFSET_DPAD_LEFT 13
+#define GAMEPAD_OFFSET_DPAD_RIGHT 14
+#define GAMEPAD_OFFSET_MISC1 15
+#define GAMEPAD_OFFSET_PADDLE1 16
+#define GAMEPAD_OFFSET_PADDLE2 17
+#define GAMEPAD_OFFSET_PADDLE3 18
+#define GAMEPAD_OFFSET_PADDLE4 19
+#define GAMEPAD_OFFSET_TOUCHPAD 20
+#define GAMEPAD_OFFSET_TRIGGER_LEFT 21
+#define GAMEPAD_OFFSET_TRIGGER_RIGHT 22
 
 // Why change the order of CONTROLLERENUM? On controllers, players are going to be generally using the left stick to move, making the movement keys redundant.
 // I keep them just in case, but i'd say a vast majority of people will be using the left stick to move.
@@ -110,16 +133,6 @@ enum JSD_ControllerType {
     Dualsense = 5
 };
 
-typedef struct jsdev {
-    int Handle;
-    JSD_ControllerType Type;
-} JSDevice;
-
-typedef struct assgn {
-    enum CONTROLLERMODE ControllerMode = DISCONNECTED;
-    JSDevice PrimaryDevice = {-1, None};
-    JSDevice SecondaryDevice {-1, None};
-} Assignment;
 
 typedef struct clr {
     unsigned char r;
@@ -132,7 +145,7 @@ typedef struct PROFILE {
     enum STICKMODE StickMode = FULLSTICK;
     int DS4Color = 0x000000;
     int CalibrationButton = { 0x20000 };
-    int BUTTONPRIM[TOTALBUTTONS] = {JSL_ZR, JSL_ZL, JSL_L, JSL_R, JSL_PLUS, JSL_S, JSL_W, JSL_E, JSL_N, 0, 0, 0, 0, JSL_UP, JSL_DOWN, JSL_LEFT, JSL_RIGHT, JSL_MINUS, 0x00000, JSL_CAPTURE};
+    int BUTTONPRIM[TOTALBUTTONS] = {GAMEPAD_TRIGGER_RIGHT, GAMEPAD_TRIGGER_LEFT, GAMEPAD_LEFTSHOULDER, GAMEPAD_RIGHTSHOULDER, GAMEPAD_START, GAMEPAD_A, GAMEPAD_B, GAMEPAD_X, GAMEPAD_Y, 0, 0, 0, 0, GAMEPAD_DPAD_UP, GAMEPAD_DPAD_DOWN, GAMEPAD_DPAD_LEFT, GAMEPAD_DPAD_RIGHT, GAMEPAD_BACK, 0x00000, GAMEPAD_MISC1};
     int BUTTONSEC[TOTALBUTTONS] = {};
     // Other settings (converted from enumerator arrays
     vec2<float> AimstickDeadzone = {0.10, 0.10};

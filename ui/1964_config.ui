@@ -306,11 +306,6 @@
           <string>Switch Pro/Dualshock</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Joycon Pair</string>
-         </property>
-        </item>
        </widget>
       </item>
      </layout>

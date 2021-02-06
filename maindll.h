@@ -38,7 +38,7 @@
 #include "common/common.h"
 #include "plugin.h"
 #include "game/EmulatorLink.h"
-#include "input/JoyShockDriver.h"
+#include "input/SdlDriver.h"
 #include "settings/Settings.h"
 #include "game/Game.h"
 #include "ui/ConfigDialog.h"
@@ -56,7 +56,7 @@ protected:
     bool _romloaded = false;
     // Pointers to objects.
     Settings* _settingsptr = nullptr;
-    JoyShockDriver* _jsdptr = nullptr;
+    SdlDriver* _jsdptr = nullptr;
 
 
     explicit MainDll(HINSTANCE hinstance);

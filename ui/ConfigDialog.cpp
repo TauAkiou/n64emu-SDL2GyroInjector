@@ -69,7 +69,7 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new U
 
     _createPrimaryButtonLayouts();
 
-    _loadedfull = _jsdriver->GetConnectedFullControllers();
+    _loadedfull = _jsdriver->GetConnectedControllers();
     _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
     _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
     _selectedplayer = PLAYER1;
@@ -88,10 +88,10 @@ void ConfigDialog::_setPlayerColorAndDefaultNumber(const PROFILE& prf, Assignmen
             return;
         case JOYCONS:
             // JSL is smart enough to ignore a line for controllers that don't have a particular feature.
-            _jsdriver->SetSPCJCNumber(asgn.SecondaryDevice, 15);
+            //_jsdriver->SetSPCJCNumber(asgn.SecondaryDevice, 15);
         case FULLCONTROLLER:
-            _jsdriver->SetSPCJCNumber(asgn.PrimaryDevice, 15);
-            _jsdriver->SetDS4Color(asgn.PrimaryDevice, prf.DS4Color);
+            //_jsdriver->SetSPCJCNumber(asgn.PrimaryDevice, 15);
+            //_jsdriver->SetDS4Color(asgn.PrimaryDevice, prf.DS4Color);
             return;
     }
 }
@@ -270,27 +270,31 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
         _baseDialog->primaryDeviceBox->clear();
         _baseDialog->primaryDeviceBox->setEnabled(true);
 
+        // Item is unselected.
+        _baseDialog->primaryDeviceBox->addItem(QString::fromStdString("---"));
+
         for(auto & dev : _loadedfull) {
             auto strbuild = std::stringstream();
 
-            strbuild << deviceno+1 << ": " << _jsdriver->GetNameOfDevice(dev);
+            strbuild << deviceno+1 << ": " << dev->GetControllerName();
             _baseDialog->primaryDeviceBox->addItem(QString::fromStdString(strbuild.str()));
 
-            if(dev.Handle == _localassignments[_selectedplayer].PrimaryDevice.Handle) {
-                _baseDialog->primaryDeviceBox->setCurrentIndex(deviceno);
+            if(dev == _localassignments[_selectedplayer].PrimaryDevice) {
+                _baseDialog->primaryDeviceBox->setCurrentIndex(deviceno+1);
             }
 
             deviceno++;
         }
 
-            for(int dev = 0; dev < _loadedfull.size(); dev++) {
+        if(_localassignments[_selectedplayer].PrimaryDevice == nullptr) {
+            _baseDialog->primaryDeviceBox->setCurrentIndex(0);
+        }
 
-            }
         // Remember to set the devices appropriately.
 
         break;
         case JOYCONS:
-            // Disable and clear secondary device box.
+            /* SDL2 does not yet have proper support for Joycon pairs.
             _baseDialog->secondaryDeviceBox->clear();
             _baseDialog->secondaryDeviceBox->setEnabled(true);
 
@@ -328,6 +332,7 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
                 }
             }
             break;
+             */
         case DISCONNECTED:
         default:
             _baseDialog->secondaryDeviceBox->clear();
@@ -339,13 +344,21 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
 }
 
 void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
-
-    // Only use the primary device. We merge the joycon input into one mask anyway, so it doesn't matter what controller
-    // we 'read' from.
-
-    for(int index = 0; index < TOTALBUTTONS; index++) {
-        _mappingButtonListPrimary[index]->setText(QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, profile.BUTTONPRIM[index])));
-        _mappingButtonListSecondary[index]->setText(QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.SecondaryDevice, profile.BUTTONSEC[index])));
+    if(asgn.PrimaryDevice != nullptr) {
+        for (int index = 0; index < TOTALBUTTONS; index++) {
+            _mappingButtonListPrimary[index]->setText(
+                    QString::fromStdString(asgn.PrimaryDevice->GetButtonNameFromBitmask(profile.BUTTONPRIM[index])));
+            _mappingButtonListSecondary[index]->setText(
+                    QString::fromStdString(asgn.PrimaryDevice->GetButtonNameFromBitmask(profile.BUTTONSEC[index])));
+        }
+    }
+    else {
+        for (int index = 0; index < TOTALBUTTONS; index++) {
+            _mappingButtonListPrimary[index]->setText(
+                    QString::fromStdString("-"));
+            _mappingButtonListSecondary[index]->setText(
+                    QString::fromStdString("-"));
+        }
     }
 }
 
@@ -376,15 +389,33 @@ void ConfigDialog::on_primaryDeviceBox_activated(int index) {
     // bounds checking
     switch(cmode) {
         case DISCONNECTED:
+        case JOYCONS:
         default:
             return;
         case FULLCONTROLLER:
-            if (index >= _loadedfull.size() || index < 0) {
+
+            // Checking.
+            if (!index) {
+            _localassignments[_selectedplayer].PrimaryDevice = nullptr;
+                _baseDialog->primaryDeviceBox->setCurrentIndex(-1);
                 return;
             }
-            _localassignments[_selectedplayer].PrimaryDevice = _loadedfull[index];
+
+                for(int player = PLAYER1; player < ALLPLAYERS; player++) {
+                    if (_loadedfull[index-1] == _localassignments[player].PrimaryDevice && player != _selectedplayer) {
+                        // Controller is already selected. Null the primarydevice.
+                        _localassignments[_selectedplayer].PrimaryDevice = nullptr;
+                        _baseDialog->primaryDeviceBox->setCurrentIndex(-1);
+                        _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+                        return;
+                    }
+                }
+
+            _localassignments[_selectedplayer].PrimaryDevice = _loadedfull[index-1];
+            _localassignments[_selectedplayer].PrimaryDevice->AssignPlayerIndex(_selectedplayer);
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
+            /*
         case JOYCONS:
             if (index >= _loadedjoyconprimary.size() || index < 0) {
                 return;
@@ -392,6 +423,7 @@ void ConfigDialog::on_primaryDeviceBox_activated(int index) {
             _localassignments[_selectedplayer].PrimaryDevice = _loadedjoyconprimary[index];
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
+             */
     }
 }
 
@@ -403,14 +435,16 @@ void ConfigDialog::on_secondaryDeviceBox_activated(int index) {
         case DISCONNECTED:
         case FULLCONTROLLER:
         default:
-            return;
         case JOYCONS:
+            return;
+            /*
             if (index >= _loadedjoyconsecondary.size() || index < 0)  {
                 return;
             }
             _localassignments[_selectedplayer].SecondaryDevice = _loadedjoyconsecondary[index];
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
+             */
     }
 }
 
@@ -425,10 +459,11 @@ void ConfigDialog::on_controllerModeBox_activated(int index) {
                 goto ListEmpty; // no full controllers; treat as DISCONNECTED.
             _loadDevicesIntoDeviceBox(FULLCONTROLLER);
             _localassignments[_selectedplayer].ControllerMode = FULLCONTROLLER;
-            _localassignments[_selectedplayer].PrimaryDevice = _loadedfull.front(); // Always select the first con.
+            _localassignments[_selectedplayer].PrimaryDevice = nullptr;
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
         case JOYCONS:
+            /*
             if(_loadedjoyconprimary.empty() || _loadedjoyconsecondary.empty())
                 goto ListEmpty; // no joycons; treat as DISCONNECTED.
             _loadDevicesIntoDeviceBox(JOYCONS);
@@ -437,13 +472,14 @@ void ConfigDialog::on_controllerModeBox_activated(int index) {
             _localassignments[_selectedplayer].SecondaryDevice = _loadedjoyconsecondary.front();
             _loadMappingsIntoUi(_localprofiles[_selectedplayer],  _localassignments[_selectedplayer]);
             break;
+             */
         default:
         case DISCONNECTED:
         ListEmpty:
             _loadDevicesIntoDeviceBox(DISCONNECTED);
             _localassignments[_selectedplayer].ControllerMode = DISCONNECTED;
-            _localassignments[_selectedplayer].PrimaryDevice = {-1, None};
-            _localassignments[_selectedplayer].SecondaryDevice = {-1, None};
+            _localassignments[_selectedplayer].PrimaryDevice = nullptr;
+            _localassignments[_selectedplayer].SecondaryDevice = nullptr;
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
             break;
     }
@@ -578,8 +614,9 @@ void ConfigDialog::on_playerSettingsTabStickAimStickModeBox_activated(int index)
 }
 
 void ConfigDialog::on_reconnectControllers_clicked() {
+    /*
     _jsdriver->ReconnectControllers();
-    _loadedfull = _jsdriver->GetConnectedFullControllers();
+    _loadedfull = _jsdriver->GetConnectedControllers();
     _loadedjoyconprimary = _jsdriver->GetConnectedLeftJoycons();
     _loadedjoyconsecondary = _jsdriver->GetConnectedRightJoycons();
 
@@ -596,6 +633,7 @@ void ConfigDialog::on_reconnectControllers_clicked() {
 
     // Commit assignments as all original assignments may now be invalid.
     _commitAssignments();
+     */
 }
 
 void ConfigDialog::on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* button) {
@@ -625,6 +663,9 @@ void ConfigDialog::on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* 
 
 void ConfigDialog::_commitAssignments() {
     for(int ctrl = PLAYER1; ctrl < ALLPLAYERS; ctrl++) {
+        if(_localassignments[ctrl].PrimaryDevice == nullptr) {
+            _localassignments[ctrl].ControllerMode = DISCONNECTED;
+        }
         _settingsptr->SetAssignmentForPlayer(static_cast<PLAYERS>(ctrl), _localassignments[ctrl]);
     }
 }
@@ -662,20 +703,20 @@ void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary)
     while (dur.count() < 5.0f) {
         QApplication::processEvents();
         if (asgn.ControllerMode == FULLCONTROLLER) {
-            auto btn = JoyShockDriver::GetFirstButtonFromDevice(asgn.PrimaryDevice);
+            auto btn = asgn.PrimaryDevice->GetFirstPressedButton();
             if (btn != 0) {
 
                 if(isSecondary) _localprofiles[_selectedplayer].BUTTONSEC[command] = btn;
                 else _localprofiles[_selectedplayer].BUTTONPRIM[command] = btn;
 
-                buttonlist[command]->setText(QString::fromStdString(
-                        JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, btn)));
+                buttonlist[command]->setText(QString::fromStdString(asgn.PrimaryDevice->GetButtonNameFromBitmask(btn)));
                 return;
             }
         }
+        /*
         else if(asgn.ControllerMode == JOYCONS) {
-            auto btn_primary = JoyShockDriver::GetFirstButtonFromDevice(asgn.PrimaryDevice);
-            auto btn_secondary = JoyShockDriver::GetFirstButtonFromDevice(asgn.SecondaryDevice);
+            auto btn_primary = SdlDriver::GetFirstButtonFromDevice(asgn.PrimaryDevice);
+            auto btn_secondary = SdlDriver::GetFirstButtonFromDevice(asgn.SecondaryDevice);
             auto btn = btn_primary & btn_secondary;
 
             if (btn != 0) {
@@ -684,10 +725,11 @@ void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary)
                 else _localprofiles[_selectedplayer].BUTTONPRIM[command] = btn;
 
                 buttonlist[command]->setText(QString::fromStdString(
-                        JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, btn)));
+                        SdlDriver::GetButtonLabelForController(asgn.PrimaryDevice, btn)));
                 return;
             }
         }
+        */
             if (dur.count() > 4.0f)
                 buttonlist[command]->setText(QString::fromStdString("1..."));
             else if (dur.count() > 3.0f)
@@ -703,5 +745,5 @@ void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary)
     if(isSecondary) _localprofiles[_selectedplayer].BUTTONSEC[command] = 0;
     else _localprofiles[_selectedplayer].BUTTONPRIM[command] = 0;
     buttonlist[command]->setText(
-            QString::fromStdString(JoyShockDriver::GetButtonLabelForController(asgn.PrimaryDevice, -1)));
+            QString::fromStdString("None"));
 }

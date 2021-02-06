@@ -25,27 +25,36 @@
  */
 
 /*
- * JoyShockDriver.h - Class for interfacting with JoyShockLibrary and operating core injection loop.
+ * SdlDriver.h - Class for interfacing with SDL2 and operating core injection loop.
  */
 
 
-#ifndef INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H
-#define INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H
+#ifndef INC_1964_INPUT_JOYSHOCKCPP_SDLDRIVER_H
+#define INC_1964_INPUT_JOYSHOCKCPP_SDLDRIVER_H
 
 #include <vector>
 #include <map>
 #include <windows.h>
 #include <ctime>
 #include <iostream>
+#include <memory>
+#include <SDL.h>
+#include <SDL_joystick.h>
+#include <SDL_hints.h>
+#include <memory>
 #include "../common/common.h"
+#include "InputClasses.h"
 #include "../settings/Settings.h"
-#include "../JoyShockLibrary/JoyShockLibrary.h"
 #include "../game/Game.h"
 
-class JoyShockDriver {
+class SdlDriver {
     protected:
-        static JoyShockDriver* instance;
+        static SdlDriver* instance;
         HANDLE _inputthread = nullptr;
+
+        // SDL GameController Instance
+        SDL_Joystick* _sdlController = nullptr;
+
         Settings* _settings = nullptr;
         ControlState* _cstateptr = nullptr;
         Game* _gameptr = nullptr;
@@ -55,7 +64,7 @@ class JoyShockDriver {
         bool _initialized = false;
         bool _looppaused = false;
 
-        std::vector<JSDevice> *_devices = new std::vector<JSDevice>();
+        std::vector<std::shared_ptr<SDLDevice>> _controllers;
         HWND _emulatorwindow = nullptr;
 
         static DWORD WINAPI startinjectionloop(void* param);
@@ -63,8 +72,8 @@ class JoyShockDriver {
 
 
     public:
-        static JoyShockDriver* getInstance();
-        JoyShockDriver();
+        static SdlDriver* getInstance();
+        SdlDriver();
         int Initialize(const HWND hw);
         void Terminate();
         void AssignEmulatorWindow(const HWND hw);
@@ -73,21 +82,21 @@ class JoyShockDriver {
         bool IsThreadRunning();
         [[nodiscard]] int GetConnectedDeviceCount() const;
         int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
-        std::vector<JSDevice> GetConnectedFullControllers();
-        std::vector<JSDevice> GetConnectedLeftJoycons();
-        std::vector<JSDevice> GetConnectedRightJoycons();
-        static std::string GetButtonLabelForController(JSDevice device, int buttonmask);
-        static void SetDS4Color(JSDevice dev, int color);
-        void SetSPCJCNumber(JSDevice dev, const int number);
-        void CalibrateGyroscope(JSDevice &jsd);
+        std::shared_ptr<SDLDevice> GetFirstController();
+        std::vector<std::shared_ptr<SDLDevice>> GetConnectedControllers();
+        std::vector<SDLDevice> GetConnectedLeftJoycons();
+        std::vector<SDLDevice> GetConnectedRightJoycons();
+        static std::string GetButtonLabelForController(SDLDevice device, int buttonmask);
+        static void SetDS4Color(SDLDevice dev, int color);
+        void SetSPCJCNumber(SDLDevice dev, const int number);
+        void CalibrateGyroscope(SDLDevice &sdldev);
         void CalibrateAllGyroscopes();
-        std::vector<JSDevice> GetConnectedDS4();
-        std::string GetNameOfDevice(JSDevice &device);
+        std::vector<SDLDevice> GetConnectedDS4();
+        std::string GetNameOfDevice(SDLDevice &device);
         void ReconnectControllers();
         void PauseInjection();
         void UnpauseInjection();
-
-    static int GetFirstButtonFromDevice(JSDevice jsd);
+        int GetFirstButtonFromDevice(SDLDevice &jsd);
 };
 
-#endif //INC_1964_INPUT_JOYSHOCKCPP_JOYSHOCKDRIVER_H
+#endif //INC_1964_INPUT_JOYSHOCKCPP_SDLDRIVER_H

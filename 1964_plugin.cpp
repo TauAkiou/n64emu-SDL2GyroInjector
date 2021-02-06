@@ -77,7 +77,7 @@ DLLEXPORT void CALL DllAbout(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllConfig(HWND hParent)
 {
-    //if(JoyShockDriver::getInstance()->GetConnectedDeviceCount())
+    //if(SdlDriver::getInstance()->GetConnectedDeviceCount())
     //{
         //MessageBoxA(hParent, "Controllers found.\n" , "JoyShock Injector - Controllers Found", MB_ICONERROR | MB_OK);
 
@@ -97,7 +97,7 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllTest(HWND hParent)
 {
-    MessageBoxA(hParent, JoyShockDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
+    MessageBoxA(hParent, SdlDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
 }
 //==========================================================================
 // Purpose: Allows the emulator to gather information about the DLL by filling in the PluginInfo structure
@@ -161,7 +161,7 @@ DLLEXPORT void CALL RomClosed(void)
 //==========================================================================
 DLLEXPORT void CALL RomOpen(void)
 {
-    JoyShockDriver::getInstance()->AssignEmulatorWindow(GetForegroundWindow());
+    SdlDriver::getInstance()->AssignEmulatorWindow(GetForegroundWindow());
     MainDll::GetInstance()->StartInjection();
     MainDll::GetInstance()->setRomloaded(true);
 
