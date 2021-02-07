@@ -22,7 +22,7 @@ This plugin is still a work in progress, and is still not ready for general use.
 ###Todo List:
 - [x] ~~Rewrite input backend using SDL.~~
 - [x] ~~Implement basic QT Plugin UI~~
-- [ ] Implement Gyroscope Calibration
+- [x] ~~Implement Gyroscope Calibration~~
 - [ ] Implement configuration saving
 - [ ] Code polishing & organization
 - [ ] Polish up for prebuilt release.
