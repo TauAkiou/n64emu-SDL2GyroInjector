@@ -13,6 +13,7 @@
 #include <iostream>
 #include "../common/common.h"
 #include "../common/Helpers.h"
+#include "GamepadMotion/GamepadMotion.hpp"
 
 typedef struct {
     float GyroX = 0.0f;
@@ -35,26 +36,34 @@ class SDLDevice {
         SDL_GameController* _sdlgcptr = nullptr;
         std::string _controllerName;
         SDL_GameControllerType _controllerType;
+        GamepadMotion _gyrocontrol;
 
         bool _deviceHasGyroscope = false;
         bool _deviceHasAccelerometer = false;
         bool _deviceHasPaddles = false;
         int _colorbar_color = 0x000000;
         int _sdlplayerindex = -1;
+        bool _deviceiscalibrating = false;
+        std::chrono::time_point<std::chrono::steady_clock> _calibration_start;
 
-    public:
+
+public:
         SDLDevice(int bindindex);
         ~SDLDevice();
         std::string GetControllerName();
         std::string GetButtonNameForDevice(SDL_GameControllerButton button);
         std::string GetAxisNameForDevice(SDL_GameControllerAxis axis);
         std::string GetButtonNameFromBitmask(int mask);
-        MotionReport GetCurrentMotionReport();
+        MotionReport GetCurrentMotionReport(float deltatime);
         AxisReport GetCurrentAxisReport();
         unsigned int GetCurrentButtonState();
         void AssignPlayerIndex(int index);
         int GetFirstPressedButton();
-
+        void StartGyroscopeCalibration();
+        bool GetIfGyroscopeIsCalibrating() const;
+        void StopGyroscopeCalibration();
+        void ResetGyroscopeCalibration();
+        std::chrono::time_point<std::chrono::steady_clock> GetStartOfLastCalibration();
 };
 
 typedef struct assgn {

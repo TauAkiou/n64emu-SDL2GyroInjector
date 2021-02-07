@@ -32,7 +32,7 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_COMMON_H
 
 #define GYRO_BASEFACTOR 400
-#define PI 3.1415927
+#define PI 3.1415927f
 #define __GYRO_INJECTOR_VERSION__ "v0.1"
 #define __CURRENTYEAR__ "2021"
 
@@ -176,8 +176,6 @@ typedef struct {
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROSTATE;
-    bool CALIBRATING;
-    std::chrono::time_point<std::chrono::steady_clock> CALIBRATIONSTARTTIME;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H

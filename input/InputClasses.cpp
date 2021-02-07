@@ -342,7 +342,7 @@ std::string SDLDevice::GetControllerName() {
     return _controllerName;
 }
 
-MotionReport SDLDevice::GetCurrentMotionReport() {
+MotionReport SDLDevice::GetCurrentMotionReport(float deltatime) {
     MotionReport report;
     if(!_deviceHasGyroscope) {
         report.GyroX = 0;
@@ -367,7 +367,15 @@ MotionReport SDLDevice::GetCurrentMotionReport() {
     else {
         float accelerometer[3];
         SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, accelerometer, 3);
+
+        report.AccelX = accelerometer[0];
+        report.AccelY = accelerometer[1];
+        report.AccelZ = accelerometer[2];
     }
+    // It's processing time.
+    _gyrocontrol.ProcessMotion(report.GyroX, report.GyroY, report.GyroZ, report.AccelX, report.AccelY, report.AccelZ, deltatime);
+    _gyrocontrol.GetCalibratedGyro(report.GyroX, report.GyroY, report.GyroZ);
+
     return report;
 }
 
@@ -465,5 +473,25 @@ void SDLDevice::AssignPlayerIndex(int index) {
     SDL_GameControllerSetPlayerIndex(_sdlgcptr, index);
 }
 
-//static Sint16 GetAxisLimitForGamepad() {}
+void SDLDevice::StartGyroscopeCalibration() {
+    _gyrocontrol.StartContinuousCalibration();
+    _calibration_start = std::chrono::steady_clock::now();
+    _deviceiscalibrating = true;
+}
 
+void SDLDevice::StopGyroscopeCalibration() {
+    _gyrocontrol.PauseContinuousCalibration();
+    _deviceiscalibrating = false;
+}
+
+void SDLDevice::ResetGyroscopeCalibration() {
+    _gyrocontrol.ResetContinuousCalibration();
+}
+
+bool SDLDevice::GetIfGyroscopeIsCalibrating() const {
+    return _deviceiscalibrating;
+}
+
+std::chrono::time_point<std::chrono::steady_clock> SDLDevice::GetStartOfLastCalibration() {
+    return _calibration_start;
+}

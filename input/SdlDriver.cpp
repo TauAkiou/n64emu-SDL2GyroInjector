@@ -77,8 +77,28 @@ DWORD SdlDriver::injectionloop() {
             auto dev = &_cstateptr->Device[player];
 
             sdl_buttons = assignment.PrimaryDevice->GetCurrentButtonState();
-            sdl_motionreport = assignment.PrimaryDevice->GetCurrentMotionReport();
+            sdl_motionreport = assignment.PrimaryDevice->GetCurrentMotionReport(dur.count());
             sdl_axisreport = assignment.PrimaryDevice->GetCurrentAxisReport();
+
+            // All we do with calibration is a simple 5 second calibration routine. Additionally, give a 2 second cooldown between calibrations.
+            if(!assignment.PrimaryDevice->GetIfGyroscopeIsCalibrating()) {
+                if((sdl_buttons & profile.BUTTONPRIM[CALIBRATEGYRO]) != 0 && (time_current - assignment.PrimaryDevice->GetStartOfLastCalibration()).count() > 6) {
+                    std::cout << "Player " << player+1 << " controller is calibrating." << std::endl;
+                    assignment.PrimaryDevice->ResetGyroscopeCalibration();
+                    assignment.PrimaryDevice->StartGyroscopeCalibration();
+                    continue;
+                }
+            }
+            else {
+                std::chrono::duration<float> cal_duration = time_current - assignment.PrimaryDevice->GetStartOfLastCalibration();
+                auto caldtest = cal_duration.count();
+                std::cout << "Time passed: " << caldtest << std::endl;
+                if(cal_duration.count() > 5.0f) {
+                    assignment.PrimaryDevice->StopGyroscopeCalibration();
+                    std::cout << "Player " << player+1 << " calibration complete." << std::endl;
+                }
+            }
+
 
             dev->AIMSTICK.x = sdl_axisreport.RStick.x;
             dev->AIMSTICK.y = sdl_axisreport.RStick.y;
@@ -110,7 +130,7 @@ DWORD SdlDriver::injectionloop() {
 
             //std::cout << "GyroX: " << _ctrlptr->Device[PLAYER1].GYROX << " GyroY: " << _ctrlptr->Device[PLAYER1].GYROY << std::endl;
             checkwindowtick = 0;
-            if(_emulatorwindow != GetForegroundWindow() || _looppaused) // don't send input if the window is inactive.
+            if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
                 memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
                 _gameptr->Inject(); // ship empty input to game

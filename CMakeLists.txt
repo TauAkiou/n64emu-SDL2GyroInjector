@@ -62,7 +62,8 @@ add_library(1964_input_joyshockcpp SHARED
         ui/ConfigDialog.h
         ui/1964_config.ui
         input/InputClasses.h
-        input/InputClasses.cpp)
+        input/InputClasses.cpp
+        input/GamepadMotion/GamepadMotion.hpp input/GamepadMotion/GamepadMotion.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${SDL_INCLUDE})
 target_link_directories(1964_input_joyshockcpp PRIVATE res)
