@@ -66,13 +66,20 @@ MainDll::MainDll(HINSTANCE hinstance) {
         wcsncpy(directory, filepath, wcslen(filepath) - dllnamelength + 1);
         directory[wcslen(filepath) - dllnamelength + 1] = L'\0'; // string needs terminator so add zero character to end
         _jsonfilepath.append(directory);
-        _jsonfilepath.append(L"mouseinjector.json");
+        _jsonfilepath.append(L"gyroinjector.json");
     }
 }
 
 MainDll::~MainDll() {
     // Delete all pointers.
 }
+
+void MainDll::LoadConfig() {
+    std::wfstream jsondata;
+    jsondata.open(std::filesystem::path(_jsonfilepath));
+
+
+};
 
 bool MainDll::Initialize(const HWND hW) {
     auto count = _jsdptr->Initialize(hW);

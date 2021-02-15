@@ -32,6 +32,8 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_MAINDLL_H
 
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <cmath>
 #include <windows.h>
 #include <commctrl.h>
@@ -42,6 +44,7 @@
 #include "settings/Settings.h"
 #include "game/Game.h"
 #include "ui/ConfigDialog.h"
+#include "nlohmann/json.hpp"
 
 #define DLLEXPORT __declspec(dllexport)
 #define CALL __cdecl
@@ -64,8 +67,6 @@ protected:
     ~MainDll();
 
 public:
-
-public:
     bool isRomloaded() const;
     void setRomloaded(bool romloaded);
     static MainDll* GetInstance(HINSTANCE hinstance = nullptr);
@@ -76,8 +77,8 @@ public:
     void UpdateControllerStatus();
     void StartInjection();
     void EndInjection();
-
     int HandleConfigWindow(int argc, char **argv);
+    void LoadConfig();
 };
 
 

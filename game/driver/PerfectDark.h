@@ -79,6 +79,8 @@ public:
     int Status() override;
     void Inject() override;
     void Quit() override;
+
+    void _processAnalogMovement(const int player, const PROFILE &profile);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_PERFECTDARK_H

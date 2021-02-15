@@ -97,7 +97,7 @@ DLLEXPORT void CALL DllConfig(HWND hParent)
 //==========================================================================
 DLLEXPORT void CALL DllTest(HWND hParent)
 {
-    MessageBoxA(hParent, SdlDriver::getInstance()->GetConnectedDeviceCount() ? "Joyshock Injector detects a JoyShockLibrary compatible controller." : "Joyshock Injector could not find Mouse and Keyboard", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
+    MessageBoxA(hParent, SdlDriver::getInstance()->GetConnectedDeviceCount() ? "Gyroscope injector located valid devices." : "Joyshock Injector could not locate any valid devices.", "Mouse Injector - Testing", MB_ICONINFORMATION | MB_OK);
 }
 //==========================================================================
 // Purpose: Allows the emulator to gather information about the DLL by filling in the PluginInfo structure
@@ -107,7 +107,7 @@ DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
 {
     PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
     PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    sprintf(PluginInfo->Name, "Joyshock for GE/PD (cpp) %s", __GYRO_INJECTOR_VERSION__);
+    sprintf(PluginInfo->Name, "SDL2 Gyroscope Controller Injector %s", __GYRO_INJECTOR_VERSION__);
 #ifdef SPEEDRUN_BUILD
     sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
 #endif
