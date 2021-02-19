@@ -13,6 +13,7 @@ This plugin is still a work in progress, and is still not ready for general use.
   * Mouse Style Gyro Aim supported on all controllers supported by SDL2.
   * Joycons not currently supported.  
 * ~~Player Identification (Color bar for DS4, Player Lights for SPC/Joycon, both for DS5)~~ (Appears to be currently broken.)    
+
 * Extensive input customization.
 * Support for up to 4 players.
 * Some Gyro-Exclusive Features:
