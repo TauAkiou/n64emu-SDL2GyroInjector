@@ -37,10 +37,11 @@
 #include <sstream>
 #include <iostream>
 #include <chrono>
+#include <memory>
 #include <future>
 #include "../settings/Settings.h"
+#include "../input/SdlDriver.h"
 #include "ui_1964_config.h"
-#include "../input/JoyShockDriver.h"
 
 
 namespace Ui {
@@ -56,7 +57,7 @@ private:
     QList<QPushButton*> _mappingButtonListSecondary;
 
     Settings* _settingsptr = Settings::GetInstance();
-    JoyShockDriver* _jsdriver = JoyShockDriver::getInstance();
+    SdlDriver* _jsdriver = SdlDriver::getInstance();
     PROFILE _localprofiles[4]{};
     Assignment _localassignments[4]{};
 
@@ -67,9 +68,9 @@ private:
 
     int _deviceindex[2][4];
 
-    std::vector<JSDevice> _loadedfull;
-    std::vector<JSDevice> _loadedjoyconprimary;
-    std::vector<JSDevice> _loadedjoyconsecondary;
+    std::vector<std::shared_ptr<SDLDevice>> _loadedfull;
+    std::vector<SDLDevice> _loadedjoyconprimary;
+    std::vector<SDLDevice> _loadedjoyconsecondary;
 
     bool _locked = false;
     static inline bool _configdialogisopen = false;
@@ -78,7 +79,6 @@ private:
     void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
     void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
     void _mapButtonToCommand(CONTROLLERENUM command, bool isSecondary);
-    void _selectDeviceFromAssignment();
     void _getCurrentConfigState();
     static QString _getNameFromButtonIndex(CONTROLLERENUM index);
     void _createPrimaryButtonLayouts();

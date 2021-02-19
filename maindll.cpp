@@ -45,7 +45,7 @@ MainDll::MainDll(HINSTANCE hinstance) {
     // TODO: Consider decoupling these objects from singletons.
     _settingsptr = Settings::GetInstance();
     //_emuctrlptr = ControlState::GetInstance();
-    _jsdptr = JoyShockDriver::getInstance();
+    _jsdptr = SdlDriver::getInstance();
     //_gameptr = Game::GetInstance();
     _hinst = hinstance;
 
@@ -66,13 +66,20 @@ MainDll::MainDll(HINSTANCE hinstance) {
         wcsncpy(directory, filepath, wcslen(filepath) - dllnamelength + 1);
         directory[wcslen(filepath) - dllnamelength + 1] = L'\0'; // string needs terminator so add zero character to end
         _jsonfilepath.append(directory);
-        _jsonfilepath.append(L"mouseinjector.json");
+        _jsonfilepath.append(L"gyroinjector.json");
     }
 }
 
 MainDll::~MainDll() {
     // Delete all pointers.
 }
+
+void MainDll::LoadConfig() {
+    std::wfstream jsondata;
+    jsondata.open(std::filesystem::path(_jsonfilepath));
+
+
+};
 
 bool MainDll::Initialize(const HWND hW) {
     auto count = _jsdptr->Initialize(hW);
@@ -109,8 +116,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     if(!_jsdptr->Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
             _settingsptr->SetAssignmentForPlayer(static_cast<PLAYERS>(player), {DISCONNECTED,
-                                                                                {-1, None},
-                                                                                {-1, None}});
+                                                                                nullptr,nullptr});
         }
         UpdateControllerStatus();
         return false;
@@ -120,7 +126,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     // Use the first detected FULL controller type.
 
-    auto ctrllst_full = _jsdptr->GetConnectedFullControllers();
+    auto ctrllst_full = _jsdptr->GetConnectedControllers();
     auto ctrllst_ljc = _jsdptr->GetConnectedLeftJoycons();
     auto ctrllst_rjc = _jsdptr->GetConnectedRightJoycons();
 
@@ -136,12 +142,29 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     if(!ctrllst_full.empty()) {
         player1asgn = {FULLCONTROLLER, ctrllst_full.front(),
-                                  {-1, None}};
-        player2asgn = {DISCONNECTED, ctrllst_full.back(),
-                               {-1, None}};
+                                  nullptr};
+        player2asgn = {DISCONNECTED, nullptr,
+                               nullptr};
     }
 
     PROFILE player1prof, player2prof, player3prof, player4prof;
+
+
+    if(player1asgn.PrimaryDevice != nullptr) {
+        player1asgn.PrimaryDevice->AssignPlayerIndex(0);
+    }
+    if(player2asgn.PrimaryDevice != nullptr) {
+        player1asgn.PrimaryDevice->AssignPlayerIndex(1);
+
+    }
+    if(player3asgn.PrimaryDevice != nullptr) {
+        player1asgn.PrimaryDevice->AssignPlayerIndex(2);
+
+    }
+    if(player4asgn.PrimaryDevice != nullptr) {
+        player1asgn.PrimaryDevice->AssignPlayerIndex(3);
+
+    }
 
 
     player1prof.DS4Color = 0x0000FF;
@@ -202,7 +225,7 @@ int MainDll::HandleConfigWindow(int argc, char* argv[]) {
     if(_romloaded && !_jsdptr->IsThreadRunning()) {
         _jsdptr->StartInjectionThread();
     }
-    return res;
+    return 0;
 }
 
 bool MainDll::isRomloaded() const {

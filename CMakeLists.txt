@@ -8,9 +8,17 @@ if(MINGW)
             "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
 endif(MINGW)
 
-#set(CMAKE_PREFIX_PATH "D:\\Qt\\5.15.2-static-mingw\\5.15.2")
-set(CMAKE_PREFIX_PATH "D:\\Qt\\qt-5_7_1-x86-msvc2017-static")
-#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+if(QT_INSTALL)
+    set(CMAKE_PREFIX_PATH ${QT_INSTALL})
+else()
+    message(FATAL_ERROR "The QT_INSTALL path must point to a QT directory.")
+endif(QT_INSTALL)
+
+if(!SDL_INCLUDE)
+    message(FATAL_ERROR "SDL_INCLUDE must be set and point to your SDL '/include' directory.")
+endif()
+
+
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -19,21 +27,18 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
 
 # used for automatic deployment & debugging purposes.
-SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
-SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
+SET(1964_INSTALL_DIRECTORY "C:/Games/1964 - sdl")
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-m32 -Wall -O2 --static")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-m32 -Wall -O2")
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-DQT_STATICPLUGIN)
 include_directories(${CMAKE_BINARY_DIR})
 add_library(1964_input_joyshockcpp SHARED
         maindll.cpp
         maindll.h
         plugin.h
-        JoyShockLibrary/JoyShockLibrary.h
-        input/JoyShockDriver.cpp
-        input/JoyShockDriver.h
+        input/SdlDriver.cpp
+        input/SdlDriver.h
         common/common.h
         game/EmulatorLink.cpp
         game/EmulatorLink.h
@@ -56,17 +61,22 @@ add_library(1964_input_joyshockcpp SHARED
         ui/ConfigDialog.cpp
         ui/ConfigDialog.h
         ui/1964_config.ui
-        )
-## target_compile_options(1964_input_joyshockcpp PRIVATE /W4 /MTd)
+        input/InputClasses.h
+        input/InputClasses.cpp
+        input/GamepadMotion/GamepadMotion.hpp
+        input/GamepadMotion/GamepadMotion.cpp
+        nlohmann/json.hpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/res D:/Qt/qt-5_7_1-x86-msvc2017-static/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${SDL_INCLUDE})
 target_link_directories(1964_input_joyshockcpp PRIVATE res)
-#target_link_libraries(1964_input_joyshockcpp JoyShockLibrary)
 
-target_link_libraries(1964_input_joyshockcpp PUBLIC Qt5::Widgets Qt5::Core Qt5::Gui JoyShockLibrary.lib)
-target_link_libraries(1964_input_joyshockcpp PRIVATE Ws2_32.lib Version.lib imm32.lib winmm.lib)
+target_link_libraries(1964_input_joyshockcpp PUBLIC Qt5::Widgets Qt5::Core Qt5::Gui SDL2)
+#target_link_libraries(1964_input_joyshockcpp PRIVATE Ws2_32.lib Version.lib imm32.lib winmm.lib)
 
-add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
+# Automatic deployment for the plugin.
+IF(1964_PLUGIN_DIRECTORY)
+    SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
+    add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_BINARY_DIR}/lib1964_input_joyshockcpp.dll
         ${1964_PLUGIN_DIRECTORY}/)
+ENDIF()

@@ -32,16 +32,19 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_MAINDLL_H
 
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <cmath>
 #include <windows.h>
 #include <commctrl.h>
 #include "common/common.h"
 #include "plugin.h"
 #include "game/EmulatorLink.h"
-#include "input/JoyShockDriver.h"
+#include "input/SdlDriver.h"
 #include "settings/Settings.h"
 #include "game/Game.h"
 #include "ui/ConfigDialog.h"
+#include "nlohmann/json.hpp"
 
 #define DLLEXPORT __declspec(dllexport)
 #define CALL __cdecl
@@ -56,14 +59,12 @@ protected:
     bool _romloaded = false;
     // Pointers to objects.
     Settings* _settingsptr = nullptr;
-    JoyShockDriver* _jsdptr = nullptr;
+    SdlDriver* _jsdptr = nullptr;
 
 
     explicit MainDll(HINSTANCE hinstance);
     bool Initialize(const HWND hW);
     ~MainDll();
-
-public:
 
 public:
     bool isRomloaded() const;
@@ -76,8 +77,8 @@ public:
     void UpdateControllerStatus();
     void StartInjection();
     void EndInjection();
-
     int HandleConfigWindow(int argc, char **argv);
+    void LoadConfig();
 };
 
 

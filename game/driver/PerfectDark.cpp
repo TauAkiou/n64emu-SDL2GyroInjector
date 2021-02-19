@@ -63,6 +63,9 @@
 #define PD_bikebase 0x805142C4 - 0x805142C0
 #define PD_bikeyaw 0x804B1AB4 - 0x804B1A48
 #define PD_bikeroll 0x804B1B04 - 0x804B1A48
+// Address offsets taken from https://github.com/n64decomp/perfect_dark/blob/master/src/include/types.h
+#define PD_speedsideways 0x168
+#define PD_speedforwards 0x170
 // STATIC ADDRESSES BELOW
 #define JOANNADATA(X) (unsigned int)_link->ReadInt(0x8009A024 + (X * 0x4)) // player pointer address (0x4 offset for each players)
 #define PD_menu(X) 0x80070750 + (X * 0x4) // player menu flag (0 = PD is in menu) (0x4 offset for each players)
@@ -126,6 +129,7 @@ void PerfectDark::Inject()
             _processFreeAimInput(player, profile);
         }
 
+        //_processAnalogMovement(player, profile);
         if(!dead && camera == 1 && !menu) // player is alive, in first person and is in menu
             _radialmenunav(player, profile); // check if player is in radial menu and translate mouse input to C buttons
         else if(dead || camera != 1) // player is dead or not in first person camera
@@ -795,8 +799,8 @@ void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const 
     crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
     crosshairposy[player] += (profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
     // * fmax(mouseaccel, 1);
-    crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE); // apply clamp then inject
-    crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE, CROSSHAIRLIMITFREE);
+    crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
+    crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
 
     _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
     _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
@@ -815,13 +819,13 @@ void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const 
         gunlcenter[player] = 0;
 
     _link->WriteFloat(playerbase[player] + PD_gunrx, ((float)gunrcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1); // calculate and inject the gun angles
-    _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairposx[player] * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier * RATIOFACTOR); // set the recoil to the correct rotation (if we don't, then the recoil is always z axis aligned)
+    _link->WriteFloat(playerbase[player] + PD_gunrxrecoil, crosshairposx[player] * (GUNRECOILXLIMIT / CROSSHAIRLIMIT) * fovmodifier * RATIOFACTOR); // set the recoil to the correct rotation (if we don't, then the recoil is always z axis aligned)
     _link->WriteFloat(playerbase[player] + PD_gunry, ((float)gunrcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
-    _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairposy[player] * (GUNRECOILYLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier);
+    _link->WriteFloat(playerbase[player] + PD_gunryrecoil, crosshairposy[player] * (GUNRECOILYLIMIT / CROSSHAIRLIMIT) * fovmodifier);
     _link->WriteFloat(playerbase[player] + PD_gunlx, ((float)gunlcenter[player] / centertime) * (crosshairposx[player] * 0.75f) + fovratio - 1);
-    _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairposx[player] * (GUNRECOILXLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier * RATIOFACTOR);
+    _link->WriteFloat(playerbase[player] + PD_gunlxrecoil, crosshairposx[player] * (GUNRECOILXLIMIT / CROSSHAIRLIMIT) * fovmodifier * RATIOFACTOR);
     _link->WriteFloat(playerbase[player] + PD_gunly, ((float)gunlcenter[player] / centertime) * (crosshairposy[player] * 0.66f) + fovratio - 1);
-    _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairposy[player] * (GUNRECOILYLIMITFREE / CROSSHAIRLIMITFREE) * fovmodifier);
+    _link->WriteFloat(playerbase[player] + PD_gunlyrecoil, crosshairposy[player] * (GUNRECOILYLIMIT / CROSSHAIRLIMIT) * fovmodifier);
 
 
     if(aimingflag) {
@@ -839,4 +843,12 @@ void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const 
         else
             aimy[player] = 0;
     }
+}
+
+void PerfectDark::_processAnalogMovement(const int player, const PROFILE &profile) {
+    const float speedsideways = _link->ReadFloat(playerbase[player] + PD_speedsideways);
+    const float speedforward = _link->ReadFloat(playerbase[player] + PD_speedforwards);
+
+    if(speedforward != 0 || speedsideways != 0) std::cout << "Speed - LR: " << speedsideways << " FB: " << speedforward << std::endl;
+
 }
