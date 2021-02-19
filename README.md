@@ -8,6 +8,8 @@ While this entire plugin was effectively rewritten, the code was primarily copie
 
 The code has some strange, unusual bugs which will be detailed in the Issue tracker, and is still very incomplete. Build and use at your own risk. Pull requests and suggestions to improve the code would be greatly appreciated.
 
+This branch is the JoyShockMapper version and is kept for archival purposes. It will not be updated.
+
 ## Features:
 * Mouse-style Gyro aiming for the following controllers:
     - Dualshock 4
