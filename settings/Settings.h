@@ -35,6 +35,7 @@
 #include "../common/common.h"
 #include "../input/InputClasses.h"
 #include "../plugin.h"
+#include <windows.h>
 
 class Settings {
 private:
@@ -49,9 +50,12 @@ private:
     vec2<int> _overrideRatio = {16, 9 };
     bool ShowGoldeneyeCrosshair = false;
 
+    std::wstring _jsonfilepath;
+    explicit Settings(HINSTANCE _hinst);
+
 public:
     // Instance
-    static Settings* GetInstance();
+    static Settings* GetInstance(HINSTANCE hinstance = nullptr);
 
     // Getters/Setters for profiles
     PROFILE GetProfileForPlayer(enum PLAYERS player);
@@ -64,13 +68,11 @@ public:
     void SetFovOverride(int fovoverride);
     vec2<int> GetOverrideRatio();
     void SetOverrideRatio(const vec2<int>& overrideratio);
-
-
-
     bool GetIfPlayerIsConnected(enum PLAYERS player);
-
     [[nodiscard]] bool GetShowGoldeneyeCrosshair() const;
     void SetShowGoldeneyeCrosshair(bool val);
+
+    // Loading from configuraiton files.
 };
 
 /*

@@ -27,11 +27,40 @@
 #include "Settings.h"
 #include <utility>
 
-Settings* Settings::GetInstance() {
+Settings* Settings::GetInstance(HINSTANCE hinstance) {
     if(_instance == nullptr) {
-        _instance = new Settings();
+        _instance = new Settings(hinstance);
     }
     return _instance;
+}
+
+Settings::Settings(HINSTANCE _hinst) {
+    try {
+        if(_hinst == nullptr) throw std::exception();
+        wchar_t filepath[MAX_PATH] = {L'\0'};
+        wchar_t directory[MAX_PATH] = {L'\0'};
+
+        GetModuleFileNameW(_hinst, filepath, MAX_PATH);
+        if (filepath != nullptr) {
+            const wchar_t slash[] = L"\\";
+            wchar_t *dllname;
+            unsigned int dllnamelength = 19;
+            dllname = wcspbrk(filepath, slash);
+            while (dllname !=
+                   nullptr) { // find the last filename in full filepath and set filename length to dllnamelength (skip to slash every loop until last filename is found)
+                dllnamelength = wcslen(dllname);
+                dllname = wcspbrk(dllname + 1, slash);
+            }
+            wcsncpy(directory, filepath, wcslen(filepath) - dllnamelength + 1);
+            directory[wcslen(filepath) - dllnamelength +
+                      1] = L'\0'; // string needs terminator so add zero character to end
+            _jsonfilepath.append(directory);
+            _jsonfilepath.append(L"gyroinjector.json");
+        }
+    }
+    catch(std::exception &exc) {
+        throw;
+    }
 }
 
 PROFILE Settings::GetProfileForPlayer(enum PLAYERS player) {
@@ -99,3 +128,5 @@ ControlState* ControlState::GetInstance() {
         _instance = new ControlState();
     return _instance;
 }
+
+
