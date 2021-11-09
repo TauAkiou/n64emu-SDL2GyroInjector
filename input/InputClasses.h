@@ -53,6 +53,9 @@ public:
         ~SDLDevice();
         std::string GetControllerName();
         std::string GetButtonNameForDevice(SDL_GameControllerButton button);
+        static std::string GetGenericButtonNames(SDL_GameControllerButton button);
+        static std::string GetGenericButtonNameFromBitmask(int mask);
+        static std::string GetGenericAxisNames(SDL_GameControllerAxis axis);
         std::string GetAxisNameForDevice(SDL_GameControllerAxis axis);
         std::string GetButtonNameFromBitmask(int mask);
         MotionReport GetCurrentMotionReport(float deltatime);

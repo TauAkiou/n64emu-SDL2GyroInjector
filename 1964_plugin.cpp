@@ -69,8 +69,8 @@ DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command)
 //==========================================================================
 DLLEXPORT void CALL DllAbout(HWND hParent)
 {
-    //std::string message = "JoyShockLibrary Plugin for 1964 (GE/PD) " << __GYRO_INJECTOR_VERSION__ << " (Build: "<< __DATE__ << ")\nCopyright (C) " << __CURRENTYEAR__ << ", Carnivorous, TauAkiou";
-    //MessageBoxA(hParent, message.c_str() , "JoyShock Injector - About", MB_ICONINFORMATION | MB_OK);
+//std::string message = "SDL2 Motion/Gyro Input Plugin for GE/PD " + __GYRO_INJECTOR_VERSION__ + " (Build: " + __DATE__ + ")\nCopyright (C) " + __CURRENTYEAR__ << ", Carnivorous, TauAkiou";
+  //  MessageBoxA(hParent, message.c_str() , "JoyShock Injector - About", MB_ICONINFORMATION | MB_OK);
 }
 //==========================================================================
 // Purpose: Optional function that is provided to allow the user to configure the DLL
@@ -109,7 +109,7 @@ DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
 {
     PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
     PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    sprintf(PluginInfo->Name, "SDL2 Gyroscope Controller Injector %s", __GYRO_INJECTOR_VERSION__);
+    sprintf(PluginInfo->Name, "SDL2 Gyro Injector %s", __GYRO_INJECTOR_VERSION__);
 #ifdef SPEEDRUN_BUILD
     sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
 #endif

@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.17)
-project(1964_input_joyshockcpp)
+project(SDL2_GyroInjector)
 set(CMAKE_CXX_STANDARD 17)
 
-message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-
-include(FetchContent)
-
 # automatically download nlohmann/json.
+message("Fetching nhlohmann/json...")
+include(FetchContent)
 
 FetchContent_Declare(json
         GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
@@ -22,11 +20,16 @@ FetchContent_MakeAvailable(json)
 
 # set up directories for SDL2 and Qt5, other required packages.
 
-set(SDL2_DIR "C:\\msvc\\SDL2-2.0.16")
-set(Qt5_DIR "C:\\msvc\\qt-5_15-x86-msvc2017-static\\lib\\cmake\\Qt5")
+IF(NOT DEFINED SDL2_DIR)
+    message(FATAL_ERROR "SDL2 Directory is not defined. Please make sure you have defined the SDL2 path in the cmake command line.")
+endif()
+
+if(NOT DEFINED Qt5_DIR)
+    message(FATAL_ERROR "Qt5 Directory is not defined. Please make sure you have defined the SDL2 path in the cmake command line.")
+endif()
 
 find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
-find_package(SDL2 REQUIRED STATIC)
+find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # compiler specific settings
@@ -42,14 +45,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# used for automatic deployment & debugging purposes.
-SET(1964_INSTALL_DIRECTORY "C:/Games/1964")
-
-SET(GCC_COVERAGE_COMPILE_FLAGS "/MTd")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-
 include_directories(${CMAKE_BINARY_DIR})
-add_library(1964_input_joyshockcpp SHARED
+add_library(SDL2_GyroInjector SHARED
         maindll.cpp
         maindll.h
         plugin.h
@@ -92,25 +89,26 @@ if(MSVC)
         cmake_policy(SET CMP0091 NEW)
     endif()
 
-    set_property(TARGET 1964_input_joyshockcpp PROPERTY
+    set_property(TARGET SDL2_GyroInjector PROPERTY
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     # set_property(TARGET SDL2 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif(MSVC)
 
-target_link_directories(1964_input_joyshockcpp PRIVATE res)
-target_link_libraries(1964_input_joyshockcpp PUBLIC Qt5::Widgets Qt5::Core Qt5::Gui)
-target_link_libraries(1964_input_joyshockcpp PRIVATE nlohmann_json::nlohmann_json SDL2)
+message("${SDL2_LIBRARIES}")
+
+#target_link_directories(SDL2_GyroInjector PRIVATE ${SDL2_LIBRARIES})
+target_link_libraries(SDL2_GyroInjector PUBLIC Qt5::Widgets Qt5::Core Qt5::Gui ${SDL2_LIBRARIES})
+target_link_libraries(SDL2_GyroInjector PRIVATE nlohmann_json::nlohmann_json)
 
 
 # Automatic deployment for the plugin.
 IF(1964_INSTALL_DIRECTORY)
-    message("${PROJECT_BINARY_DIR}")
     SET(1964_PLUGIN_DIRECTORY ${1964_INSTALL_DIRECTORY}/plugin)
-    #add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove
+    #add_custom_command(TARGET SDL2_GyroInjector POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove
     #${1964_PLUGIN_DIRECTORY}/)
-    add_custom_command(TARGET 1964_input_joyshockcpp POST_BUILD VERBATIM
+    add_custom_command(TARGET SDL2_GyroInjector POST_BUILD VERBATIM
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${PROJECT_BINARY_DIR}/1964_input_joyshockcpp.dll"
-            "${1964_PLUGIN_DIRECTORY}/1964_input_joyshockcpp.dll"
+            "${PROJECT_BINARY_DIR}/SDL2_GyroInjector.dll"
+            "${1964_PLUGIN_DIRECTORY}/SDL2_GyroInjector.dll"
             COMMENT "Copying to 1964 Directory...")
 ENDIF()

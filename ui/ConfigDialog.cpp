@@ -355,9 +355,9 @@ void ConfigDialog::_loadMappingsIntoUi(js_settings::PROFILE&profile, Assignment 
     else {
         for (int index = 0; index < TOTALBUTTONS; index++) {
             _mappingButtonListPrimary[index]->setText(
-                    QString::fromStdString("-"));
+                    QString::fromStdString(SDLDevice::GetGenericButtonNameFromBitmask(profile.BUTTONPRIM[index])));
             _mappingButtonListSecondary[index]->setText(
-                    QString::fromStdString("-"));
+                    QString::fromStdString(SDLDevice::GetGenericButtonNameFromBitmask(profile.BUTTONSEC[index])));
         }
     }
 }

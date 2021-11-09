@@ -40,6 +40,28 @@ SDLDevice::~SDLDevice() {
     SDL_GameControllerClose(_sdlgcptr);
 }
 
+std::string SDLDevice::GetGenericAxisNames(SDL_GameControllerAxis axis) {
+        switch(axis) {
+            case SDL_CONTROLLER_AXIS_INVALID:
+                return "Invalid";
+            case SDL_CONTROLLER_AXIS_LEFTX:
+                return "Left X-Axis";
+            case SDL_CONTROLLER_AXIS_LEFTY:
+                return "Left Y-Axis";
+            case SDL_CONTROLLER_AXIS_RIGHTX:
+                return "Right X-Axis";
+            case SDL_CONTROLLER_AXIS_RIGHTY:
+                return "Right Y-Axis";
+            case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+                return "LT";
+            case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+                return "RT";
+            case SDL_CONTROLLER_AXIS_MAX:
+            default:
+                return "Unknown";
+        }
+}
+
 std::string SDLDevice::GetAxisNameForDevice(SDL_GameControllerAxis axis) {
     switch(_controllerType) {
 
@@ -115,6 +137,8 @@ std::string SDLDevice::GetAxisNameForDevice(SDL_GameControllerAxis axis) {
 std::string SDLDevice::GetButtonNameFromBitmask(int mask) {
     // Really think I should have used an Enum here.
     switch(mask) {
+        case 0:
+            return "None";
         case GAMEPAD_A:
             return GetButtonNameForDevice(SDL_CONTROLLER_BUTTON_A);
         case GAMEPAD_B:
@@ -163,6 +187,113 @@ std::string SDLDevice::GetButtonNameFromBitmask(int mask) {
             return GetAxisNameForDevice(SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
         default:
             return GetButtonNameForDevice(SDL_CONTROLLER_BUTTON_INVALID);
+    }
+}
+
+std::string SDLDevice::GetGenericButtonNameFromBitmask(int mask) {
+    switch(mask) {
+        case 0:
+            return "None";
+        case GAMEPAD_A:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_A);
+        case GAMEPAD_B:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_B);
+        case GAMEPAD_X:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_X);
+        case GAMEPAD_Y:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_Y);
+        case GAMEPAD_BACK:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_BACK);
+        case GAMEPAD_GUIDE:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_GUIDE);
+        case GAMEPAD_START:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_START);
+        case GAMEPAD_LEFTSTICK:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_LEFTSTICK);
+        case GAMEPAD_RIGHTSTICK:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+        case GAMEPAD_LEFTSHOULDER:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+        case GAMEPAD_RIGHTSHOULDER:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+        case GAMEPAD_DPAD_UP:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_DPAD_UP);
+        case GAMEPAD_DPAD_DOWN:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+        case GAMEPAD_DPAD_LEFT:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+        case GAMEPAD_DPAD_RIGHT:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+        case GAMEPAD_MISC1:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_MISC1);
+        case GAMEPAD_PADDLE1:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_PADDLE1);
+        case GAMEPAD_PADDLE2:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_PADDLE2);
+        case GAMEPAD_PADDLE3:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_PADDLE3);
+        case GAMEPAD_PADDLE4:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_PADDLE4);
+        case GAMEPAD_TOUCHPAD:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_TOUCHPAD);
+        case GAMEPAD_TRIGGER_LEFT:
+            return GetGenericAxisNames(SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+        case GAMEPAD_TRIGGER_RIGHT:
+            return GetGenericAxisNames(SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+        default:
+            return GetGenericButtonNames(SDL_CONTROLLER_BUTTON_INVALID);
+    }
+}
+
+std::string SDLDevice::GetGenericButtonNames(SDL_GameControllerButton button) {
+    switch(button) {
+        case SDL_CONTROLLER_BUTTON_A:
+            return "A";
+        case SDL_CONTROLLER_BUTTON_B:
+            return "B";
+        case SDL_CONTROLLER_BUTTON_BACK:
+            return "Back";
+        case SDL_CONTROLLER_BUTTON_INVALID:
+            return "Invalid";
+        case SDL_CONTROLLER_BUTTON_X:
+            return "X";
+        case SDL_CONTROLLER_BUTTON_Y:
+            return "Y";
+        case SDL_CONTROLLER_BUTTON_GUIDE:
+            return "Home";
+        case SDL_CONTROLLER_BUTTON_START:
+            return "Start";
+        case SDL_CONTROLLER_BUTTON_LEFTSTICK:
+            return "LS";
+        case SDL_CONTROLLER_BUTTON_RIGHTSTICK:
+            return "RS";
+        case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+            return "LB";
+        case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+            return "RB";
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+            return "Up";
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+            return "Down";
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+            return "Left";
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+            return "Right";
+        case SDL_CONTROLLER_BUTTON_MISC1:
+            return "Misc 1";
+        case SDL_CONTROLLER_BUTTON_PADDLE1:
+            return "Paddle 1";
+        case SDL_CONTROLLER_BUTTON_PADDLE2:
+            return "Paddle 2";
+        case SDL_CONTROLLER_BUTTON_PADDLE3:
+            return "Paddle 3";
+        case SDL_CONTROLLER_BUTTON_PADDLE4:
+            return "Paddle 4";
+        case SDL_CONTROLLER_BUTTON_TOUCHPAD:
+            return "Touchpad";
+        case SDL_CONTROLLER_BUTTON_MAX:
+        default:
+            return "Invalid";
     }
 }
 
