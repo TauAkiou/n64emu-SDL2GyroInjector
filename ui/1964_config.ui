@@ -216,7 +216,7 @@
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>341</width>
+      <width>351</width>
       <height>561</height>
      </rect>
     </property>
@@ -228,7 +228,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>339</width>
+       <width>349</width>
        <height>559</height>
       </rect>
      </property>
@@ -254,7 +254,7 @@
      <x>10</x>
      <y>50</y>
      <width>371</width>
-     <height>57</height>
+     <height>61</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="controllerSettingsLayout">
@@ -468,7 +468,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -637,7 +637,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>334</width>
+        <width>339</width>
         <height>341</height>
        </rect>
       </property>
@@ -1112,9 +1112,9 @@
      <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>0</y>
-        <width>332</width>
+        <width>311</width>
         <height>101</height>
        </rect>
       </property>
@@ -1366,9 +1366,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>311</width>
-      <height>173</height>
+      <y>32</y>
+      <width>341</width>
+      <height>151</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="globalLayout">
@@ -1610,6 +1610,9 @@
    </widget>
   </widget>
   <widget class="QPushButton" name="reconnectControllers">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>600</x>

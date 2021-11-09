@@ -85,7 +85,7 @@ private:
     void _commitAssignments();
     void _commitProfiles();
     void _commitGlobals();
-    void _loadProfileSettingsIntoUi(const js_settings::PROFILE& profile);
+    void _loadProfileSettingsIntoUi(const js_settings::PROFILE profile);
     static Color _getColorFromInt(int color);
     int _getIntFromColor(Color color);
     void _setPlayerColorAndDefaultNumber(const js_settings::PROFILE& prf, Assignment asgn);

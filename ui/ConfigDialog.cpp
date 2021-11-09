@@ -127,7 +127,7 @@ int ConfigDialog::_getIntFromColor(Color color) {
     return (rgb << 8) + color.b;
 }
 
-void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE& profile) {
+void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile) {
     //
     _baseDialog->playerSettingsTabStickAimStickLayoutBox->setCurrentIndex(profile.AimStick);
     _baseDialog->playerSettingsTabStickAimStickModeBox->setCurrentIndex(profile.StickMode);
@@ -270,7 +270,7 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
         _baseDialog->primaryDeviceBox->clear();
         _baseDialog->primaryDeviceBox->setEnabled(true);
 
-        // Item is unselected.
+        // Item is unselected
         _baseDialog->primaryDeviceBox->addItem(QString::fromStdString("---"));
 
         for(auto & dev : _loadedfull) {
@@ -491,7 +491,7 @@ void ConfigDialog::on_controllerModeBox_activated(int index) {
 // Gyro Aim X
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(value / 100.0);
-    //_localprofiles[_selectedplayer].GyroscopeSensitivity.x = roundf(((float)value/100) * 100 / 100) / 100.0;
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = roundf((float)value) / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value) {
@@ -569,7 +569,7 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(do
 // Y
 void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickMoveDeadzoneYSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].MoveStickDeadzone.y = (value / 100.0f);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.y = ((float)value / 100.0f);
 }
 
 void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value) {
@@ -579,12 +579,12 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(do
 
 void ConfigDialog::on_globalFovSpinbox_valueChanged(int value) {
     _baseDialog->globalFovSlider->setValue(value);
-    //_settingsptr->SetFovOverride(value);
+    _settingsptr->SetFovOverride(value);
 }
 
 void ConfigDialog::on_globalFovSlider_valueChanged(int value) {
     _baseDialog->globalFovSpinbox->setValue(value);
-    //_settingsptr->SetFovOverride(value);
+    _settingsptr->SetFovOverride(value);
 }
 
 void ConfigDialog::on_playerSettingsTabGyroAimingStyleBox_activated(int index) {

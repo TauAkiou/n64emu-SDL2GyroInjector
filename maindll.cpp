@@ -90,6 +90,9 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     Sleep(1000); // Sleep for a second to get everything initialized.
 
+    // Load the configuration file.
+    _settingsptr->LoadConfigFile();
+
     if(!_jsdptr->Initialize(window)) {
         for(int player = PLAYER1; player < ALLPLAYERS; player++) {
             _settingsptr->SetAssignmentForPlayer(static_cast<PLAYERS>(player), {DISCONNECTED,
@@ -98,22 +101,10 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
         UpdateControllerStatus();
         return false;
     }
-        // Set up configuration objects.
-
-
-    // Use the first detected FULL controller type.
 
     auto ctrllst_full = _jsdptr->GetConnectedControllers();
     auto ctrllst_ljc = _jsdptr->GetConnectedLeftJoycons();
     auto ctrllst_rjc = _jsdptr->GetConnectedRightJoycons();
-
-    /*
-    if(ctrllist.empty()) {
-        // No controller, just in case here
-        player1prof.SETTINGS[CONFIG] = DISABLED;
-        return false;
-    }
-     */
 
     Assignment player1asgn, player2asgn, player3asgn, player4asgn;
 
@@ -124,50 +115,6 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
                                nullptr};
     }
 
-    _settingsptr->LoadConfigFile();
-
-    /*
-
-    PROFILE player1prof, player2prof, player3prof, player4prof;
-
-
-    if(player1asgn.PrimaryDevice != nullptr) {
-        player1asgn.PrimaryDevice->AssignPlayerIndex(0);
-    }
-    if(player2asgn.PrimaryDevice != nullptr) {
-        player1asgn.PrimaryDevice->AssignPlayerIndex(1);
-
-    }
-    if(player3asgn.PrimaryDevice != nullptr) {
-        player1asgn.PrimaryDevice->AssignPlayerIndex(2);
-
-    }
-    if(player4asgn.PrimaryDevice != nullptr) {
-        player1asgn.PrimaryDevice->AssignPlayerIndex(3);
-
-    }
-
-
-    player1prof.DS4Color = 0x0000FF;
-    player2prof.DS4Color = 0xFF0000;
-    player3prof.DS4Color = 0x00FF00;
-    player4prof.DS4Color = 0xFFFF00;
-
-    _settingsptr->SetProfileForPlayer(PLAYER1, player1prof);
-    _settingsptr->SetAssignmentForPlayer(PLAYER1, player1asgn);
-
-    _settingsptr->SetProfileForPlayer(PLAYER2, player2prof);
-    _settingsptr->SetAssignmentForPlayer(PLAYER2, player2asgn);
-
-    _settingsptr->SetProfileForPlayer(PLAYER3, player3prof);
-    _settingsptr->SetAssignmentForPlayer(PLAYER3, player3asgn);
-
-    _settingsptr->SetProfileForPlayer(PLAYER4, player4prof);
-    _settingsptr->SetAssignmentForPlayer(PLAYER4, player4asgn);
-
-    _settingsptr->SetShowGoldeneyeCrosshair(true);
-    _settingsptr->SetFovOverride(90);
-    */
 
     UpdateControllerStatus();
     return true;
