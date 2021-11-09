@@ -42,6 +42,8 @@
 #define FOV_MAX 120
 
 #include <chrono>
+#include <utility>
+#include "nlohmann/json.hpp"
 #include "vec2.h"
 
 // Bitmask defines for buttons.
@@ -123,6 +125,7 @@ enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
 enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 enum CONTROLLERMODE { DISCONNECTED = 0, FULLCONTROLLER, JOYCONS };
+enum AIMTYPE { STANDARD = 0, SPLATOON, FREE };
 
 enum JSD_ControllerType {
     None = 0,
@@ -140,31 +143,48 @@ typedef struct clr {
     unsigned char b;
 } Color;
 
-typedef struct PROFILE {
-    // Secondary devices are used when we are in Joycon mode.
-    enum STICKMODE StickMode = FULLSTICK;
-    int DS4Color = 0x000000;
-    int CalibrationButton = { 0x20000 };
-    int BUTTONPRIM[TOTALBUTTONS] = {GAMEPAD_TRIGGER_RIGHT, GAMEPAD_TRIGGER_LEFT, GAMEPAD_LEFTSHOULDER, GAMEPAD_RIGHTSHOULDER, GAMEPAD_START, GAMEPAD_A, GAMEPAD_B, GAMEPAD_X, GAMEPAD_Y, 0, 0, 0, 0, GAMEPAD_DPAD_UP, GAMEPAD_DPAD_DOWN, GAMEPAD_DPAD_LEFT, GAMEPAD_DPAD_RIGHT, GAMEPAD_BACK, 0x00000, GAMEPAD_MISC1};
-    int BUTTONSEC[TOTALBUTTONS] = {};
-    // Other settings (converted from enumerator arrays
-    vec2<float> AimstickDeadzone = {0.10, 0.10};
-    vec2<float> MoveStickDeadzone = {0.10, 0.10};
-    vec2<float> AimStickSensitivity = {1.00, 1.00};
-    vec2<float> GyroscopeSensitivity = {1.00, 1.00};
-    float Crosshair = {1.00};
-    bool GyroPitchInverted = {false};
-    bool StickPitchInverted = {false};
-    bool CrouchToggle = {true};
-    bool GoldeneyeAimMode = {true};
-    bool PerfectDarkAimMode = {true};
-    bool UseStickToAim = {false};
-    bool FreeAiming = {true};
-    bool AimStick = false; // True: Left, False: Right
-    //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
-    //float FLOATSETTINGS[TOTALVECTORSETTINGS];
-    //int SETTINGS[TOTALSETTINGS];
-} PROFILE;
+namespace js_settings {
+
+    typedef struct EMUSETTINGS {
+        bool IsOverclocked = true;
+        int FovOverride = 60;
+        vec2<int> RatioOverride{16, 9};
+        bool GoldeneyeCrosshair = false;
+    } EMUSETTINGS;
+
+    typedef struct PROFILE {
+        // Secondary devices are used when we are in Joycon mode.
+        enum STICKMODE StickMode = FULLSTICK;
+        int DS4Color = 0x000000;
+        int BUTTONPRIM[TOTALBUTTONS] = {GAMEPAD_TRIGGER_RIGHT, GAMEPAD_TRIGGER_LEFT, GAMEPAD_LEFTSHOULDER,
+                                        GAMEPAD_RIGHTSHOULDER, GAMEPAD_START, GAMEPAD_A, GAMEPAD_B, GAMEPAD_X,
+                                        GAMEPAD_Y, 0, 0, 0, 0, GAMEPAD_DPAD_UP, GAMEPAD_DPAD_DOWN, GAMEPAD_DPAD_LEFT,
+                                        GAMEPAD_DPAD_RIGHT, GAMEPAD_BACK, 0x00000, GAMEPAD_MISC1};
+        int BUTTONSEC[TOTALBUTTONS] = {};
+        // Other settings (converted from enumerator arrays
+        vec2<float> AimstickDeadzone = {0.10, 0.10};
+        vec2<float> MoveStickDeadzone = {0.10, 0.10};
+        vec2<float> AimStickSensitivity = {1.00, 1.00};
+        vec2<float> GyroscopeSensitivity = {2.00, 2.00};
+        float Crosshair = {1.00};
+        bool GyroPitchInverted = {false};
+        bool StickPitchInverted = {false};
+        bool CrouchToggle = {true};
+        bool GoldeneyeAimMode = {true};
+        bool PerfectDarkAimMode = {true};
+        bool UseStickToAim = {false};
+        bool FreeAiming = {false};
+        bool AimStick = false; // True: Left, False: Right
+        //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
+        //float FLOATSETTINGS[TOTALVECTORSETTINGS];
+        //int SETTINGS[TOTALSETTINGS];
+    } PROFILE;
+
+    void to_json(nlohmann::json &j, const PROFILE &p);
+    void to_json(nlohmann::json &j, const EMUSETTINGS &p);
+    void from_json(const nlohmann::json &j, PROFILE &p);
+    void from_json(const nlohmann::json &j, EMUSETTINGS &p);
+}
 
 
 

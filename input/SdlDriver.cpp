@@ -212,7 +212,7 @@ std::vector<std::shared_ptr<SDLDevice>> SdlDriver::GetConnectedControllers() {
 }
 
 std::vector<SDLDevice> SdlDriver::GetConnectedDS4() {
-
+    return std::vector<SDLDevice>();
 }
 
 // Return empty lists for the Joycons since SDL2 does not yet support Joycon logic.
@@ -229,16 +229,18 @@ void SdlDriver::CalibrateAllGyroscopes() {
 }
 
 std::string SdlDriver::GetButtonLabelForController(SDLDevice device, int buttonmask) {
+    return "";
 }
 
 std::string SdlDriver::GetNameOfDevice(SDLDevice &device) {
+    return "";
 }
 
 void SdlDriver::ReconnectControllers() {
 }
 
 int SdlDriver::GetFirstButtonFromDevice(SDLDevice &sdldev) {
-
+    return -1;
 }
 
 void SdlDriver::SetDS4Color(SDLDevice dev, int color) {

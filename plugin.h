@@ -45,7 +45,7 @@
 typedef unsigned short WORD;
 typedef int BOOL;
 typedef unsigned long DWORD;
-typedef void * HWND;
+// typedef void * HWND;
 #endif
 
 typedef struct

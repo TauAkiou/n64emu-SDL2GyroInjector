@@ -104,7 +104,7 @@ float InputHandler::getFlickState(PLAYERS player, const vec2<float> &stick) {
 
         float lastFlickProgress = flickprogress[player];
         if (lastFlickProgress < flicktime) {
-            flickprogress[player] = std::min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
+            flickprogress[player] = min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
 
             // get last time and this time in 0-1 completion range
             float lastPerOne = lastFlickProgress / flicktime;

@@ -2,21 +2,20 @@
 
 This is a modified/rewritten C++ version of the Keyboard/Mouse Injector Plugin written by Carnivorous.
 
-This plugin works with the custom, overclocked version of the 1964 Emulator released by Stolen and Carnivorous, which can be found here: [link](http://www.shootersforever.com/forums_message_boards/viewtopic.php?t=7045)
+This plugin works with the custom, overclocked version of the 1964 Emulator released by [Stolen and Carnivorous](http://www.shootersforever.com/forums_message_boards/viewtopic.php?t=7045)
 
-While this entire plugin was effectively rewritten, the code was primarily copied and readapted from Stolen and Carnivorous' work. A majority of the credit for this project goes to them and the ShootersForever community.
+This plugin is a rewrite heavily based on work done by Stolen and Carnivorous. A majority of the credit for this project goes to them and the ShootersForever community.
 
-This plugin is still a work in progress, and is still not ready for general use. 
+This plugin is still a work in progress.
 
 ## Features:
 * Full Controller Support for Goldeneye/Perfect Dark.
   * Mouse Style Gyro Aim supported on all controllers supported by SDL2.
   * Joycons not currently supported.  
-* ~~Player Identification (Color bar for DS4, Player Lights for SPC/Joycon, both for DS5)~~ (Appears to be currently broken.)    
 
 * Extensive input customization.
 * Support for up to 4 players.
-* Some Gyro-Exclusive Features:
+* Some features designed for gyroscope aiming:
     - Free Aim (Always-Active Aim Mode - experimental)
     - [Flick Stick](http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick)
   
@@ -24,11 +23,10 @@ This plugin is still a work in progress, and is still not ready for general use.
 - [x] ~~Rewrite input backend using SDL.~~
 - [x] ~~Implement basic QT Plugin UI~~
 - [x] ~~Implement Gyroscope Calibration~~
-- [ ] Implement configuration saving
+- [X] ~~Implement configuration saving~~
+- [ ] Controller Player ID
 - [ ] Code polishing & organization
-- [ ] Polish up for prebuilt release.
 - [ ] Fix up `CMakeLists.txt` & learn how to better utilize cmake
-- [ ] Finish build instructions.
 
 
 ## Potential Future Features
@@ -39,18 +37,24 @@ This plugin is still a work in progress, and is still not ready for general use.
 
 ## Dependencies & Requirements
 This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link above to find it.
-- MinGW64 (32-bit, x86)
+- MSVC Compiler
+- cmake
 - QT Framework 5.15.2
-- SDL2 (Latest Development Snapshot)
+- SDL2
 
 Currently, you will have to configure ```cmakelist.txt``` and make sure your build environment is set up.
 
 ## Building
-This assumes you already have mingw32, cmake, and the SDL headers somewhere on your system & your path set up. Build instructions should be similar to other cmake projects - detailed information coming later.
+This plugin uses MSVC to build.
 
-There are two cmake variables that must be set:
-- QT_INSTALL (Points to your QT Install directory)
-- SDL_INCLUDES (Points to the include directory for your SDL install)
+The emulator this plugin is designed to work with is 32-bit only, so you must download i686 versions of the compilers and libraries.
+
+###Dependencies:
+- msvc (Visual Studio 2017)
+- GlideN64 qt5-static for Zilmar-spec builds (obtainable from [here](https://github.com/gonetz/GLideN64/releases/tag/qt_build))
+- SDL2
+- [nlohmann/json](https://github.com/nlohmann/json)
+- cmake
 
 ## Releases
 Releases are not yet being provided. You will have to build the plugin yourself.

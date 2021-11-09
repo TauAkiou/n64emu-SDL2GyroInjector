@@ -32,7 +32,7 @@
 #define GUNAIMLIMITFREE 12.879164696 // 0x40DC221E
 #define CROSSHAIRLIMITFREE 10.159373283 // 0x40A51996
 #define TANKXROTATIONLIMIT 6.283185005 // 0x40C90FDA
-#define PI 3.1415927 // 0x40490FDB
+// #define PI 3.1415927 // 0x40490FDB
 // GOLDENEYE ADDRESSES - OFFSET ADDRESSES BELOW (REQUIRES PLAYERBASE TO USE)
 #define GE_stanceflag 0x800D2FFC - 0x800D2F60
 #define GE_deathflag 0x800D3038 - 0x800D2F60
@@ -124,7 +124,7 @@ void Goldeneye::Inject() {
     _resetgyro();
 }
 
-void Goldeneye::_processOriginalAimmode(int player, const PROFILE& profile) {
+void Goldeneye::_processOriginalAimmode(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(GE_camera);
     const int exit = _link->ReadInt(GE_exit);
     const int pause = _link->ReadInt(GE_pause);
@@ -237,7 +237,7 @@ void Goldeneye::_processOriginalAimmode(int player, const PROFILE& profile) {
     }
 }
 
-void Goldeneye::_aimmode(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov)
+void Goldeneye::_aimmode(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov)
 {
     const float crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx);
     const float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
@@ -287,7 +287,7 @@ void Goldeneye::_aimmode(const int player, const PROFILE& profile, const int aim
         crosshairposx[player] = crosshairx, crosshairposy[player] = crosshairy;
 }
 
-void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
+void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(GE_camera);
     const int exit = _link->ReadInt(GE_exit);
     const int pause = _link->ReadInt(GE_pause);
@@ -414,7 +414,7 @@ void Goldeneye::_processFreeAim(int player, const PROFILE& profile) {
 
 
 
-void Goldeneye::_crouch(const int player, const PROFILE& profile)
+void Goldeneye::_crouch(const int player, const js_settings::PROFILE& profile)
 {
     int crouchheld = _cfgptr->Device[player].BUTTONPRIM[CROUCH] || _cfgptr->Device[player].BUTTONSEC[CROUCH] || _cfgptr->Device[player].BUTTONPRIM[KNEEL] || _cfgptr->Device[player].BUTTONSEC[KNEEL];
     if(profile.CrouchToggle) // check and toggle player stance
@@ -434,7 +434,7 @@ void Goldeneye::_crouch(const int player, const PROFILE& profile)
 
 
 
-void Goldeneye::_aimmode_freeaim(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
+void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
     const float crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx);
     const float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
     const float offsetpos[2][33] = {{0, 0, 0, 0, 0.1625, 0.1625, 0.15, 0.5, 0.8, 0.4, 0.5, 0.5, 0.48, 0.9, 0.25, 0.6, 0.6, 0.7, 0.25, 0.15, 0.1625, 0.1625, 0.5, 0.5, 0.9, 0.9, 0, 0, 0, 0, 0, 0.4}, {0, 0, 0, 0, 0.1, 0.1, 0.2, 0.325, 1, 0.3, 0.425, 0.425, 0.45, 0.95, 0.1, 0.55, 0.5, 0.7, 0.25, 0.1, 0.1, 0.1, 0.275, 1, 0.9, 0.8, 0, 0, 0, 0, 0, 0.25}}; // table of X/Y offset for weapons
@@ -591,7 +591,7 @@ void Goldeneye::_resetgyro() {
 }
 
 
-void Goldeneye::_processMenu(int player, const PROFILE& profile) {
+void Goldeneye::_processMenu(int player, const js_settings::PROFILE& profile) {
     // Use a constant sensitivity to make the menu feel consistent.
     const float sensitivity_stick_menu_x = 100 / 40.0f;
     const float sensitivity_stick_menu_y = 100 / 40.0f;

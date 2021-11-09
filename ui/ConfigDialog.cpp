@@ -81,7 +81,7 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new U
     _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
 }
 
-void ConfigDialog::_setPlayerColorAndDefaultNumber(const PROFILE& prf, Assignment asgn) {
+void ConfigDialog::_setPlayerColorAndDefaultNumber(const js_settings::PROFILE& prf, Assignment asgn) {
     switch(asgn.ControllerMode) {
         default:
         case DISCONNECTED:
@@ -127,7 +127,7 @@ int ConfigDialog::_getIntFromColor(Color color) {
     return (rgb << 8) + color.b;
 }
 
-void ConfigDialog::_loadProfileSettingsIntoUi(const PROFILE& profile) {
+void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE& profile) {
     //
     _baseDialog->playerSettingsTabStickAimStickLayoutBox->setCurrentIndex(profile.AimStick);
     _baseDialog->playerSettingsTabStickAimStickModeBox->setCurrentIndex(profile.StickMode);
@@ -343,7 +343,7 @@ void ConfigDialog::_loadDevicesIntoDeviceBox(CONTROLLERMODE mode) {
     }
 }
 
-void ConfigDialog::_loadMappingsIntoUi(PROFILE &profile, Assignment &asgn) {
+void ConfigDialog::_loadMappingsIntoUi(js_settings::PROFILE&profile, Assignment &asgn) {
     if(asgn.PrimaryDevice != nullptr) {
         for (int index = 0; index < TOTALBUTTONS; index++) {
             _mappingButtonListPrimary[index]->setText(
@@ -380,6 +380,7 @@ void ConfigDialog::on_okButton_clicked() {
     _commitAssignments();
     _commitProfiles();
     _commitGlobals();
+    _settingsptr->SaveConfigFile();
     this->close();
 }
 

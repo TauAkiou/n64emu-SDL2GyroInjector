@@ -115,7 +115,7 @@ void PerfectDark::Inject()
         if(!_settings->GetIfPlayerIsConnected(player)) // bypass disabled players
             continue;
 
-        PROFILE profile = _settings->GetProfileForPlayer(player);
+        js_settings::PROFILE profile = _settings->GetProfileForPlayer(player);
 
 
         playerbase[player] = JOANNADATA(player);
@@ -184,7 +184,7 @@ void PerfectDark::_resetgyro() {
 // Purpose: crouching function for Perfect Dark (2 = stand, 1 = kneel, 0 = duck)
 // Changes Members: safetocrouch, crouchstance, safetostand
 //==========================================================================
-void PerfectDark::_crouch(const int player, const PROFILE& profile)
+void PerfectDark::_crouch(const int player, const js_settings::PROFILE& profile)
 {
     int crouchheld = _cfgptr->Device[player].BUTTONPRIM[CROUCH] || _cfgptr->Device[player].BUTTONSEC[CROUCH];
     int kneelheld = _cfgptr->Device[player].BUTTONPRIM[KNEEL] || _cfgptr->Device[player].BUTTONSEC[KNEEL];
@@ -219,7 +219,7 @@ void PerfectDark::_crouch(const int player, const PROFILE& profile)
 // Purpose: replicate the original aiming system, uses aimx/y to move screen when crosshair is on border of screen
 // Changes members: crosshairposx, crosshairposy, gunrcenter, gunlcenter, aimx, aimy
 //==========================================================================
-void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov)
+void PerfectDark::_aimmode(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov)
 {
     const float crosshairx = _link->ReadFloat(playerbase[player] + PD_crosshairx), crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
     const int gunrreload = _link->ReadInt(playerbase[player] + PD_gunrstate) == 1, gunlreload = _link->ReadInt(playerbase[player] + PD_gunlstate) == 1, unarmed = _link->ReadInt(playerbase[player] + PD_currentweapon) < 2;
@@ -284,7 +284,7 @@ void PerfectDark::_aimmode(const int player, const PROFILE& profile, const int a
 // Purpose: translate mouse to analog stick for Camspy/Slayer
 // Changes Members: xstick, ystick, usingstick
 //==========================================================================
-void PerfectDark::_camspyslayer(const int player, const PROFILE& profile, const int camspyflag, const float sensitivityx, const float sensitivityy)
+void PerfectDark::_camspyslayer(const int player, const js_settings::PROFILE& profile, const int camspyflag, const float sensitivityx, const float sensitivityy)
 {
     if(camspyflag)
     {
@@ -314,7 +314,7 @@ void PerfectDark::_camspyslayer(const int player, const PROFILE& profile, const 
 // Purpose: translate mouse to weapon radial menu
 // Changed Members: xmenu, ymenu, radialmenudirection
 //==========================================================================
-void PerfectDark::_radialmenunav(const int player, const PROFILE& profile)
+void PerfectDark::_radialmenunav(const int player, const js_settings::PROFILE& profile)
 {
     const float max = 19, threshold = 13, diagonalthres = 0.75;
     if((_cfgptr->Device[player].BUTTONPRIM[ACCEPT] || _cfgptr->Device[player].BUTTONSEC[ACCEPT]) && !_cfgptr->Device[player].BUTTONPRIM[FIRE] && !_cfgptr->Device[player].BUTTONSEC[FIRE]) // if a button is held (reject if fire is pressed so aimx/y can be reset back to center)
@@ -476,7 +476,7 @@ PerfectDark::PerfectDark(EmulatorLink *linkptr) {
 // Purpose: Inject mouse input for Original Input Scheme.
 // Changes Members: safetocrouch, safetostand, crouchstance
 //==========================================================================
-void PerfectDark::_processOriginalInput(int player, const PROFILE& profile) {
+void PerfectDark::_processOriginalInput(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(PD_camera);
     const int pause = _link->ReadInt(PD_pause);
     const int mppause = (_link->ReadShort(PD_mppause) & 0xFF00);
@@ -609,7 +609,7 @@ void PerfectDark::_processOriginalInput(int player, const PROFILE& profile) {
 
     }
 
-void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
+void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(PD_camera);
     const int pause = _link->ReadInt(PD_pause);
     const int mppause = (_link->ReadShort(PD_mppause) & 0xFF00);
@@ -784,7 +784,7 @@ void PerfectDark::_processFreeAimInput(int player, const PROFILE& profile) {
 }
 
 
-void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
+void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
     const float crosshairx = _link->ReadFloat(playerbase[player] + PD_crosshairx);
     const float crosshairy = _link->ReadFloat(playerbase[player] + PD_crosshairy);
     const int gunrreload = _link->ReadInt(playerbase[player] + PD_gunrstate) == 1;
@@ -845,7 +845,7 @@ void PerfectDark::_aimmode_free(const int player, const PROFILE& profile, const 
     }
 }
 
-void PerfectDark::_processAnalogMovement(const int player, const PROFILE &profile) {
+void PerfectDark::_processAnalogMovement(const int player, const js_settings::PROFILE &profile) {
     const float speedsideways = _link->ReadFloat(playerbase[player] + PD_speedsideways);
     const float speedforward = _link->ReadFloat(playerbase[player] + PD_speedforwards);
 

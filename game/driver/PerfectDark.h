@@ -63,16 +63,16 @@ private:
     int gunrcenter[4]{};
     int gunlcenter[4]{};
 
-    void _crouch(int player, const PROFILE& profile);
-    void _camspyslayer(int player, const PROFILE& profile, int camspyflag, float sensitivityx, float sensitivityy);
-    void _processOriginalInput(int player, const PROFILE& profile);
-    void _aimmode(int player, const PROFILE& profile, int aimingflag, float fov, float basefov);
-    void _radialmenunav(int player, const PROFILE& profile);
+    void _crouch(int player, const js_settings::PROFILE& profile);
+    void _camspyslayer(int player, const js_settings::PROFILE& profile, int camspyflag, float sensitivityx, float sensitivityy);
+    void _processOriginalInput(int player, const js_settings::PROFILE& profile);
+    void _aimmode(int player, const js_settings::PROFILE& profile, int aimingflag, float fov, float basefov);
+    void _radialmenunav(int player, const js_settings::PROFILE& profile);
     void _resetgyro();
     void _controller();
     void _injecthacks();
-    void _processFreeAimInput(int player, const PROFILE& profile);
-    void _aimmode_free(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov);
+    void _processFreeAimInput(int player, const js_settings::PROFILE& profile);
+    void _aimmode_free(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov);
 
 public:
     explicit PerfectDark(EmulatorLink* linkptr);
@@ -80,7 +80,7 @@ public:
     void Inject() override;
     void Quit() override;
 
-    void _processAnalogMovement(const int player, const PROFILE &profile);
+    void _processAnalogMovement(const int player, const js_settings::PROFILE &profile);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_PERFECTDARK_H

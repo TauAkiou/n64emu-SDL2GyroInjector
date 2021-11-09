@@ -48,15 +48,15 @@ private:
     float crosshairposy[4]{};
     float aimx[4]{};
     float aimy[4]{};
-    void _crouch(const int player, const PROFILE& profile);
-    void _aimmode(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov);
+    void _crouch(const int player, const js_settings::PROFILE& profile);
+    void _aimmode(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov);
     void _resetgyro();
     void _controller();
     void _injecthacks();
-    void _processFreeAim(int player, const PROFILE& profile);
-    void _aimmode_freeaim(const int player, const PROFILE& profile, const int aimingflag, const float fov, const float basefov);
-    void _processOriginalAimmode(int player, const PROFILE& proful);
-    void _processMenu(int player, const PROFILE& profile);
+    void _processFreeAim(int player, const js_settings::PROFILE& profile);
+    void _aimmode_freeaim(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov);
+    void _processOriginalAimmode(int player, const js_settings::PROFILE& profile);
+    void _processMenu(int player, const js_settings::PROFILE& profile);
 
 public:
     explicit Goldeneye(EmulatorLink *linkptr);

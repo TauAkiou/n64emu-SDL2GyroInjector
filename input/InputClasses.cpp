@@ -235,7 +235,7 @@ std::string SDLDevice::GetButtonNameForDevice(SDL_GameControllerButton button) {
                 case SDL_CONTROLLER_BUTTON_B:
                     return "B";
                 case SDL_CONTROLLER_BUTTON_BACK:
-                    if(_controllerType == (SDL_CONTROLLER_TYPE_XBOX360 | SDL_CONTROLLER_TYPE_VIRTUAL)) return "Back";
+                    if(_controllerType == (SDL_CONTROLLER_TYPE_XBOX360)) return "Back";
                     else if(_controllerType == SDL_CONTROLLER_TYPE_XBOXONE) return "View";
                 case SDL_CONTROLLER_BUTTON_INVALID:
                     return "Invalid";
@@ -246,7 +246,7 @@ std::string SDLDevice::GetButtonNameForDevice(SDL_GameControllerButton button) {
                 case SDL_CONTROLLER_BUTTON_GUIDE:
                     return "Guide";
                 case SDL_CONTROLLER_BUTTON_START:
-                    if(_controllerType == (SDL_CONTROLLER_TYPE_XBOX360 | SDL_CONTROLLER_TYPE_VIRTUAL)) return "Start";
+                    if(_controllerType == (SDL_CONTROLLER_TYPE_XBOX360)) return "Start";
                     else if(_controllerType == SDL_CONTROLLER_TYPE_XBOXONE) return "Menu";
                 case SDL_CONTROLLER_BUTTON_LEFTSTICK:
                     return "LS";

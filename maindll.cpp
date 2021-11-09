@@ -55,7 +55,7 @@ MainDll::~MainDll() {
 }
 
 void MainDll::LoadConfig() {
-
+    // time to start handling the configuration file... the big one one would guess
 };
 
 bool MainDll::Initialize(const HWND hW) {
@@ -124,6 +124,10 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
                                nullptr};
     }
 
+    _settingsptr->LoadConfigFile();
+
+    /*
+
     PROFILE player1prof, player2prof, player3prof, player4prof;
 
 
@@ -163,6 +167,7 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
 
     _settingsptr->SetShowGoldeneyeCrosshair(true);
     _settingsptr->SetFovOverride(90);
+    */
 
     UpdateControllerStatus();
     return true;

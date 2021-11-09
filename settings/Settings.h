@@ -28,27 +28,25 @@
  * Settings.h - Classes for storing configuration values & state.
  */
 
-
 #ifndef INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
 #define INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
 
 #include "../common/common.h"
 #include "../input/InputClasses.h"
 #include "../plugin.h"
+#include <nlohmann/json.hpp>
 #include <windows.h>
+#include <filesystem>
+#include <fstream>
+
 
 class Settings {
 private:
     static inline Settings* _instance;
 
-    PROFILE Profile[4] {};
+    js_settings::PROFILE Profile[4] {};
+    js_settings::EMUSETTINGS EmulatorSettings;
     Assignment ControllerAssignments[4] = {};
-
-    // Plugin/Emulator settings
-    bool EmulatorOverclocked = true;
-    int FovOverride = 60;
-    vec2<int> _overrideRatio = {16, 9 };
-    bool ShowGoldeneyeCrosshair = false;
 
     std::wstring _jsonfilepath;
     explicit Settings(HINSTANCE _hinst);
@@ -58,8 +56,8 @@ public:
     static Settings* GetInstance(HINSTANCE hinstance = nullptr);
 
     // Getters/Setters for profiles
-    PROFILE GetProfileForPlayer(enum PLAYERS player);
-    void SetProfileForPlayer(enum PLAYERS player, PROFILE profile);
+    js_settings::PROFILE GetProfileForPlayer(enum PLAYERS player);
+    void SetProfileForPlayer(enum PLAYERS player, js_settings::PROFILE profile);
     Assignment GetAssignmentForPlayer(enum PLAYERS player);
     void SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn);
     [[nodiscard]] bool GetIfEmulatorOverclocked() const;
@@ -72,7 +70,10 @@ public:
     [[nodiscard]] bool GetShowGoldeneyeCrosshair() const;
     void SetShowGoldeneyeCrosshair(bool val);
 
-    // Loading from configuraiton files.
+    // Loading from configuration files.
+    int LoadConfigFile();
+    int SaveConfigFile();
+
 };
 
 /*

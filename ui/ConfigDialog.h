@@ -58,7 +58,7 @@ private:
 
     Settings* _settingsptr = Settings::GetInstance();
     SdlDriver* _jsdriver = SdlDriver::getInstance();
-    PROFILE _localprofiles[4]{};
+    js_settings::PROFILE _localprofiles[4]{};
     Assignment _localassignments[4]{};
 
     bool _ge_crosshair;
@@ -77,7 +77,7 @@ private:
     static inline bool _guibusy = false;
     PLAYERS _selectedplayer;
     void _loadDevicesIntoDeviceBox(CONTROLLERMODE mode);
-    void _loadMappingsIntoUi(PROFILE &profile, Assignment &asgn);
+    void _loadMappingsIntoUi(js_settings::PROFILE &profile, Assignment &asgn);
     void _mapButtonToCommand(CONTROLLERENUM command, bool isSecondary);
     void _getCurrentConfigState();
     static QString _getNameFromButtonIndex(CONTROLLERENUM index);
@@ -85,10 +85,10 @@ private:
     void _commitAssignments();
     void _commitProfiles();
     void _commitGlobals();
-    void _loadProfileSettingsIntoUi(const PROFILE& profile);
+    void _loadProfileSettingsIntoUi(const js_settings::PROFILE& profile);
     static Color _getColorFromInt(int color);
     int _getIntFromColor(Color color);
-    void _setPlayerColorAndDefaultNumber(const PROFILE& prf, Assignment asgn);
+    void _setPlayerColorAndDefaultNumber(const js_settings::PROFILE& prf, Assignment asgn);
 
 signals:
     void primaryClicked(int value);

@@ -15,21 +15,22 @@
 #include "../common/Helpers.h"
 #include "GamepadMotion/GamepadMotion.hpp"
 
-typedef struct {
+
+struct MotionReport {
     float GyroX = 0.0f;
     float GyroY = 0.0f;
     float GyroZ = 0.0f;
     float AccelX = 0.0f;
     float AccelY = 0.0f;
     float AccelZ = 0.0f;
-} MotionReport;
+};
 
-typedef struct {
+struct AxisReport {
     vec2<float> LStick { 0, 0 };
     vec2<float> RStick {0, 0 };
     float LTrigger = 0;
     float RTrigger = 0;
-} AxisReport;
+};
 
 class SDLDevice {
     private:
