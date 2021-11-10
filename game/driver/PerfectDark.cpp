@@ -284,14 +284,20 @@ void PerfectDark::_aimmode(const int player, const js_settings::PROFILE& profile
 // Purpose: translate mouse to analog stick for Camspy/Slayer
 // Changes Members: xstick, ystick, usingstick
 //==========================================================================
-void PerfectDark::_camspyslayer(const int player, const js_settings::PROFILE& profile, const int camspyflag, const float sensitivityx, const float sensitivityy)
+void PerfectDark::_camspyslayer(const int player, const js_settings::PROFILE &profile, const int camspyflag, const float sensitivityx, const float sensitivityy)
 {
     if(camspyflag)
     {
         if(!_cfgptr->Device[player].BUTTONPRIM[AIM] && !_cfgptr->Device[player].BUTTONSEC[AIM]) // camspy
         {
-            xstick[player] = (int)((!profile.StickPitchInverted ? -_cfgptr->Device[player].AIMSTICK.y : _cfgptr->Device[player].AIMSTICK.y) * sensitivityx * 8.0f);
-            ystick[player] = (int)(_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 16.0f);
+            xstick[player] = (int)((!profile.StickPitchInverted ? -_cfgptr->Device[player].AIMSTICK.y : _cfgptr->Device[player].AIMSTICK.y) * sensitivityx *  8.0f);
+            // TODO: Fix sensitivityy so that it reports a valid sens even when there is none.
+            if(profile.StickMode == XONLY || profile.StickMode == FLICK) { // These theoretically have no sensitivity for the X axis. use y's instead
+                ystick[player] = (int) (_cfgptr->Device[player].AIMSTICK.x * sensitivityx * 16.0f);
+            }
+            else {
+                ystick[player] = (int) (_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 16.0f);
+            }
         }
         else // camspy (aiming mode)
         {

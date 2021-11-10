@@ -64,7 +64,7 @@ private:
     int gunlcenter[4]{};
 
     void _crouch(int player, const js_settings::PROFILE& profile);
-    void _camspyslayer(int player, const js_settings::PROFILE& profile, int camspyflag, float sensitivityx, float sensitivityy);
+    void _camspyslayer(int player, const js_settings::PROFILE &profile, int camspyflag, float sensitivityx, float sensitivityy);
     void _processOriginalInput(int player, const js_settings::PROFILE& profile);
     void _aimmode(int player, const js_settings::PROFILE& profile, int aimingflag, float fov, float basefov);
     void _radialmenunav(int player, const js_settings::PROFILE& profile);
