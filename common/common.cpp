@@ -25,7 +25,7 @@ using namespace js_settings;
     }
 
     void js_settings::from_json(const nlohmann::json &j, PROFILE &p) {
-        j.at("stickmode").get_to(p.StickMode);
+        p.StickMode = j.value("stickmode", FULLSTICK);
         j.at("ds4color").get_to(p.DS4Color);
         j.at("gyroscopesensitivity").at("x").get_to(p.GyroscopeSensitivity.x);
         j.at("gyroscopesensitivity").at("y").get_to(p.AimStickSensitivity.y);
@@ -41,6 +41,7 @@ using namespace js_settings;
         j.at("crouchtoggle").get_to(p.CrouchToggle);
         j.at("goldeneyeaimmode").get_to(p.GoldeneyeAimMode);
         j.at("perfectdarkaimmode").get_to(p.PerfectDarkAimMode);
+        p.AllowStickInAimMode = j.value("allow_stick_l_aiming", false);
         j.at("freeaim").get_to(p.FreeAiming);
         j.at("aimstick").get_to(p.AimStick);
 
@@ -67,9 +68,10 @@ using namespace js_settings;
                         {"crouchtoggle", p.CrouchToggle},
                         {"goldeneyeaimmode", p.GoldeneyeAimMode},
                         {"perfectdarkaimmode", p.PerfectDarkAimMode},
-                        {"usesticktoaim", p.UseStickToAim},
+                        {"usesticktoaim", p.AllowStickInAimMode},
                         {"freeaim", p.FreeAiming},
                         {"aimstick", p.AimStick},
+                        {"allow_stick_l_aiming", p.AllowStickInAimMode},
                         {"button_primary", p.BUTTONPRIM},
                         {"button_secondary", p.BUTTONSEC} });
     };

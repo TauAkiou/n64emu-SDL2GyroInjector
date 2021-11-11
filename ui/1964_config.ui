@@ -253,7 +253,7 @@
     <rect>
      <x>10</x>
      <y>50</y>
-     <width>371</width>
+     <width>381</width>
      <height>61</height>
     </rect>
    </property>
@@ -462,9 +462,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
+      <y>30</y>
       <width>341</width>
-      <height>411</height>
+      <height>401</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -480,7 +480,7 @@
         <x>0</x>
         <y>0</y>
         <width>331</width>
-        <height>107</height>
+        <height>137</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabGyroLayout">
@@ -496,6 +496,83 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
+           <property name="text">
+            <string>Y-Axis Sensitivity</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivitySlider">
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>500</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivitySpinbox">
+           <property name="minimum">
+            <double>0.500000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>5.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroCheckRow1Layout">
+         <item>
+          <layout class="QHBoxLayout" name="playerSettingsTabGyroInvertGyroPitchLayout">
+           <item>
+            <widget class="QCheckBox" name="playerSettingsTabGyroInvertCheckbox">
+             <property name="text">
+              <string>Invert Gyroscope Pitch</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>50</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroXAxisSensitivityLayout">
          <item>
@@ -572,55 +649,6 @@
              <string>Free Aim</string>
             </property>
            </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
-         <item>
-          <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
-           <property name="text">
-            <string>Y-Axis Sensitivity</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivitySlider">
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>500</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivitySpinbox">
-           <property name="minimum">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>5.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
-           </property>
           </widget>
          </item>
         </layout>
@@ -1102,6 +1130,13 @@
          </item>
         </layout>
        </item>
+       <item>
+        <widget class="QCheckBox" name="playerSettingsTabStickInvertAimPitchCheckbox">
+         <property name="text">
+          <string>Invert Aiming Stick Pitch (Y)</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -1113,9 +1148,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>0</y>
-        <width>311</width>
-        <height>101</height>
+        <y>10</y>
+        <width>321</width>
+        <height>125</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabOtherLayout">
@@ -1126,222 +1161,111 @@
         <number>5</number>
        </property>
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherReverseGyroPitchLayout">
+        <layout class="QVBoxLayout" name="playerSettingsTabOtherLayoutVertical">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMaximumSize</enum>
+         </property>
          <item>
-          <widget class="QCheckBox" name="playerSettingsTabOtherReverseGyroPitchCheckbox">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="playerSettingsTabOtherReverseGyroPitchLabel">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Reverse Gyroscope Pitch</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="1">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherCursorAimingGeLayout">
-         <item>
-          <widget class="QLabel" name="playerSettingsTabOtherCursorAimingGeLabel">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
-           </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
+          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingGoldeneyeCheckbox">
            <property name="text">
             <string>Cursor Aiming (Goldeneye)</string>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingGeCheckbox">
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
+          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingPerfectDarkCheckbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>23</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherCursorAimingPdLayout">
-         <item>
-          <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingPDCheckbox">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="playerSettingsTabOtherCursorAimingPDLabel">
-           <property name="minimumSize">
+           <property name="maximumSize">
             <size>
-             <width>120</width>
-             <height>0</height>
+             <width>300</width>
+             <height>16777215</height>
             </size>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
-           </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
            </property>
            <property name="text">
             <string>Cursor Aiming (Perfect Dark)</string>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherReverseAimStickPitchLayout">
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
          <item>
-          <widget class="QLabel" name="playerSettingsTabOtherReverseAimStickPitchLabel">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
+          <widget class="QCheckBox" name="playerSettingsTabOtherAllowAimingUsingStickCheckbox">
            <property name="text">
-            <string>Reverse Aim Stick Pitch</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
+            <string>Allow Stick Aiming In Aiming Mode</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="playerSettingsTabOtherReverseAimStickPitchCheckbox">
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="playerSettingsTabOtherDS4ColorLayout">
-         <item>
-          <widget class="QLabel" name="playerSettingsTabOtherDS4ColorHeaderLabel">
-           <property name="text">
-            <string>Colorbar (DS4)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QWidget" name="colorwidget" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="autoFillBackground">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="playerSettingsTabOtherDS4ColorRedLabel">
-           <property name="text">
-            <string>Red:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4RedSpinbox">
-           <property name="maximum">
-            <number>255</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Green</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4GreenSpinbox">
-           <property name="maximum">
-            <number>255</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Blue</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="playerrSettingsTabOtherDS4BlueSpinbox">
-           <property name="maximum">
-            <number>255</number>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="playerSettingsTabOtherDS4ColorLayout">
+           <item>
+            <widget class="QLabel" name="playerSettingsTabOtherDS4Label">
+             <property name="text">
+              <string>Lightbar Color
+(DS4/DS5)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="playerSettingsTabOtherDS4SpinboxRed">
+             <property name="maximumSize">
+              <size>
+               <width>65</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="specialValueText">
+              <string/>
+             </property>
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="prefix">
+              <string>R: </string>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="playerSettingsTabOtherDS4SpinboxGreen">
+             <property name="maximumSize">
+              <size>
+               <width>65</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="prefix">
+              <string>G: </string>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="playerSettingsTabOtherDS4SpinboxBlue">
+             <property name="maximumSize">
+              <size>
+               <width>65</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="prefix">
+              <string>B: </string>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>

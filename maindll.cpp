@@ -111,8 +111,8 @@ bool MainDll::InitiateControllers(HWND window, CONTROL *ptr) {
     if(!ctrllst_full.empty()) {
         player1asgn = {FULLCONTROLLER, ctrllst_full.front(),
                                   nullptr};
-        player2asgn = {DISCONNECTED, nullptr,
-                               nullptr};
+        // If we have a controller, make sure player 1 is assigned the first connected controller.
+        _settingsptr->SetAssignmentForPlayer(PLAYER1, player1asgn);
     }
 
 

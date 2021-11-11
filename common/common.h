@@ -172,7 +172,7 @@ namespace js_settings {
         bool CrouchToggle = {true};
         bool GoldeneyeAimMode = {true};
         bool PerfectDarkAimMode = {true};
-        bool UseStickToAim = {false};
+        bool AllowStickInAimMode = {false};
         bool FreeAiming = {false};
         bool AimStick = false; // True: Left, False: Right
         //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];

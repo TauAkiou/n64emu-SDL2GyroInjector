@@ -228,13 +228,17 @@ void PerfectDark::_aimmode(const int player, const js_settings::PROFILE& profile
     const float speed = 475.f;
     const float sensitivity = 100.f * fovmodifier;
     const float centertime = 60.f;
+
+    vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, true);
+    const vec2<float> sensitivity_basefactor_stick = _ihandler.GetGeneralBaseFactorForStick();
+
+
     if(aimingflag) // if player is aiming
     {
         //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
-        if(profile.UseStickToAim) {
-            crosshairposx[player] += _cfgptr->Device[player].AIMSTICK.x / 10.0f * (profile.AimStickSensitivity.x / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
-            crosshairposy[player] += (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * (profile.AimStickSensitivity.y / sensitivity); // * fmax(mouseaccel, 1);
-
+        if(profile.AllowStickInAimMode) {
+            crosshairposx[player] += _cfgptr->Device[player].AIMSTICK.x / 10.0f * ((profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 2) / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
+            crosshairposy[player] += (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * ((profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 2) / sensitivity); // * fmax(mouseaccel, 1);
         }
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / (sensitivity) / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
         crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
@@ -291,13 +295,7 @@ void PerfectDark::_camspyslayer(const int player, const js_settings::PROFILE &pr
         if(!_cfgptr->Device[player].BUTTONPRIM[AIM] && !_cfgptr->Device[player].BUTTONSEC[AIM]) // camspy
         {
             xstick[player] = (int)((!profile.StickPitchInverted ? -_cfgptr->Device[player].AIMSTICK.y : _cfgptr->Device[player].AIMSTICK.y) * sensitivityx *  8.0f);
-            // TODO: Fix sensitivityy so that it reports a valid sens even when there is none.
-            if(profile.StickMode == XONLY || profile.StickMode == FLICK) { // These theoretically have no sensitivity for the X axis. use y's instead
-                ystick[player] = (int) (_cfgptr->Device[player].AIMSTICK.x * sensitivityx * 16.0f);
-            }
-            else {
-                ystick[player] = (int) (_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 16.0f);
-            }
+            ystick[player] = (int) (_cfgptr->Device[player].AIMSTICK.x * sensitivityy * 16.0f);
         }
         else // camspy (aiming mode)
         {
@@ -487,7 +485,8 @@ void PerfectDark::_processOriginalInput(int player, const js_settings::PROFILE& 
     const int pause = _link->ReadInt(PD_pause);
     const int mppause = (_link->ReadShort(PD_mppause) & 0xFF00);
 
-        vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player);
+        vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, false);
+        vec2<float> aimstickdata_camspy = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, true);
         playerbase[player] = JOANNADATA(player);
         const int dead = _link->ReadInt(playerbase[player] + PD_deathflag);
         const int menu = _link->ReadInt(PD_menu(player));
@@ -499,7 +498,7 @@ void PerfectDark::_processOriginalInput(int player, const js_settings::PROFILE& 
         const float fov = _link->ReadFloat(playerbase[player] + PD_fov);
         const float basefov = fov > 60.0f ? (float)OVERRIDEFOV : 60.0f;
         // const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
-        const vec2<float> sensitivity_basefactor_stick = InputHandler::GetBaseFactorForStickType(profile.StickMode);
+        const vec2<float> sensitivity_basefactor_stick = (thirdperson == 1 || thirdperson == 2) ? InputHandler::GetGeneralBaseFactorForStick() : InputHandler::GetBaseFactorForStickType(profile.StickMode);
 
         const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
         const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
@@ -620,7 +619,8 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
     const int pause = _link->ReadInt(PD_pause);
     const int mppause = (_link->ReadShort(PD_mppause) & 0xFF00);
 
-    vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player);
+    //vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, false);
+
     playerbase[player] = JOANNADATA(player);
     const int dead = _link->ReadInt(playerbase[player] + PD_deathflag);
     const int menu = _link->ReadInt(PD_menu(player));
@@ -629,6 +629,10 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
     const unsigned int bikebase = _link->ReadInt(
             (unsigned int) _link->ReadInt(playerbase[player] + PD_bikeptr) + PD_bikebase);
     const int thirdperson = _link->ReadInt(playerbase[player] + PD_thirdperson);
+
+    vec2<float> aimstickdata = (thirdperson == 1 || thirdperson == 2) ? _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, true) : _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, false);
+
+
     const int cursoraimingflag = profile.PerfectDarkAimMode && aimingflag &&
                                  _link->ReadInt(playerbase[player] + PD_currentweapon) !=
                                  50; // don't use cursoraiming when using the horizon scanner
@@ -636,7 +640,7 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
     const float basefov = fov > 60.0f ? (float) OVERRIDEFOV : 60.0f;
     // const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
 
-    const vec2<float> sensitivity_basefactor_stick = _ihandler.GetBaseFactorForStickType(profile.StickMode);
+    const vec2<float> sensitivity_basefactor_stick = (thirdperson == 1 || thirdperson == 2) ? _ihandler.GetBaseFactorForStickType(profile.StickMode) : _ihandler.GetGeneralBaseFactorForStick();
 
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);

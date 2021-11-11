@@ -71,10 +71,11 @@ class InputHandler {
 
     public:
         InputHandler() = default;
-        vec2<float> ProcessAimStickInputForPlayer(PLAYERS player);
+        vec2<float> ProcessAimStickInputForPlayer(PLAYERS player, bool ignore_stickmode);
         static vec2<float> HandleDeadZoneStickInput(vec2<float> stick, vec2<float> deadzone);
 
     static vec2<float> GetBaseFactorForStickType(enum STICKMODE mode);
+    static vec2<float> GetGeneralBaseFactorForStick();
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_INPUTHANDLER_H

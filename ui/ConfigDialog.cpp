@@ -132,15 +132,16 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
     _baseDialog->playerSettingsTabStickAimStickLayoutBox->setCurrentIndex(profile.AimStick);
     _baseDialog->playerSettingsTabStickAimStickModeBox->setCurrentIndex(profile.StickMode);
     _baseDialog->playerSettingsTabGyroAimingStyleBox->setCurrentIndex(profile.FreeAiming);
-    _baseDialog->playerSettingsTabOtherReverseGyroPitchCheckbox->setChecked(profile.GyroPitchInverted);
-    _baseDialog->playerSettingsTabOtherReverseAimStickPitchCheckbox->setChecked(profile.StickPitchInverted);
-    _baseDialog->playerSettingsTabOtherCursorAimingPDCheckbox->setChecked(profile.PerfectDarkAimMode);
-    _baseDialog->playerSettingsTabOtherCursorAimingGeCheckbox->setChecked(profile.GoldeneyeAimMode);
+    _baseDialog->playerSettingsTabGyroInvertCheckbox->setChecked(profile.GyroPitchInverted);
+    _baseDialog->playerSettingsTabStickInvertAimPitchCheckbox->setChecked(profile.StickPitchInverted);
+    _baseDialog->playerSettingsTabOtherCursorAimingPerfectDarkCheckbox->setChecked(profile.PerfectDarkAimMode);
+    _baseDialog->playerSettingsTabOtherCursorAimingGoldeneyeCheckbox->setChecked(profile.GoldeneyeAimMode);
+    _baseDialog->playerSettingsTabOtherAllowAimingUsingStickCheckbox->setChecked(profile.AllowStickInAimMode);
 
     auto ds4color = _getColorFromInt(profile.DS4Color);
-    _baseDialog->playerrSettingsTabOtherDS4RedSpinbox->setValue(ds4color.r);
-    _baseDialog->playerrSettingsTabOtherDS4GreenSpinbox->setValue(ds4color.g);
-    _baseDialog->playerrSettingsTabOtherDS4BlueSpinbox->setValue(ds4color.b);
+    _baseDialog->playerSettingsTabOtherDS4SpinboxRed->setValue(ds4color.r);
+    _baseDialog->playerSettingsTabOtherDS4SpinboxGreen->setValue(ds4color.g);
+    _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->setValue(ds4color.b);
 
     //auto colorrole = _baseDialog->colorwidget.
 
@@ -658,6 +659,53 @@ void ConfigDialog::on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* 
     _loadProfileSettingsIntoUi(_localprofiles[_selectedplayer]);
     _loadDevicesIntoDeviceBox(_localassignments[_selectedplayer].ControllerMode);
     _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+}
+
+void ConfigDialog::on_playerSettingsTabStickInvertAimPitchCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].StickPitchInverted = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabGyroInvertCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].GyroPitchInverted = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabOtherCursorAimingGoldeneyeCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].GoldeneyeAimMode = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabOtherCursorAimingPerfectDarkCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].PerfectDarkAimMode = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabOtherAllowAimingUsingStickCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].AllowStickInAimMode = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxRed_valueChanged(int value) {
+    Color ds4_new_color = Color();
+    ds4_new_color.r = value;
+    ds4_new_color.g = _baseDialog->playerSettingsTabOtherDS4SpinboxGreen->value();
+    ds4_new_color.b = _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->value();
+
+    _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
+}
+
+void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxGreen_valueChanged(int value) {
+    Color ds4_new_color = Color();
+    ds4_new_color.r = _baseDialog->playerSettingsTabOtherDS4SpinboxRed->value();
+    ds4_new_color.g = value;
+    ds4_new_color.b = _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->value();
+
+    _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
+}
+
+void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int value) {
+    Color ds4_new_color = Color();
+    ds4_new_color.r = _baseDialog->playerSettingsTabOtherDS4SpinboxRed->value();
+    ds4_new_color.g = _baseDialog->playerSettingsTabOtherDS4SpinboxGreen->value();
+    ds4_new_color.b = value;
+
+    _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
 }
 
 // ---------------------------------------------------------------------------------------------------------

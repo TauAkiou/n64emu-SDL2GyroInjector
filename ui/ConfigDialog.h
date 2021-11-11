@@ -125,6 +125,18 @@ private slots:
     void on_playerSettingsTabGyroAimingStyleBox_activated(int index);
     void on_playerSelectionButtonGroup_buttonClicked(QAbstractButton* button);
     void on_playerSettingsTabStickAimStickModeBox_activated(int index);
+    void on_playerSettingsTabStickInvertAimPitchCheckbox_stateChanged(int state);
+    void on_playerSettingsTabGyroInvertCheckbox_stateChanged(int state);
+    void on_playerSettingsTabOtherCursorAimingGoldeneyeCheckbox_stateChanged(int state);
+    void on_playerSettingsTabOtherCursorAimingPerfectDarkCheckbox_stateChanged(int state);
+    void on_playerSettingsTabOtherAllowAimingUsingStickCheckbox_stateChanged(int state);
+    void on_playerSettingsTabOtherDS4SpinboxRed_valueChanged(int value);
+    void on_playerSettingsTabOtherDS4SpinboxGreen_valueChanged(int value);
+    void on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int value);
+
+
+
+
 
 
     // Why can't qt designer have an easy way of assigning large groups of buttons in a way that is straightforward and works...

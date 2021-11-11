@@ -40,9 +40,20 @@ vec2<float> InputHandler::GetBaseFactorForStickType(enum STICKMODE mode) {
     }
 }
 
-vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player) {
+vec2<float> InputHandler::GetGeneralBaseFactorForStick() {
+    return { 400, 400 };
+}
+
+vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player, bool ignore_stickmode) {
     vec2<float> vec;
     auto profile = _settings->GetProfileForPlayer(player);
+
+
+    if(ignore_stickmode) {
+        return HandleDeadZoneStickInput(_ctrlptr->Device[player].AIMSTICK,
+                                        profile.AimstickDeadzone);
+    }
+
     switch(profile.StickMode) {
         default:
         case FULLSTICK:
