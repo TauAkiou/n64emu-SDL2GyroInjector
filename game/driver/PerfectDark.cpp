@@ -237,8 +237,8 @@ void PerfectDark::_aimmode(const int player, const js_settings::PROFILE& profile
     {
         //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
         if(profile.AllowStickInAimMode) {
-            crosshairposx[player] += _cfgptr->Device[player].AIMSTICK.x / 10.0f * ((profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 2) / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
-            crosshairposy[player] += (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f * ((profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 2) / sensitivity); // * fmax(mouseaccel, 1);
+            crosshairposx[player] += aimstickdata.x / 10.0f * ((profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 2) / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
+            crosshairposy[player] += (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.y) / 10.0f * ((profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 2) / sensitivity); // * fmax(mouseaccel, 1);
         }
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / (sensitivity) / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
         crosshairposy[player] += (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
