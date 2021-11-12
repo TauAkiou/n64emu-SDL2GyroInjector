@@ -676,11 +676,14 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
         {
             _crouch(player, profile);
             if (!cursoraimingflag) { // if not aiming (or pdaimmode is off)
-                // Freeaim only uses stick input to move the camera.
-                camx += aimstickdata.x / 10.0f * sensitivity_stick_x *
-                        (fov / basefov); // regular mouselook calculation
-                //camx += _cfgptr->Device[player].GYRO.x / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime *
-                //(fov / basefov);
+                // Aiming mode will only use the camera to move if set to FREE. Splatoon allows X movement on the camera.
+                camx += aimstickdata.x / 10.0f * sensitivity_stick_x * (fov / basefov); // regular mouselook calculation
+
+                if(profile.FreeAiming == SPLATOON) {
+                    camx += _cfgptr->Device[player].GYRO.x / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime *
+                            (fov / basefov);
+                }
+
             } else
                 camx += aimx[player] * (fov / basefov); // scroll screen with aimx/aimy
             while (camx < 0)
@@ -806,14 +809,22 @@ void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& pr
     // In free aim, the aimer is always unlocked and tied to the gyro exclusively.
 
     //const float mouseaccel = PROFILE[player].SETTINGS[ACCELERATION] ? sqrt(DEVICE[player].XPOS * DEVICE[player].XPOS + DEVICE[player].YPOS * DEVICE[player].YPOS) / TICKRATE / 12.0f * PROFILE[player].SETTINGS[ACCELERATION] : 0;
-    crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
+    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
+        crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
+
+
     crosshairposy[player] += (profile.GyroPitchInverted ? -_cfgptr->Device[player].GYRO.y : _cfgptr->Device[player].GYRO.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
-    // * fmax(mouseaccel, 1);
-    crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
+    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
+        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
+
     crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
 
     _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
     _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
+
+    if(profile.FreeAiming == SPLATOON && !aimingflag) {
+        crosshairposx[player] = crosshairx;  // Ensure x is locked to center in Splatoon mode.
+    }
 
     if(unarmed || gunrreload) // if unarmed or reloading right weapon, remove from gunrcenter
         gunrcenter[player] -= _settings->GetIfEmulatorOverclocked() ? 1 : 2;

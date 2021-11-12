@@ -296,6 +296,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the type of device attached to this controller port.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;: The player's controller is disconnected and will not be detected by the ROM.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Controller&lt;/span&gt;: A standard, SDL2 capable controller will be used.&lt;/p&gt;&lt;p&gt;A player that does not have a device assigned to it will be treated as &lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <item>
          <property name="text">
           <string>Disconnected</string>
@@ -303,7 +306,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Switch Pro/Dualshock</string>
+          <string>Controller</string>
          </property>
         </item>
        </widget>
@@ -413,6 +416,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Choose the controller that will correspond to this player slot.</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -468,7 +474,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -639,9 +645,17 @@
          </item>
          <item>
           <widget class="QComboBox" name="playerSettingsTabGyroAimingStyleBox">
+           <property name="toolTip">
+            <string>Gyroscope crosshair aiming mode.</string>
+           </property>
            <item>
             <property name="text">
              <string>Standard</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Splatoon</string>
             </property>
            </item>
            <item>
@@ -1495,6 +1509,9 @@
         <spacer name="globalFovBottomSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
