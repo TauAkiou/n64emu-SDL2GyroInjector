@@ -5,6 +5,7 @@
 #include "InputClasses.h"
 
 SDLDevice::SDLDevice(int bindindex) {
+        auto test =  SDL_GameControllerTypeForIndex(bindindex);
         if(!SDL_GameControllerTypeForIndex(bindindex)) {
             throw std::exception();
         }
@@ -604,6 +605,10 @@ void SDLDevice::AssignPlayerIndex(int index) {
     SDL_GameControllerSetPlayerIndex(_sdlgcptr, index);
 }
 
+int SDLDevice::GetPlayerIndex() {
+    return _sdlplayerindex;
+}
+
 void SDLDevice::StartGyroscopeCalibration() {
     _gyrocontrol.StartContinuousCalibration();
     _calibration_start = std::chrono::steady_clock::now();
@@ -625,4 +630,19 @@ bool SDLDevice::GetIfGyroscopeIsCalibrating() const {
 
 std::chrono::time_point<std::chrono::steady_clock> SDLDevice::GetStartOfLastCalibration() {
     return _calibration_start;
+}
+
+void SDLDevice::SetLightbarColor(int color) {
+    if(SDL_GameControllerHasLED(_sdlgcptr)) {
+        auto r = (color >> 16) & 0xFF;
+        auto g = (color >> 8) & 0xFF;
+        auto b = color & 0xFF;
+
+        SDL_GameControllerSetLED(_sdlgcptr, r, g, b);
+        _colorbar_color = color;
+    }
+}
+
+int SDLDevice::GetLightbarColor() {
+    return _colorbar_color;
 }

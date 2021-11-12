@@ -416,6 +416,9 @@ void ConfigDialog::on_primaryDeviceBox_activated(int index) {
             _localassignments[_selectedplayer].PrimaryDevice = _loadedfull[index-1];
             _localassignments[_selectedplayer].PrimaryDevice->AssignPlayerIndex(_selectedplayer);
             _loadMappingsIntoUi(_localprofiles[_selectedplayer], _localassignments[_selectedplayer]);
+            // set index.
+            _localassignments[_selectedplayer].PrimaryDevice->AssignPlayerIndex(_selectedplayer+1);
+
             break;
             /*
         case JOYCONS:
@@ -691,6 +694,8 @@ void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxRed_valueChanged(int value
     ds4_new_color.b = _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->value();
 
     _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
+
+    //_localassignments[_selectedplayer].PrimaryDevice->SetLightbarColor(_localprofiles[_selectedplayer].DS4Color);
 }
 
 void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxGreen_valueChanged(int value) {
@@ -700,6 +705,8 @@ void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxGreen_valueChanged(int val
     ds4_new_color.b = _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->value();
 
     _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
+    //_localassignments[_selectedplayer].PrimaryDevice->SetLightbarColor(_localprofiles[_selectedplayer].DS4Color);
+
 }
 
 void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int value) {
@@ -709,6 +716,8 @@ void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int valu
     ds4_new_color.b = value;
 
     _localprofiles[_selectedplayer].DS4Color = _getIntFromColor(ds4_new_color);
+    //_localassignments[_selectedplayer].PrimaryDevice->SetLightbarColor(_localprofiles[_selectedplayer].DS4Color);
+
 }
 
 // ---------------------------------------------------------------------------------------------------------

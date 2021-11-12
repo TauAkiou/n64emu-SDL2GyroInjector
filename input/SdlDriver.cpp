@@ -54,11 +54,6 @@ DWORD SdlDriver::injectionloop() {
 
     int checkwindowtick = 0;
 
-    // Set up controller player lights/colors
-    for(int player = PLAYER1; player < ALLPLAYERS; player++) {
-
-    }
-
     auto emutickrate = TICKRATE;
     while(!_terminatethread) {
         time_previous = time_current;
@@ -75,6 +70,14 @@ DWORD SdlDriver::injectionloop() {
             auto assignment = _settings->GetAssignmentForPlayer(static_cast<PLAYERS>(player));
             auto profile = _settings->GetProfileForPlayer(static_cast<PLAYERS>(player));
             auto dev = &_cstateptr->Device[player];
+
+            if(profile.DS4Color != assignment.PrimaryDevice->GetLightbarColor()) {
+                assignment.PrimaryDevice->SetLightbarColor(profile.DS4Color);
+            }
+
+            if(assignment.PrimaryDevice->GetPlayerIndex() != player + 1) {
+                assignment.PrimaryDevice->AssignPlayerIndex(player + 1);
+            }
 
             sdl_buttons = assignment.PrimaryDevice->GetCurrentButtonState();
             sdl_motionreport = assignment.PrimaryDevice->GetCurrentMotionReport(dur.count());
@@ -171,7 +174,8 @@ int SdlDriver::Initialize(const HWND hw) {
 
             auto jstotal = SDL_NumJoysticks();
             for(int index = 0; index < jstotal; ++index) {
-                if(SDL_IsGameController(index)) {
+                auto cname = SDL_GameControllerNameForIndex(index);
+                if(SDL_IsGameController(index) && SDL_GameControllerTypeForIndex(index)) {
                     _controllers.push_back(std::make_shared<SDLDevice>(index));
                 }
                 std::cout << std::endl;
@@ -201,8 +205,10 @@ void SdlDriver::StartInjectionThread() {
 
 void SdlDriver::EndInjectionThread() {
     if(!_terminatethread) {
-        CloseHandle(_inputthread);
         _terminatethread = true;
+        Sleep(500); // Wait for the thread to die.
+
+        //CloseHandle(_inputthread);
         _inputthread = nullptr;
     }
 }
@@ -244,9 +250,11 @@ int SdlDriver::GetFirstButtonFromDevice(SDLDevice &sdldev) {
 }
 
 void SdlDriver::SetDS4Color(SDLDevice dev, int color) {
+    dev.SetLightbarColor(color);
 }
 
 void SdlDriver::SetSPCJCNumber(SDLDevice dev, const int number) {
+    dev.AssignPlayerIndex(number);
 }
 
 void SdlDriver::UnpauseInjection() {

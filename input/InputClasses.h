@@ -62,12 +62,15 @@ public:
         AxisReport GetCurrentAxisReport();
         unsigned int GetCurrentButtonState();
         void AssignPlayerIndex(int index);
+        int GetPlayerIndex();
         int GetFirstPressedButton();
         void StartGyroscopeCalibration();
         bool GetIfGyroscopeIsCalibrating() const;
         void StopGyroscopeCalibration();
         void ResetGyroscopeCalibration();
         std::chrono::time_point<std::chrono::steady_clock> GetStartOfLastCalibration();
+        void SetLightbarColor(int color);
+        int GetLightbarColor();
 };
 
 typedef struct assgn {

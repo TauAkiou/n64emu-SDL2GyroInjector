@@ -40,6 +40,9 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Confirm all setting changes and close this window.</string>
+   </property>
    <property name="text">
     <string>Ok</string>
    </property>
@@ -55,6 +58,9 @@
      <width>75</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Discard all setting changes and close this window.</string>
    </property>
    <property name="text">
     <string>Cancel</string>
@@ -82,6 +88,9 @@
      <height>17</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select settings for N64 Controller Port 1.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Player 1</string>
    </property>
@@ -101,6 +110,9 @@
      <height>17</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select settings for N64 Controller Port 2.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Player 2</string>
    </property>
@@ -117,6 +129,9 @@
      <height>17</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select settings for N64 Controller Port 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Player 3</string>
    </property>
@@ -132,6 +147,9 @@
      <width>82</width>
      <height>17</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select settings for N64 Controller Port 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>Player 4</string>
@@ -297,7 +315,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the type of device attached to this controller port.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;: The player's controller is disconnected and will not be detected by the ROM.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Controller&lt;/span&gt;: A standard, SDL2 capable controller will be used.&lt;/p&gt;&lt;p&gt;A player that does not have a device assigned to it will be treated as &lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the type of device attached to this controller port.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;: The player's controller is disconnected and will not be detected by the ROM.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Controller&lt;/span&gt;: A standard, SDL2 capable controller will be used.&lt;/p&gt;&lt;p&gt;A player that does not have a device assigned to it will be treated as &lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <item>
          <property name="text">
@@ -474,7 +492,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -506,6 +524,9 @@
         <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
          <item>
           <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Y-Axis Sensitivity</string>
            </property>
@@ -535,6 +556,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivitySpinbox">
+           <property name="suffix">
+            <string>°</string>
+           </property>
            <property name="minimum">
             <double>0.500000000000000</double>
            </property>
@@ -557,6 +581,9 @@
           <layout class="QHBoxLayout" name="playerSettingsTabGyroInvertGyroPitchLayout">
            <item>
             <widget class="QCheckBox" name="playerSettingsTabGyroInvertCheckbox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Invert Gyroscope (Y Axis) pitch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Invert Gyroscope Pitch</string>
              </property>
@@ -583,6 +610,9 @@
         <layout class="QHBoxLayout" name="playerSettingsTabGyroXAxisSensitivityLayout">
          <item>
           <widget class="QLabel" name="playerSettingsTabGyroXAxisSensitivityLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope X Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>X-Axis Sensitivity</string>
            </property>
@@ -612,6 +642,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="playerSettingsTabGyroXAxisSensitivitySpinbox">
+           <property name="suffix">
+            <string>°</string>
+           </property>
            <property name="minimum">
             <double>0.500000000000000</double>
            </property>
@@ -646,7 +679,7 @@
          <item>
           <widget class="QComboBox" name="playerSettingsTabGyroAimingStyleBox">
            <property name="toolTip">
-            <string>Gyroscope crosshair aiming mode.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <item>
             <property name="text">
@@ -700,6 +733,9 @@
          </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimStickLayoutLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determine which stick is used for aiming. The other stick will automatically be used for movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Aim Stick</string>
            </property>
@@ -737,6 +773,9 @@
          </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimStickModeLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determines how stick input influences camera motion.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Full: &lt;/span&gt;Stick manipulates X and Y camera axises, like in a typical controller camera scheme.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;X-Only: &lt;/span&gt;Stick will only manipulate the camera on the X-Axis. This mode is intended to compliment Gyroscope aiming by keeping the stick from interfering with Gyro Y-Axis aiming.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Flick: &lt;/span&gt;Flick, or 'Flick Stick' will instantly move the camera horizontally based on the angle the stick is moved or 'flicked' at. (Example: Flicking the stick 90° to the left will instantly rotate the camera 90° to the left in game). Holding the stick at the edge and moving around after a flick will rotate the camera. This mode was developed by Jibb Smart and is explicitly designed to compliment gyroscope aiming.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Aim Stick Mode</string>
            </property>
@@ -910,6 +949,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Controls the X deadzone for the Aiming stick.&lt;/p&gt;&lt;p&gt;Deadzone is measured in percentage of the stick travelled.&lt;/p&gt;&lt;p&gt;Example: 0.20 means that the stick must be moved roughly 20% of it's distance on that axis to be counted as movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Aim Deadzone X</string>
            </property>
@@ -970,6 +1012,9 @@
              <width>80</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Controls the Y deadzone for the Aiming stick.&lt;/p&gt;&lt;p&gt;Deadzone is measured in percentage of the stick travelled.&lt;/p&gt;&lt;p&gt;Example: 0.20 means that the stick must be moved roughly 20% of it's distance on that axis to be counted as movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Aim Deadzone Y</string>
@@ -1032,6 +1077,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Controls the X deadzone for the movement stick.&lt;/p&gt;&lt;p&gt;Deadzone is measured in percentage of the stick travelled.&lt;/p&gt;&lt;p&gt;Example: 0.20 means that the stick must be moved roughly 20% of it's distance on that axis to be counted as movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
@@ -1093,6 +1141,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Controls the Y deadzone for the movement stick.&lt;/p&gt;&lt;p&gt;Deadzone is measured in percentage of the stick travelled.&lt;/p&gt;&lt;p&gt;Example: 0.20 means that the stick must be moved roughly 20% of it's distance on that axis to be counted as movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Movement Deadzone Y</string>
            </property>
@@ -1146,6 +1197,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="playerSettingsTabStickInvertAimPitchCheckbox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Invert Aiming Stick (Y Axis) Pitch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Invert Aiming Stick Pitch (Y)</string>
          </property>
@@ -1181,6 +1235,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingGoldeneyeCheckbox">
+           <property name="statusTip">
+            <string>Enable traditional L-Aiming in Goldeneye 64. If disabled, Aim Mode will force the cursor to the center of the screen, not unilke the aiming mode in traditional shooters.</string>
+           </property>
            <property name="text">
             <string>Cursor Aiming (Goldeneye)</string>
            </property>
@@ -1200,6 +1257,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="whatsThis">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable traditional L-Aiming in Perfect Dark. If disabled, Aim Mode will force the cursor to the center of the screen, not unilke the aiming mode in traditional shooters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Cursor Aiming (Perfect Dark)</string>
            </property>
@@ -1207,6 +1267,15 @@
          </item>
          <item>
           <widget class="QCheckBox" name="playerSettingsTabOtherAllowAimingUsingStickCheckbox">
+           <property name="toolTip">
+            <string>Allows the Aiming Stick to move the aiming cursor in L-Aiming mode. If disabled, Aiming in L-Aiming mode can only be performed with the gyroscope.</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="whatsThis">
+            <string/>
+           </property>
            <property name="text">
             <string>Allow Stick Aiming In Aiming Mode</string>
            </property>
@@ -1216,6 +1285,9 @@
           <layout class="QHBoxLayout" name="playerSettingsTabOtherDS4ColorLayout">
            <item>
             <widget class="QLabel" name="playerSettingsTabOtherDS4Label">
+             <property name="toolTip">
+              <string>Sets the lightbar color for Dualshock 4 and Dualsense controllers. This is useful for identifying which controller belongs to which player.</string>
+             </property>
              <property name="text">
               <string>Lightbar Color
 (DS4/DS5)</string>
@@ -1326,6 +1398,9 @@
            <height>23</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Override the game's internal widescreen ratio to a ratio of your choice. This should only be used if your screen is not 16:9.</string>
+         </property>
          <property name="text">
           <string>16:9 Ratio Override:</string>
          </property>
@@ -1403,6 +1478,9 @@
         <layout class="QHBoxLayout" name="globalFovTopLayout">
          <item>
           <widget class="QPushButton" name="globalFovTopResetFovButton">
+           <property name="toolTip">
+            <string>Reset Field Of View (FoV) to the game's default of 60°.</string>
+           </property>
            <property name="text">
             <string>Reset FOV</string>
            </property>
@@ -1531,6 +1609,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>Display a crosshair for all players in Goldeneye 64. </string>
+           </property>
            <property name="text">
             <string>Show Crosshair (Goldeneye)</string>
            </property>
@@ -1575,6 +1656,9 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Undo all changes and revert to previous input settings/</string>
+   </property>
    <property name="text">
     <string>Revert</string>
    </property>
@@ -1587,6 +1671,9 @@
      <width>75</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Clear all buttons (All input values will be set to &quot;None&quot;)</string>
    </property>
    <property name="text">
     <string>Clear</string>
