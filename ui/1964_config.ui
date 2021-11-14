@@ -315,7 +315,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the type of device attached to this controller port.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;: The player's controller is disconnected and will not be detected by the ROM.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Controller&lt;/span&gt;: A standard, SDL2 capable controller will be used.&lt;/p&gt;&lt;p&gt;A player that does not have a device assigned to it will be treated as &lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the type of device attached to this controller port.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;: The player's controller is disconnected and will not be detected by the ROM.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Controller&lt;/span&gt;: A standard, SDL2 capable controller. Note: This includes ALL classes of controller, including ones without motion sensors. Settings should be adjusted accordingly.&lt;/p&gt;&lt;p&gt;A player that does not have a device assigned to it will be treated as &lt;span style=&quot; font-weight:600;&quot;&gt;Disconnected&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <item>
          <property name="text">
@@ -345,6 +345,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="profileBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>260</width>
@@ -461,7 +464,7 @@
         <property name="minimumSize">
          <size>
           <width>200</width>
-          <height>0</height>
+          <height>20</height>
          </size>
         </property>
        </widget>
@@ -522,10 +525,16 @@
        </property>
        <item row="2" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Y-Axis Sensitivity</string>
@@ -577,6 +586,12 @@
        </item>
        <item row="3" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroCheckRow1Layout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="playerSettingsTabGyroInvertGyroPitchLayout">
            <item>
@@ -608,6 +623,12 @@
        </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroXAxisSensitivityLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabGyroXAxisSensitivityLabel">
            <property name="toolTip">
@@ -663,11 +684,23 @@
        </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroAimingStyleLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
          <property name="rightMargin">
           <number>10</number>
          </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabGyroAimingStyleLabel">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Aiming Style</string>
            </property>
@@ -704,19 +737,34 @@
      </widget>
     </widget>
     <widget class="QWidget" name="playerSettingsTabStick">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <attribute name="title">
       <string>Stick</string>
      </attribute>
      <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>339</width>
-        <height>341</height>
+        <x>10</x>
+        <y>10</y>
+        <width>321</width>
+        <height>351</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
        <property name="leftMargin">
         <number>10</number>
        </property>
@@ -729,10 +777,28 @@
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickAimStickLayout">
          <property name="rightMargin">
-          <number>5</number>
+          <number>10</number>
          </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimStickLayoutLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determine which stick is used for aiming. The other stick will automatically be used for movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -748,7 +814,7 @@
           <widget class="QComboBox" name="playerSettingsTabStickAimStickLayoutBox">
            <property name="minimumSize">
             <size>
-             <width>210</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -769,15 +835,30 @@
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickAimStickModeLayout">
          <property name="rightMargin">
-          <number>5</number>
+          <number>10</number>
          </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimStickModeLabel">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determines how stick input influences camera motion.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Full: &lt;/span&gt;Stick manipulates X and Y camera axises, like in a typical controller camera scheme.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;X-Only: &lt;/span&gt;Stick will only manipulate the camera on the X-Axis. This mode is intended to compliment Gyroscope aiming by keeping the stick from interfering with Gyro Y-Axis aiming.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Flick: &lt;/span&gt;Flick, or 'Flick Stick' will instantly move the camera horizontally based on the angle the stick is moved or 'flicked' at. (Example: Flicking the stick 90° to the left will instantly rotate the camera 90° to the left in game). Holding the stick at the edge and moving around after a flick will rotate the camera. This mode was developed by Jibb Smart and is explicitly designed to compliment gyroscope aiming.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determines how the aiming stick input influences camera motion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Full: &lt;/span&gt;Stick manipulates X and Y camera axises, like in a typical controller camera scheme.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;X-Only: &lt;/span&gt;Stick will only manipulate the camera on the X-Axis. This mode is intended to compliment Gyroscope aiming by keeping the stick from interfering with Gyro Y-Axis aiming.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Flick: &lt;/span&gt;Flick, or 'Flick Stick' will instantly move the camera horizontally based on the angle the stick is moved or 'flicked' at. (Example: Flicking the stick 90° to the left will instantly rotate the camera 90° to the left in game). Holding the stick at the edge and rotating after a flick will rotate the camera. This mode was developed by Jibb Smart and is explicitly designed to compliment gyroscope aiming.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="text">
-            <string>Aim Stick Mode</string>
+            <string>Aiming Mode</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -788,7 +869,7 @@
           <widget class="QComboBox" name="playerSettingsTabStickAimStickModeBox">
            <property name="minimumSize">
             <size>
-             <width>210</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -816,12 +897,27 @@
          <property name="spacing">
           <number>5</number>
          </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimSensitivityXLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>80</width>
+             <width>0</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="text">
@@ -837,9 +933,15 @@
          </item>
          <item>
           <widget class="QSlider" name="playerSettingsTabStickAimSensitivityXSlider">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>160</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -880,12 +982,27 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickAimSensitivityYLayout">
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimSensitivityLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>80</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="text">
@@ -903,7 +1020,7 @@
           <widget class="QSlider" name="playerSettingsTabStickAimSensitivityYSlider">
            <property name="minimumSize">
             <size>
-             <width>160</width>
+             <width>100</width>
              <height>0</height>
             </size>
            </property>
@@ -941,12 +1058,27 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickAimDeadzoneXLayout">
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimDeadzoneXLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>80</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="toolTip">
@@ -967,7 +1099,7 @@
           <widget class="QSlider" name="playerSettingsTabStickAimDeadzoneXSlider">
            <property name="minimumSize">
             <size>
-             <width>160</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -1005,12 +1137,27 @@
          <property name="spacing">
           <number>10</number>
          </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickAimDeadzoneYLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>80</width>
+             <width>0</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="toolTip">
@@ -1031,7 +1178,7 @@
           <widget class="QSlider" name="playerSettingsTabStickAimDeadzoneYSlider">
            <property name="minimumSize">
             <size>
-             <width>160</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -1069,12 +1216,27 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickMoveDeadzoneXLayout">
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickMoveDeadzoneXLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>80</width>
+             <width>0</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="toolTip">
@@ -1098,7 +1260,7 @@
           <widget class="QSlider" name="playerSettingsTabStickMoveDeadzoneXSlider">
            <property name="minimumSize">
             <size>
-             <width>160</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -1133,12 +1295,27 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="playerSettingsTabStickMoveDeadzoneYLayout">
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="playerSettingsTabStickMoveDeadzoneYLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>80</width>
+             <width>0</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="toolTip">
@@ -1159,7 +1336,7 @@
           <widget class="QSlider" name="playerSettingsTabStickMoveDeadzoneYSlider">
            <property name="minimumSize">
             <size>
-             <width>120</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -1235,6 +1412,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="playerSettingsTabOtherCursorAimingGoldeneyeCheckbox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables non-centered L-Aiming in Goldeneye. Otherwise, the crosshair will remain centered in L-Aiming Mode. Recommended to leave enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="statusTip">
             <string>Enable traditional L-Aiming in Goldeneye 64. If disabled, Aim Mode will force the cursor to the center of the screen, not unilke the aiming mode in traditional shooters.</string>
            </property>
@@ -1256,6 +1436,9 @@
              <width>300</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables non-centered L-Aiming in Perfect Dark. Otherwise, the crosshair will remain centered in L-Aiming Mode. Recommended to leave enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="whatsThis">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable traditional L-Aiming in Perfect Dark. If disabled, Aim Mode will force the cursor to the center of the screen, not unilke the aiming mode in traditional shooters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1286,7 +1469,7 @@
            <item>
             <widget class="QLabel" name="playerSettingsTabOtherDS4Label">
              <property name="toolTip">
-              <string>Sets the lightbar color for Dualshock 4 and Dualsense controllers. This is useful for identifying which controller belongs to which player.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the lightbar color for Sony DS4 and DS5 controllers.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Setting all colors to &lt;span style=&quot; font-weight:600;&quot;&gt;0&lt;/span&gt; will disable the lightbar.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This is useful in multiplayer games for identifying which controller belongs to which player.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Lightbar Color
@@ -1375,10 +1558,10 @@
    <widget class="QWidget" name="gridLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>32</y>
-      <width>341</width>
-      <height>151</height>
+      <x>0</x>
+      <y>20</y>
+      <width>351</width>
+      <height>159</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="globalLayout">
@@ -1599,32 +1782,16 @@
          </property>
         </spacer>
        </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="globalGoldeneyeCrosshairLayout">
        <item>
-        <layout class="QHBoxLayout" name="globalGoldeneyeCrosshairLayout">
-         <item>
-          <widget class="QLabel" name="globalGoldeneyeCrosshairLabel">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Display a crosshair for all players in Goldeneye 64. </string>
-           </property>
-           <property name="text">
-            <string>Show Crosshair (Goldeneye)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="globalGoldeneyeCrosshairCheckbox">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QCheckBox" name="globalGoldeneyeCrosshairCheckbox">
+         <property name="text">
+          <string>Enable Goldeneye 64 Crosshair</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
