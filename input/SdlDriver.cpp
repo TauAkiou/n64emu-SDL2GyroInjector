@@ -56,6 +56,11 @@ DWORD SdlDriver::injectionloop() {
 
     auto emutickrate = TICKRATE;
     while(!_terminatethread) {
+        if(_looppaused) {
+            Sleep(TICKRATE);
+            continue;
+        }
+
         time_previous = time_current;
         time_current = std::chrono::steady_clock::now();
         std::chrono::duration<float> dur = time_current - time_previous;
@@ -190,6 +195,11 @@ void SdlDriver::AssignEmulatorWindow(const HWND hw) {
     }
 }
 
+void SdlDriver::UnassignEmulatorWindow() {
+    if(_emulatorwindow != nullptr)
+        _emulatorwindow = nullptr;
+}
+
 DWORD SdlDriver::startinjectionloop(void* param) {
     auto ThisClass = (SdlDriver*) param;
     return ThisClass->injectionloop();
@@ -206,9 +216,6 @@ void SdlDriver::StartInjectionThread() {
 void SdlDriver::EndInjectionThread() {
     if(!_terminatethread) {
         _terminatethread = true;
-        Sleep(500); // Wait for the thread to die.
-
-        //CloseHandle(_inputthread);
         _inputthread = nullptr;
     }
 }
@@ -265,8 +272,12 @@ void SdlDriver::PauseInjection() {
     _looppaused = true;
 }
 
-bool SdlDriver::IsThreadRunning() {
-    return _terminatethread;
+bool SdlDriver::IsThreadPaused() const {
+    return _looppaused;
+}
+
+bool SdlDriver::IsThreadRunning() const {
+    return !_terminatethread;
 }
 
 std::shared_ptr<SDLDevice> SdlDriver::GetFirstController() {

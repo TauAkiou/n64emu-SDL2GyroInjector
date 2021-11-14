@@ -67,6 +67,16 @@ ConfigDialog::ConfigDialog(QDialog *parent) : QDialog(parent), _baseDialog(new U
     connect(this, SIGNAL(primaryClicked(int)), this, SLOT(_processPrimaryLayout(int)));
     connect(this, SIGNAL(secondaryClicked(int)), this, SLOT(_processSecondaryLayout(int)));
 
+    if(_jsdriver->IsThreadRunning()) {
+        // Lock the FoV controls if the plugin is running.
+        _baseDialog->globalFovSlider->setEnabled(false);
+        _baseDialog->globalFovSlider->setToolTip(_cnststr_fov_locked);
+        _baseDialog->globalFovSpinbox->setEnabled(false);
+        _baseDialog->globalFovSpinbox->setToolTip(_cnststr_fov_locked);
+        _baseDialog->globalFovTopResetFovButton->setEnabled(false);
+        _baseDialog->globalFovTopResetFovButton->setToolTip(_cnststr_fov_locked);
+    }
+
     _createPrimaryButtonLayouts();
 
     _loadedfull = _jsdriver->GetConnectedControllers();
@@ -584,6 +594,18 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(do
 void ConfigDialog::on_globalFovSpinbox_valueChanged(int value) {
     _baseDialog->globalFovSlider->setValue(value);
     _settingsptr->SetFovOverride(value);
+
+    if(_settingsptr->GetFovOverride() < 60)
+        _baseDialog->globalFovBottomLabel->setText("Below Default");
+    else if(_settingsptr->GetFovOverride() == 60)
+        _baseDialog->globalFovBottomLabel->setText("Default FOV");
+    else if(_settingsptr->GetFovOverride() <= 80)
+        _baseDialog->globalFovBottomLabel->setText("Above Default");
+    else if(_settingsptr->GetFovOverride() <= 90)
+        _baseDialog->globalFovBottomLabel->setText("Breaks Viewmodels");
+    else
+        _baseDialog->globalFovBottomLabel->setText("Breaks Viewmodels\\LOD");
+
 }
 
 void ConfigDialog::on_globalFovSlider_valueChanged(int value) {

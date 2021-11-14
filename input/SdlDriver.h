@@ -77,9 +77,12 @@ class SdlDriver {
         int Initialize(const HWND hw);
         void Terminate();
         void AssignEmulatorWindow(const HWND hw);
+        void UnassignEmulatorWindow();
+        bool IsEmulatorWindowAssigned() const;
         void StartInjectionThread();
         void EndInjectionThread();
-        bool IsThreadRunning();
+        bool IsThreadRunning() const;
+        bool IsThreadPaused() const;
         [[nodiscard]] int GetConnectedDeviceCount() const;
         int SetPlayerHandle(PLAYERS player, int deviceclass, int phandle, int sechandle);
         std::shared_ptr<SDLDevice> GetFirstController();

@@ -154,6 +154,7 @@ DLLEXPORT void CALL RomClosed(void)
 {
     MainDll::GetInstance()->EndInjection();
     MainDll::GetInstance()->setRomloaded(false);
+    SdlDriver::getInstance()->UnassignEmulatorWindow();
 }
 //==========================================================================
 // Purpose: Called when a ROM is open (from the emulation thread)

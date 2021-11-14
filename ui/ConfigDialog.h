@@ -44,6 +44,7 @@
 #include "ui_1964_config.h"
 
 
+
 namespace Ui {
     class ConfigDialog;
 }
@@ -51,6 +52,8 @@ namespace Ui {
 class ConfigDialog : public QDialog {
     Q_OBJECT
 private:
+    const QString _cnststr_fov_locked = "FOV controls are disabled while a ROM is running.<br>Stop the ROM to change this setting.";
+
     Ui::ConfigDialog* _baseDialog;
 
     QList<QPushButton*> _mappingButtonListPrimary;

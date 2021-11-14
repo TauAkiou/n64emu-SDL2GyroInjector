@@ -138,7 +138,7 @@ int MainDll::HandleConfigWindow(int argc, char* argv[]) {
     QCoreApplication* pApp = QCoreApplication::instance();
     // Stop the injection thread while we are in settings.
     if(_romloaded && _jsdptr->IsThreadRunning()) {
-        _jsdptr->EndInjectionThread();
+        _jsdptr->PauseInjection();
     }
 
     if(pApp == nullptr) {
@@ -151,8 +151,8 @@ int MainDll::HandleConfigWindow(int argc, char* argv[]) {
     int res = pQApp ? pQApp->exec() : cfgdlg.exec();
 
     UpdateControllerStatus();
-    if(_romloaded && !_jsdptr->IsThreadRunning()) {
-        _jsdptr->StartInjectionThread();
+    if(_romloaded && !_jsdptr->IsThreadPaused()) {
+        _jsdptr->UnpauseInjection();
     }
     return 0;
 }
