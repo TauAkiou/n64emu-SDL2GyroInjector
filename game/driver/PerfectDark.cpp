@@ -808,6 +808,19 @@ void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& pr
     const float threshold = 0.72f, speed = 475.f, sensitivity = 100.f * fovmodifier, centertime = 60.f;
     // In free aim, the aimer is always unlocked and tied to the gyro exclusively.
 
+    vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, true);
+    const vec2<float> sensitivity_basefactor_stick = _ihandler.GetGeneralBaseFactorForStick();
+
+    if(profile.AllowStickInAimMode && aimingflag) {
+        crosshairposx[player] += aimstickdata.x / 10.0f *
+                                 (profile.AimStickSensitivity.x * (sensitivity_basefactor_stick.x / 2) / sensitivity /
+                                  RATIOFACTOR); // fmax(mouseaccel, 1); // calculate the crosshair position
+        crosshairposy[player] +=
+                (!profile.StickPitchInverted ? aimstickdata.y
+                                             : -aimstickdata.y) / 10.0f *
+                (profile.AimStickSensitivity.y * (sensitivity_basefactor_stick.y / 2) / sensitivity); // fmax(mouseaccel, 1);
+    }
+
     //const float mouseaccel = PROFILE[player].SETTINGS[ACCELERATION] ? sqrt(DEVICE[player].XPOS * DEVICE[player].XPOS + DEVICE[player].YPOS * DEVICE[player].YPOS) / TICKRATE / 12.0f * PROFILE[player].SETTINGS[ACCELERATION] : 0;
     if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
         crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position

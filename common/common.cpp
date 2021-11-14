@@ -1,7 +1,3 @@
-//
-// Created by ladmin on 11/8/2021.
-//
-
 #include "common.h"
 
 using nljs = nlohmann::json;

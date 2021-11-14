@@ -1,15 +1,15 @@
 /*
  *==========================================================================
- * Joyshock Injector - 1964 Plugin
+ * SDL2_GyroInjector - 1964 Plugin
  *==========================================================================
- * Largely based off of the original Keyboard/Mouse Injector Plugin
- * Copyright (C) 2016-2021 Carnivorous
+ * Based off the original Keyboard/Mouse Injector Plugin
+ * Copyright (C) 2016-2021 Carnivorous & Stolen
  *
- * Joyshock Injector
+ * SDL2_GyroInjector
  * Copyright (C) 2016-2021 TauAkiou
  * All rights reserved.
  *
- * Joyshock Injector is free software; you can redistribute it and/or modify it
+ * SDL2_GyroInjector is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
@@ -26,6 +26,11 @@
 
 #include <iostream>
 #include "Goldeneye.h"
+
+/*
+ * Game definitions, including memory addresses & constant values.
+ * These generally should not be changed, especially the addresses!
+ */
 
 #define GUNAIMLIMIT 6.879164696 // 0x40DC221E
 #define CROSSHAIRLIMIT 5.159373283 // 0x40A51996
@@ -74,6 +79,11 @@
 #define GE_weaponzpos (GE_weaponypos + 4) // z axis position for view models
 #define GE_ResetCrouchToggle(X) safetocrouch[X] = 1, safetostand[X] = 0, crouchstance[X] = 0 // reset crouch toggle bind
 
+
+/* Initialization & Status methods for the game driver.
+ * These functions are called by the plugin to set up and run the injection loop.
+ *
+ */
 Goldeneye::Goldeneye(EmulatorLink* linkptr) {
     _link = linkptr;
 }
@@ -106,6 +116,9 @@ void Goldeneye::Inject() {
         if(!_settings->GetIfPlayerIsConnected(static_cast<enum PLAYERS>(player))) // bypass disabled players
             continue;
 
+        // Standard and FreeAiming types have seperate code blocks
+        // because Free Aim requires special considerations to account
+        // for the unlocked cursor.
         if(!profile.FreeAiming) {
             _processOriginalAimmode(player, profile);
         }
@@ -123,6 +136,8 @@ void Goldeneye::Inject() {
     _controller(); // set controller data
     _resetgyro();
 }
+
+/* ---------- Original Aiming Mode Codeblock ---------- */
 
 void Goldeneye::_processOriginalAimmode(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(GE_camera);
@@ -291,6 +306,10 @@ void Goldeneye::_aimmode(const int player, const js_settings::PROFILE& profile, 
         crosshairposx[player] = crosshairx, crosshairposy[player] = crosshairy;
 }
 
+/* ---------- End Original Aiming Codeblock ---------- */
+
+/* ---------- Free Aiming Codeblock  ----------------- */
+
 void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile) {
     const int camera = _link->ReadInt(GE_camera);
     const int exit = _link->ReadInt(GE_exit);
@@ -298,6 +317,10 @@ void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile)
     const int menupage = _link->ReadInt(GE_menupage);
     const int tankflag = _link->ReadInt(GE_tankflag);
     const int mproundend = _link->ReadInt(GE_matchended);
+
+    const int currentweapon = _link->ReadInt(playerbase[player] + GE_currentweapon);
+    const int aimingintank = _link->ReadInt(GE_tankflag) == 1 && currentweapon == 32; // flag if player is driving tank with tank equipped as weapon
+
 
     vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, false);
 
@@ -356,7 +379,7 @@ void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile)
             if(!cursoraimingflag || _link->ReadInt(playerbase[player] + GE_currentweapon) == 32) { // if not aiming (or geaimmode is off) or player is driving tank with tank equipped as weapon, then use regular mouselook calculation
                 tankx += aimstickdata.x / 10.0f * sensitivity_stick_x / (360 / TANKXROTATIONLIMIT * 2.5) *
                          (fov / basefov);
-                if(profile.FreeAiming == SPLATOON) {
+                if(profile.FreeAiming) {
                     tankx += _cfgptr->Device[player].GYRO.x / 10.0f * sensitivity_gyro_x_camera / (360 / TANKXROTATIONLIMIT * 2.5) *
                     _cfgptr->DeltaTime * (fov / basefov);
                 }
@@ -424,6 +447,88 @@ void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile)
     }
 }
 
+void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
+    const float crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx);
+    const float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
+    const float offsetpos[2][33] = {{0, 0, 0, 0, 0.1625, 0.1625, 0.15, 0.5,   0.8, 0.4, 0.5,   0.5,   0.48, 0.9,  0.25, 0.6,  0.6, 0.7, 0.25, 0.15, 0.1625, 0.1625, 0.5,   0.5, 0.9, 0.9, 0, 0, 0, 0, 0, 0.4},
+                                    {0, 0, 0, 0, 0.1,    0.1,    0.2,  0.325, 1,   0.3, 0.425, 0.425, 0.45, 0.95, 0.1,  0.55, 0.5, 0.7, 0.25, 0.1,  0.1,    0.1,    0.275, 1,   0.9, 0.8, 0, 0, 0, 0, 0, 0.25}}; // table of X/Y offset for weapons
+    const int currentweapon = _link->ReadInt(playerbase[player] + GE_currentweapon);
+    const float fovratio = fov / basefov, fovmodifier = basefov / 60.f; // basefov is 60 unless override is above 60
+    const float threshold = 0.72f, speed = 475.f, sensitivity = 292.f * fovmodifier;
+    const int aimingintank = _link->ReadInt(GE_tankflag) == 1 &&
+                             currentweapon == 32; // flag if player is driving tank with tank equipped as weapon
+
+    vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, true);
+    const vec2<float> sensitivity_basefactor_stick = _ihandler.GetGeneralBaseFactorForStick();
+
+
+    //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
+    if(profile.AllowStickInAimMode && aimingflag) {
+        crosshairposx[player] += aimstickdata.x / 10.0f *
+                                 (profile.AimStickSensitivity.x * (sensitivity_basefactor_stick.x / 2) / sensitivity /
+                                  RATIOFACTOR); // fmax(mouseaccel, 1); // calculate the crosshair position
+        crosshairposy[player] +=
+                (!profile.StickPitchInverted ? aimstickdata.y
+                                             : -aimstickdata.y) / 10.0f *
+                (profile.AimStickSensitivity.y * (sensitivity_basefactor_stick.y / 2) / sensitivity); // fmax(mouseaccel, 1);
+    }
+
+    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
+        crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f *
+                                 ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) *
+                                 _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
+    }
+
+    crosshairposy[player] +=
+            (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) /
+            10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) *
+            _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
+
+    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
+        crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE,
+                                                          CROSSHAIRLIMITFREE); // apply clamp then inject
+    }
+    crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE,
+                                                      CROSSHAIRLIMITFREE);
+
+    if(profile.FreeAiming == SPLATOON && !aimingflag) {
+        crosshairposx[player] = crosshairx; // Ensure x is locked to center in Splatoon mode.
+    }
+
+    if (aimingintank) // if player is aiming while driving tank with tank equipped as weapon, set x axis crosshair to 0 (like the original game - so you cannot aim across the screen because the tank barrel is locked in the center)
+        crosshairposx[player] = 0;
+    _link->WriteFloat(playerbase[player] + GE_crosshairx, crosshairposx[player]);
+    _link->WriteFloat(playerbase[player] + GE_crosshairy, crosshairposy[player]);
+    _link->WriteFloat(playerbase[player] + GE_gunx, crosshairposx[player] * RATIOFACTOR * (1.11f +
+                                                                                           (currentweapon >= 0 &&
+                                                                                            currentweapon <= 32
+                                                                                            ? offsetpos[0][currentweapon]
+                                                                                            : 0.15f) * 1.5f) +
+                                                    fovratio -
+                                                    1); // calculate and inject the gun angles (uses pre-made pos table or if unknown weapon use fail-safe value)
+    _link->WriteFloat(playerbase[player] + GE_guny, crosshairposy[player] * (1.11f + (currentweapon >= 0 &&
+                                                                                      currentweapon <= 32
+                                                                                      ? offsetpos[1][currentweapon]
+                                                                                      : 0) * 1.5f) + fovratio - 1);
+    if (crosshairx > 0 && crosshairx / CROSSHAIRLIMIT >
+                          threshold) // if crosshair is within threshold of the border then calculate a linear scrolling speed and enable mouselook
+        aimx[player] = (crosshairx / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
+    else if (crosshairx < 0 && crosshairx / CROSSHAIRLIMIT < -threshold)
+        aimx[player] = (crosshairx / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
+    else
+        aimx[player] = 0;
+    if (crosshairy > 0 && crosshairy / CROSSHAIRLIMIT > threshold)
+        aimy[player] = (crosshairy / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
+    else if (crosshairy < 0 && crosshairy / CROSSHAIRLIMIT < -threshold)
+        aimy[player] = (crosshairy / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
+    else
+        aimy[player] = 0;
+
+}
+
+/* ---------- End Free Aiming Codeblock ---------- */
+
+/* ---------- Other Input Function Codeblock ----- */
 
 
 void Goldeneye::_crouch(const int player, const js_settings::PROFILE& profile)
@@ -442,87 +547,6 @@ void Goldeneye::_crouch(const int player, const js_settings::PROFILE& profile)
         crouchheld = crouchstance[player];
     }
     _link->WriteInt(playerbase[player] + GE_stanceflag, !crouchheld ? 2 : 0); // set in-game stance
-}
-
-
-
-void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov) {
-    const float crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx);
-    const float crosshairy = _link->ReadFloat(playerbase[player] + GE_crosshairy);
-    const float offsetpos[2][33] = {{0, 0, 0, 0, 0.1625, 0.1625, 0.15, 0.5,   0.8, 0.4, 0.5,   0.5,   0.48, 0.9,  0.25, 0.6,  0.6, 0.7, 0.25, 0.15, 0.1625, 0.1625, 0.5,   0.5, 0.9, 0.9, 0, 0, 0, 0, 0, 0.4},
-                                    {0, 0, 0, 0, 0.1,    0.1,    0.2,  0.325, 1,   0.3, 0.425, 0.425, 0.45, 0.95, 0.1,  0.55, 0.5, 0.7, 0.25, 0.1,  0.1,    0.1,    0.275, 1,   0.9, 0.8, 0, 0, 0, 0, 0, 0.25}}; // table of X/Y offset for weapons
-    const int currentweapon = _link->ReadInt(playerbase[player] + GE_currentweapon);
-    const float fovratio = fov / basefov, fovmodifier = basefov / 60.f; // basefov is 60 unless override is above 60
-    const float threshold = 0.72f, speed = 475.f, sensitivity = 292.f * fovmodifier;
-    const int aimingintank = _link->ReadInt(GE_tankflag) == 1 &&
-                             currentweapon == 32; // flag if player is driving tank with tank equipped as weapon
-
-    vec2<float> aimstickdata = _ihandler.ProcessAimStickInputForPlayer((PLAYERS)player, true);
-    const vec2<float> sensitivity_basefactor_stick = _ihandler.GetGeneralBaseFactorForStick();
-
-
-    //const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
-        if (profile.AllowStickInAimMode) {
-            crosshairposx[player] += _cfgptr->Device[player].AIMSTICK.x / 10.0f *
-                                     ((aimstickdata.x) / sensitivity /
-                                      RATIOFACTOR); // fmax(mouseaccel, 1); // calculate the crosshair position
-            crosshairposy[player] +=
-                    (!profile.StickPitchInverted ? _cfgptr->Device[player].AIMSTICK.y
-                                                 : -_cfgptr->Device[player].AIMSTICK.y) / 10.0f *
-                    ((aimstickdata.y) / sensitivity); // fmax(mouseaccel, 1);
-        }
-
-        if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
-            crosshairposx[player] += _cfgptr->Device[player].GYRO.x / 10.0f *
-                                     ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) *
-                                     _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
-        }
-
-        crosshairposy[player] +=
-                (!profile.GyroPitchInverted ? _cfgptr->Device[player].GYRO.y : -_cfgptr->Device[player].GYRO.y) /
-                10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) *
-                _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
-
-        if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
-            crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE,
-                                                              CROSSHAIRLIMITFREE); // apply clamp then inject
-        }
-        crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE,
-                                                          CROSSHAIRLIMITFREE);
-
-        if(profile.FreeAiming == SPLATOON && !aimingflag) {
-            crosshairposx[player] = crosshairx; // Ensure x is locked to center in Splatoon mode.
-        }
-
-        if (aimingintank) // if player is aiming while driving tank with tank equipped as weapon, set x axis crosshair to 0 (like the original game - so you cannot aim across the screen because the tank barrel is locked in the center)
-            crosshairposx[player] = 0;
-        _link->WriteFloat(playerbase[player] + GE_crosshairx, crosshairposx[player]);
-        _link->WriteFloat(playerbase[player] + GE_crosshairy, crosshairposy[player]);
-        _link->WriteFloat(playerbase[player] + GE_gunx, crosshairposx[player] * RATIOFACTOR * (1.11f +
-                                                                                               (currentweapon >= 0 &&
-                                                                                                currentweapon <= 32
-                                                                                                ? offsetpos[0][currentweapon]
-                                                                                                : 0.15f) * 1.5f) +
-                                                        fovratio -
-                                                        1); // calculate and inject the gun angles (uses pre-made pos table or if unknown weapon use fail-safe value)
-        _link->WriteFloat(playerbase[player] + GE_guny, crosshairposy[player] * (1.11f + (currentweapon >= 0 &&
-                                                                                          currentweapon <= 32
-                                                                                          ? offsetpos[1][currentweapon]
-                                                                                          : 0) * 1.5f) + fovratio - 1);
-        if (crosshairx > 0 && crosshairx / CROSSHAIRLIMIT >
-                              threshold) // if crosshair is within threshold of the border then calculate a linear scrolling speed and enable mouselook
-            aimx[player] = (crosshairx / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
-        else if (crosshairx < 0 && crosshairx / CROSSHAIRLIMIT < -threshold)
-            aimx[player] = (crosshairx / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
-        else
-            aimx[player] = 0;
-        if (crosshairy > 0 && crosshairy / CROSSHAIRLIMIT > threshold)
-            aimy[player] = (crosshairy / CROSSHAIRLIMIT - threshold) * speed * TIMESTEP;
-        else if (crosshairy < 0 && crosshairy / CROSSHAIRLIMIT < -threshold)
-            aimy[player] = (crosshairy / CROSSHAIRLIMIT + threshold) * speed * TIMESTEP;
-        else
-            aimy[player] = 0;
-
 }
 
 void Goldeneye::_controller() {

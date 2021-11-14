@@ -311,7 +311,7 @@ std::string SDLDevice::GetButtonNameForDevice(SDL_GameControllerButton button) {
                 case SDL_CONTROLLER_BUTTON_BACK:
                     if(_controllerType == SDL_CONTROLLER_TYPE_PS5) return "Create";
                     else if(_controllerType == SDL_CONTROLLER_TYPE_PS4) return "Share";
-                    else if(_controllerType == SDL_CONTROLLER_TYPE_PS3) return "Select";
+                    else return "Select";
                 case SDL_CONTROLLER_BUTTON_INVALID:
                     return "Invalid";
                 case SDL_CONTROLLER_BUTTON_X:
@@ -321,8 +321,8 @@ std::string SDLDevice::GetButtonNameForDevice(SDL_GameControllerButton button) {
                 case SDL_CONTROLLER_BUTTON_GUIDE:
                     return "PS";
                 case SDL_CONTROLLER_BUTTON_START:
-                    if(_controllerType == (SDL_CONTROLLER_TYPE_PS3 | SDL_CONTROLLER_TYPE_PS4)) return "Options";
-                    else if(_controllerType == SDL_CONTROLLER_TYPE_PS3) return "Select";
+                    if(_controllerType == SDL_CONTROLLER_TYPE_PS5 || _controllerType == SDL_CONTROLLER_TYPE_PS4) return "Options";
+                    else return "Select";
                 case SDL_CONTROLLER_BUTTON_LEFTSTICK:
                     return "L3";
                 case SDL_CONTROLLER_BUTTON_RIGHTSTICK:
@@ -361,6 +361,8 @@ std::string SDLDevice::GetButtonNameForDevice(SDL_GameControllerButton button) {
         case SDL_CONTROLLER_TYPE_XBOX360:
         case SDL_CONTROLLER_TYPE_XBOXONE:
         case SDL_CONTROLLER_TYPE_VIRTUAL:
+        case SDL_CONTROLLER_TYPE_AMAZON_LUNA:
+        case SDL_CONTROLLER_TYPE_GOOGLE_STADIA:
             switch(button) {
                 case SDL_CONTROLLER_BUTTON_A:
                     return "A";
