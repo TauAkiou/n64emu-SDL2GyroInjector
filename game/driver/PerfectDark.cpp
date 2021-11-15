@@ -631,7 +631,7 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
     const int thirdperson = _link->ReadInt(playerbase[player] + PD_thirdperson);
 
     vec2<float> aimstickdata = (thirdperson == 1 || thirdperson == 2) ? _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, true) : _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, false);
-
+    vec2<float> aimstickdata_camspy = _ihandler.ProcessAimStickInputForPlayer((PLAYERS) player, true);
 
     const int cursoraimingflag = profile.PerfectDarkAimMode && aimingflag &&
                                  _link->ReadInt(playerbase[player] + PD_currentweapon) !=
@@ -640,7 +640,7 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
     const float basefov = fov > 60.0f ? (float) OVERRIDEFOV : 60.0f;
     // const float mouseaccel = profile.SETTINGS[ACCELERATION] ? sqrt(_cfgptr->Device[player].XPOS * _cfgptr->Device[player].XPOS + _cfgptr->Device[player].YPOS * _cfgptr->Device[player].YPOS) / TICKRATE / 12.0f * profile.SETTINGS[ACCELERATION] : 0;
 
-    const vec2<float> sensitivity_basefactor_stick = (thirdperson == 1 || thirdperson == 2) ? _ihandler.GetBaseFactorForStickType(profile.StickMode) : _ihandler.GetGeneralBaseFactorForStick();
+    const vec2<float> sensitivity_basefactor_stick = (thirdperson == 1 || thirdperson == 2) ? InputHandler::GetGeneralBaseFactorForStick() : _ihandler.GetBaseFactorForStickType(profile.StickMode);
 
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
