@@ -125,9 +125,9 @@ DWORD SdlDriver::injectionloop() {
                 dev->BUTTONSEC[button] = (sdl_buttons & profile.BUTTONSEC[button]) != 0;
             }
 
-            dev->BUTTONPRIM[FORWARDS] = sdl_axisreport.LStick.y < profile.MoveStickDeadzone.y;
+            dev->BUTTONPRIM[FORWARDS] = sdl_axisreport.LStick.y < -profile.MoveStickDeadzone.y;
             dev->BUTTONPRIM[BACKWARDS] = sdl_axisreport.LStick.y > profile.MoveStickDeadzone.y;
-            dev->BUTTONPRIM[STRAFELEFT] = sdl_axisreport.LStick.x < profile.MoveStickDeadzone.x;
+            dev->BUTTONPRIM[STRAFELEFT] = sdl_axisreport.LStick.x < -profile.MoveStickDeadzone.x;
             dev->BUTTONPRIM[STRAFERIGHT] = sdl_axisreport.LStick.x > profile.MoveStickDeadzone.x;
 
         }
