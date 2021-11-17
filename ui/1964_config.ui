@@ -495,7 +495,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="playerSettingsTabGyro">
      <attribute name="title">
@@ -550,7 +550,7 @@
             <number>50</number>
            </property>
            <property name="maximum">
-            <number>500</number>
+            <number>2000</number>
            </property>
            <property name="value">
             <number>100</number>
@@ -572,7 +572,7 @@
             <double>0.500000000000000</double>
            </property>
            <property name="maximum">
-            <double>5.000000000000000</double>
+            <double>20.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
@@ -648,7 +648,7 @@
             <number>50</number>
            </property>
            <property name="maximum">
-            <number>500</number>
+            <number>2000</number>
            </property>
            <property name="sliderPosition">
             <number>100</number>
@@ -663,6 +663,12 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="playerSettingsTabGyroXAxisSensitivitySpinbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>8</verstretch>
+            </sizepolicy>
+           </property>
            <property name="suffix">
             <string>°</string>
            </property>
@@ -670,7 +676,7 @@
             <double>0.500000000000000</double>
            </property>
            <property name="maximum">
-            <double>5.000000000000000</double>
+            <double>20.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
