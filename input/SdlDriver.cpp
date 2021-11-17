@@ -117,10 +117,11 @@ DWORD SdlDriver::injectionloop() {
             }
 
             std::chrono::duration<float> gyro_timeout_duration = time_current - disable_last_pressed[player];
-            if(gyro_timeout_duration.count() > 0.25f) {
+            if(gyro_timeout_duration.count() > 0.5f) {
                 if (sdl_buttons & profile.BUTTONPRIM[TOGGLEGYRO]) {
                     // toggle the disabled state.
                     gyro_is_disabled[player] = !gyro_is_disabled[player];
+                    disable_last_pressed[player] = time_current;
                 }
             }
 
