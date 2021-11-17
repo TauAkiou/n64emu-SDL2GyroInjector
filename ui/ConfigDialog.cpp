@@ -510,73 +510,73 @@ void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(in
 
 void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value) {
     _baseDialog->playerSettingsTabGyroXAxisSensitivitySlider->setValue((int)(value * 100.0f));
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = roundf((float)value * 100 / 100);
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.x = (float)value;
 }
 
 // Y
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabGyroYAxisSensitivitySpinbox->setValue(value / 100.0);
-    //_localprofiles[_selectedplayer].GyroscopeSensitivity.y = value / 100.0;
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivitySpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue(value * 100.0);
-    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = roundf((float)value * 100 / 100);
+    _baseDialog->playerSettingsTabGyroYAxisSensitivitySlider->setValue((int)(value * 100.0));
+    _localprofiles[_selectedplayer].GyroscopeSensitivity.y = (float)value;
 }
 
 // Stick Aim X
 void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimSensitivityXSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].AimStickSensitivity.x = (value / 100.0);
+    _localprofiles[_selectedplayer].AimStickSensitivity.x = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabStickAimSensitivityXSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickAimSensitivityXSlider->setValue(value * 100.0);
+    _baseDialog->playerSettingsTabStickAimSensitivityXSlider->setValue((int)(value * 100.0));
     _localprofiles[_selectedplayer].AimStickSensitivity.x = (float) value;
 }
 
 // Y
 void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimSensitivityYSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].AimStickSensitivity.y = (value / 100.0f);
+    _localprofiles[_selectedplayer].AimStickSensitivity.y = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabStickAimSensitivityYSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickAimSensitivityYSlider->setValue(value * 100.0);
-    _localprofiles[_selectedplayer].AimStickSensitivity.y = (float) value;
+    _baseDialog->playerSettingsTabStickAimSensitivityYSlider->setValue((int)(value * 100.0));
+    _localprofiles[_selectedplayer].AimStickSensitivity.y = (float)value;
 }
 
 // Stick Aim Deadzone X
 
 void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimDeadzoneXSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].AimstickDeadzone.x = (value / 100.0f);
+    _localprofiles[_selectedplayer].AimstickDeadzone.x = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabStickAimDeadzoneXSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickAimDeadzoneXSlider->setValue(value * 100.0);
+    _baseDialog->playerSettingsTabStickAimDeadzoneXSlider->setValue((int)(value * 100.0f));
     _localprofiles[_selectedplayer].AimstickDeadzone.x = (float) value;
 }
 
 // Y
 void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickAimDeadzoneYSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].AimstickDeadzone.y = (value / 100.0f);
+    _localprofiles[_selectedplayer].AimstickDeadzone.y = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabStickAimDeadzoneYSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickAimDeadzoneYSlider->setValue(value * 100.0);
+    _baseDialog->playerSettingsTabStickAimDeadzoneYSlider->setValue((int)(value * 100.0));
     _localprofiles[_selectedplayer].AimstickDeadzone.y = (float) value;
 }
 
 // Stick Move X
 void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSlider_sliderMoved(int value) {
     _baseDialog->playerSettingsTabStickMoveDeadzoneXSpinbox->setValue(value / 100.0);
-    _localprofiles[_selectedplayer].MoveStickDeadzone.x = (value / 100.0f);
+    _localprofiles[_selectedplayer].MoveStickDeadzone.x = (float)value / 100.0f;
 }
 
 void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneXSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickMoveDeadzoneXSlider->setValue(value * 100.0);
+    _baseDialog->playerSettingsTabStickMoveDeadzoneXSlider->setValue((int)(value * 100.0));
     _localprofiles[_selectedplayer].MoveStickDeadzone.x = (float) value;
 }
 
@@ -587,7 +587,7 @@ void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSlider_sliderMoved(int 
 }
 
 void ConfigDialog::on_playerSettingsTabStickMoveDeadzoneYSpinbox_valueChanged(double value) {
-    _baseDialog->playerSettingsTabStickMoveDeadzoneYSlider->setValue(value * 100.0);
+    _baseDialog->playerSettingsTabStickMoveDeadzoneYSlider->setValue((int)(value * 100.0f));
     _localprofiles[_selectedplayer].MoveStickDeadzone.y = (float) value;
 }
 
