@@ -30,7 +30,7 @@ using namespace js_settings;
         j.at("aimstickdeadzone").at("x").get_to(p.AimstickDeadzone.x);
         j.at("aimstickdeadzone").at("y").get_to(p.AimstickDeadzone.y);
         j.at("movestickdeadzone").at("x").get_to(p.MoveStickDeadzone.x);
-        j.at("movestickdeadzone").at("y").get_to(p.MoveStickDeadzone.x);
+        j.at("movestickdeadzone").at("y").get_to(p.MoveStickDeadzone.y);
         j.at("crosshair").get_to(p.Crosshair);
         j.at("gyropitchinverted").get_to(p.GyroPitchInverted);
         j.at("stickpitchinverted").get_to(p.StickPitchInverted);
