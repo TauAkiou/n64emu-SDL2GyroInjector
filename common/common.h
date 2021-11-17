@@ -162,8 +162,8 @@ namespace js_settings {
                                         GAMEPAD_DPAD_RIGHT, GAMEPAD_BACK, 0x00000, GAMEPAD_MISC1};
         int BUTTONSEC[TOTALBUTTONS] = {};
         // Other settings (converted from enumerator arrays
-        vec2<float> AimstickDeadzone = {0.10, 0.10};
-        vec2<float> MoveStickDeadzone = {0.10, 0.10};
+        vec2<float> AimstickDeadzone = {0.25, 0.25};
+        vec2<float> MoveStickDeadzone = {0.25, 0.25};
         vec2<float> AimStickSensitivity = {1.00, 1.00};
         vec2<float> GyroscopeSensitivity = {2.00, 2.00};
         float Crosshair = {1.00};
