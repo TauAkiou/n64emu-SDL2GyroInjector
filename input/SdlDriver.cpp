@@ -48,6 +48,15 @@ DWORD SdlDriver::injectionloop() {
     AxisReport sdl_axisreport;
     //IMU_STATE jsl_imu_secondary;
 
+    bool gyro_is_disabled[ALLPLAYERS];
+    std::chrono::time_point<std::chrono::steady_clock> disable_last_pressed[ALLPLAYERS];
+
+
+    for(int x = PLAYER1; x < ALLPLAYERS; x++) {
+        gyro_is_disabled[x] = false;
+        disable_last_pressed[x] = std::chrono::steady_clock::now();
+    }
+
     auto time_current = std::chrono::steady_clock::now();
     auto time_previous = time_current;
 
@@ -107,6 +116,15 @@ DWORD SdlDriver::injectionloop() {
                 }
             }
 
+            std::chrono::duration<float> gyro_timeout_duration = time_current - disable_last_pressed[player];
+            if(gyro_timeout_duration.count() > 0.5f) {
+                if (sdl_buttons & profile.BUTTONPRIM[TOGGLEGYRO]) {
+                    // toggle the disabled state.
+                    gyro_is_disabled[player] = !gyro_is_disabled[player];
+                    disable_last_pressed[player] = time_current;
+                }
+            }
+
 
             dev->AIMSTICK.x = sdl_axisreport.RStick.x;
             dev->AIMSTICK.y = sdl_axisreport.RStick.y;
@@ -117,8 +135,16 @@ DWORD SdlDriver::injectionloop() {
             if(sdl_axisreport.RTrigger >= 0.50)
                 sdl_buttons |= 1 << GAMEPAD_OFFSET_TRIGGER_RIGHT;
 
-            dev->GYRO.x = -sdl_motionreport.GyroY;
-            dev->GYRO.y = -sdl_motionreport.GyroX;
+
+            // Disable the gyro if the toggle is off.
+            if(!gyro_is_disabled[player]) {
+                dev->GYRO.x = -sdl_motionreport.GyroY;
+                dev->GYRO.y = -sdl_motionreport.GyroX;
+            }
+            else {
+                dev->GYRO.x = 0;
+                dev->GYRO.y = 0;
+            }
 
             for(int button = FIRE; button < TOTALBUTTONS; button++) {
                 dev->BUTTONPRIM[button] = (sdl_buttons & profile.BUTTONPRIM[button]) != 0;
