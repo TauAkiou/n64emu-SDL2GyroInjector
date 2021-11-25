@@ -104,6 +104,10 @@ private slots:
     void on_cancelButton_clicked();
     void on_okButton_clicked();
     void on_reconnectControllers_clicked();
+    void on_playerSettingsTabGyroLocalSpaceYAxisBox_activated(int index);
+    void on_playerSettingsTabGyroGyroSpaceBox_activated(int index);
+
+
     void on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(int value);
     void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
     void on_playerSettingsTabGyroYAxisSensitivitySlider_sliderMoved(int value);

@@ -136,14 +136,13 @@ DWORD SdlDriver::injectionloop() {
                 sdl_buttons |= 1 << GAMEPAD_OFFSET_TRIGGER_RIGHT;
 
 
-            // Disable the gyro if the toggle is off.
+            // Disable the gyro & accelerometer if the toggle is off.
             if(!gyro_is_disabled[player]) {
-                dev->GYRO.x = -sdl_motionreport.GyroY;
-                dev->GYRO.y = -sdl_motionreport.GyroX;
+                dev->MOTION = sdl_motionreport;
+
             }
             else {
-                dev->GYRO.x = 0;
-                dev->GYRO.y = 0;
+                dev->MOTION = {};
             }
 
             for(int button = FIRE; button < TOTALBUTTONS; button++) {

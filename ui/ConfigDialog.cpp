@@ -153,6 +153,12 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
     _baseDialog->playerSettingsTabOtherDS4SpinboxGreen->setValue(ds4color.g);
     _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->setValue(ds4color.b);
 
+    _baseDialog->playerSettingsTabGyroGyroSpaceBox->setCurrentIndex(profile.GyroscopeSpace);
+    _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setCurrentIndex(profile.GyroscopeSpace);
+
+    if(_baseDialog->playerSettingsTabGyroGyroSpaceBox->currentIndex() != (int)LOCALSPACE)
+        _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setEnabled(false);
+
     //auto colorrole = _baseDialog->colorwidget.
 
     _baseDialog->playerSettingsTabGyroXAxisSensitivitySpinbox->setValue(profile.GyroscopeSensitivity.x);
@@ -639,6 +645,34 @@ void ConfigDialog::on_playerSettingsTabStickAimStickModeBox_activated(int index)
             break;
         case FLICK:
             _localprofiles[_selectedplayer].StickMode = FLICK;
+            break;
+    }
+}
+
+void ConfigDialog::on_playerSettingsTabGyroLocalSpaceYAxisBox_activated(int index) {
+    switch((GYROYAXIS)index) {
+        default:
+        case YAW:
+            _localprofiles[_selectedplayer].GyroscopeYAxis = YAW;
+            break;
+        case ROLL:
+            _localprofiles[_selectedplayer].GyroscopeYAxis = ROLL;
+            break;
+        case HYBRID:
+            _localprofiles[_selectedplayer].GyroscopeYAxis = HYBRID;
+            break;
+    }
+}
+void ConfigDialog::on_playerSettingsTabGyroGyroSpaceBox_activated(int index) {
+    switch((GYROSPACE)index) {
+        default:
+        case LOCALSPACE:
+            _localprofiles[_selectedplayer].GyroscopeSpace = LOCALSPACE;
+            _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setDisabled(false);
+            break;
+        case PLAYER:
+            _localprofiles[_selectedplayer].GyroscopeSpace = PLAYER;
+            _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setDisabled(true);
             break;
     }
 }

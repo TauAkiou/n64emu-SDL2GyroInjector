@@ -32,7 +32,7 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_SETTINGS_H
 
 #include "../common/common.h"
-#include "../input/InputClasses.h"
+#include "../input/SDLDevice.h"
 #include "../plugin.h"
 #include <nlohmann/json.hpp>
 #include <windows.h>

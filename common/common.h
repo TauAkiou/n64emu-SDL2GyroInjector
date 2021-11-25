@@ -45,6 +45,7 @@
 #include <utility>
 #include "nlohmann/json.hpp"
 #include "vec2.h"
+#include "vec3.h"
 
 // Bitmask defines for buttons.
 #define GAMEPAD_A 1
@@ -126,6 +127,8 @@ enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 enum CONTROLLERMODE { DISCONNECTED = 0, FULLCONTROLLER, JOYCONS };
 enum AIMTYPE { STANDARD = 0, SPLATOON, FREE };
+enum GYROSPACE { LOCALSPACE = 0, PLAYER };
+enum GYROYAXIS { YAW = 0, ROLL, HYBRID };
 
 enum JSD_ControllerType {
     None = 0,
@@ -142,6 +145,22 @@ typedef struct clr {
     unsigned char g;
     unsigned char b;
 } Color;
+
+struct MotionReport {
+    float GyroX = 0.0f;
+    float GyroY = 0.0f;
+    float GyroZ = 0.0f;
+    float AccelX = 0.0f;
+    float AccelY = 0.0f;
+    float AccelZ = 0.0f;
+    float GravX = 0.0f;
+    float GravY = 0.0f;
+    float GravZ = 0.0f;
+    float QuatW = 0.0f;
+    float QuatX = 0.0f;
+    float QuatY = 0.0f;
+    float QuatZ = 0.0f;
+};
 
 namespace js_settings {
 
@@ -175,6 +194,10 @@ namespace js_settings {
         bool AllowStickInAimMode = {false};
         AIMTYPE FreeAiming = { STANDARD };
         bool AimStick = false; // True: Left, False: Right
+        GYROSPACE GyroscopeSpace = LOCALSPACE;
+        GYROYAXIS GyroscopeYAxis = YAW;
+
+
         //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
         //float FLOATSETTINGS[TOTALVECTORSETTINGS];
         //int SETTINGS[TOTALSETTINGS];
@@ -189,7 +212,9 @@ namespace js_settings {
 
 
 typedef struct {
-    vec2<float> AIMSTICK, GYRO;
+    vec2<float> AIMSTICK;
+    MotionReport MOTION;
+    vec3<float> ACCELEROMETER;
     float LTRIGGER, RTRIGGER;
     int POSX, POSY; // Just in case we want kb/m support
     int BUTTONPRIM[TOTALBUTTONS];

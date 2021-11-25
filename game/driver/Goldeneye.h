@@ -34,6 +34,7 @@
 #include "GameDriver.h"
 #include "../../common/Helpers.h"
 #include "../../common/vec2.h"
+#include "../../common/vec3.h"
 #include "../../input/InputHandler.h"
 
 class Goldeneye : public GameDriver {
@@ -49,14 +50,16 @@ private:
     float aimx[4]{};
     float aimy[4]{};
     void _crouch(const int player, const js_settings::PROFILE& profile);
-    void _aimmode(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov);
+    void _aimmode(const int player, const js_settings::PROFILE& profile, vec2<float> gyroscope, const int aimingflag, const float fov, const float basefov);
     void _resetgyro();
     void _controller();
     void _injecthacks();
     void _processFreeAim(int player, const js_settings::PROFILE& profile);
-    void _aimmode_freeaim(const int player, const js_settings::PROFILE& profile, const int aimingflag, const float fov, const float basefov);
+    void _aimmode_freeaim(const int player, const js_settings::PROFILE& profile, vec2<float> gyroscope, const int aimingflag, const float fov, const float basefov);
     void _processOriginalAimmode(int player, const js_settings::PROFILE& profile);
     void _processMenu(int player, const js_settings::PROFILE& profile);
+    vec3<float> _processGyroscopeValueBySpace(GYROSPACE space, vec3<float> gyroscope, vec3<float> accelerometer);
+
 
 public:
     explicit Goldeneye(EmulatorLink *linkptr);

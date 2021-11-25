@@ -507,7 +507,7 @@
         <x>0</x>
         <y>0</y>
         <width>331</width>
-        <height>137</height>
+        <height>192</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabGyroLayout">
@@ -523,8 +523,8 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
-       <item row="2" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroGyroSpaceLayout">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -532,59 +532,89 @@
           <number>10</number>
          </property>
          <item>
-          <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <widget class="QLabel" name="playerSettingsTabGyroGyroSpaceLabel">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
            </property>
            <property name="text">
-            <string>Y-Axis Sensitivity</string>
+            <string>Gyroscope Space</string>
            </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivitySlider">
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>2000</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::TicksBelow</enum>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivitySpinbox">
-           <property name="suffix">
-            <string>°</string>
-           </property>
-           <property name="minimum">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>20.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
-           </property>
+          <widget class="QComboBox" name="playerSettingsTabGyroGyroSpaceBox">
+           <item>
+            <property name="text">
+             <string>Local</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Player</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroAimingStyleLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroAimingStyleLabel">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Aiming Style</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="playerSettingsTabGyroAimingStyleBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>Standard</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Splatoon</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Free Aim</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroCheckRow1Layout">
          <property name="leftMargin">
           <number>10</number>
@@ -621,7 +651,49 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroLocalSpaceYAxisLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroLocalSpaceYAxisLabel">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Vertical Axis (Local)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="playerSettingsTabGyroLocalSpaceYAxisBox">
+           <item>
+            <property name="text">
+             <string>Yaw</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Roll</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Hybrid</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroXAxisSensitivityLayout">
          <property name="leftMargin">
           <number>10</number>
@@ -635,7 +707,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope X Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>X-Axis Sensitivity</string>
+            <string>Yaw (X) Sensitivity</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -688,8 +760,8 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabGyroAimingStyleLayout">
+       <item row="4" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityLayout">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -697,44 +769,54 @@
           <number>10</number>
          </property>
          <item>
-          <widget class="QLabel" name="playerSettingsTabGyroAimingStyleLabel">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityLabel">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Aiming Style</string>
+            <string>Pitch (Y) Sensitivity</string>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="playerSettingsTabGyroAimingStyleBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivitySlider">
+           <property name="minimum">
+            <number>50</number>
            </property>
-           <item>
-            <property name="text">
-             <string>Standard</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Splatoon</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Free Aim</string>
-            </property>
-           </item>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivitySpinbox">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="minimum">
+            <double>0.500000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>20.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1566,11 +1648,23 @@
      <rect>
       <x>0</x>
       <y>20</y>
-      <width>351</width>
-      <height>159</height>
+      <width>361</width>
+      <height>171</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="globalLayout">
+     <property name="leftMargin">
+      <number>5</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>5</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="globalRatioLayout">
        <item>

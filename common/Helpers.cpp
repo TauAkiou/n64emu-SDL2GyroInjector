@@ -37,3 +37,4 @@ int PluginHelpers::ClampInt(const int value, const int min, const int max)
     const int test = value < min ? min : value;
     return test > max ? max : test;
 }
+

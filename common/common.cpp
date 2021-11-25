@@ -23,7 +23,8 @@ using namespace js_settings;
     void js_settings::from_json(const nlohmann::json &j, PROFILE &p) {
         p.StickMode = j.value("stickmode", FULLSTICK);
         p.DS4Color = j.value("ds4color", 0);
-        j.at("gyroscopesensitivity").at("x").get_to(p.GyroscopeSensitivity.x);
+        //j.at("gyroscopesensitivity").at("x").get_to(p.GyroscopeSensitivity.x);
+        p.AimStickSensitivity.x = j.at("gyroscopesensitivity").value("x", 1.0f);
         j.at("gyroscopesensitivity").at("y").get_to(p.AimStickSensitivity.y);
         j.at("aimsticksensitivity").at("x").get_to(p.AimStickSensitivity.x);
         j.at("aimsticksensitivity").at("y").get_to(p.AimStickSensitivity.y);

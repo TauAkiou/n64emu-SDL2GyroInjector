@@ -2,7 +2,7 @@
 // Created by Robin on 2/4/2021.
 //
 
-#include "InputClasses.h"
+#include "SDLDevice.h"
 
 SDLDevice::SDLDevice(int bindindex) {
         auto test =  SDL_GameControllerTypeForIndex(bindindex);
@@ -32,7 +32,6 @@ SDLDevice::SDLDevice(int bindindex) {
     }
     if(_deviceHasGyroscope) {
         SDL_GameControllerSetSensorEnabled(_sdlgcptr, SDL_SENSOR_GYRO, SDL_TRUE);
-
     }
 }
 
@@ -486,11 +485,11 @@ MotionReport SDLDevice::GetCurrentMotionReport(float deltatime) {
     else {
         // Standard gyroscope supports 3 axis entry: x, y, z
         float gyroscope[3];
-        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, gyroscope, 3);
-        // Convert from radians to degrees.
-        report.GyroX = gyroscope[0] * 180 / PI;
-        report.GyroY = gyroscope[1] * 180 / PI;
-        report.GyroZ = gyroscope[2] * 180 / PI;
+        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, &gyroscope[0], 3);
+        // Convert from radians to degrees. X = Roll, Y = Pitch, Z = Yaw
+        report.GyroX = gyroscope[0] * (180 / PI);
+        report.GyroY = gyroscope[1] * (180 / PI);
+        report.GyroZ = gyroscope[2] * (180 / PI);
     }
 
     if(!_deviceHasAccelerometer) {
@@ -500,7 +499,7 @@ MotionReport SDLDevice::GetCurrentMotionReport(float deltatime) {
     }
     else {
         float accelerometer[3];
-        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, accelerometer, 3);
+        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, &accelerometer[0], 3);
 
         report.AccelX = accelerometer[0];
         report.AccelY = accelerometer[1];
@@ -509,6 +508,9 @@ MotionReport SDLDevice::GetCurrentMotionReport(float deltatime) {
     // It's processing time.
     _gyrocontrol.ProcessMotion(report.GyroX, report.GyroY, report.GyroZ, report.AccelX, report.AccelY, report.AccelZ, deltatime);
     _gyrocontrol.GetCalibratedGyro(report.GyroX, report.GyroY, report.GyroZ);
+    _gyrocontrol.GetProcessedAcceleration(report.AccelX, report.AccelY, report.AccelZ);
+    _gyrocontrol.GetGravity(report.GravX, report.GravY, report.GravZ);
+    _gyrocontrol.GetOrientation(report.QuatW, report.QuatX, report.QuatY, report.QuatZ);
 
     return report;
 }

@@ -71,11 +71,12 @@ add_library(SDL2_GyroInjector SHARED
         1964_plugin.cpp
         1964_plugin.h
         common/vec2.h
+        common/vec3.h
         ui/ConfigDialog.cpp
         ui/ConfigDialog.h
         ui/1964_config.ui
-        input/InputClasses.h
-        input/InputClasses.cpp
+        input/SDLDevice.h
+        input/SDLDevice.cpp
         input/GamepadMotion/GamepadMotion.hpp
         input/GamepadMotion/GamepadMotion.cpp
         common/common.cpp)

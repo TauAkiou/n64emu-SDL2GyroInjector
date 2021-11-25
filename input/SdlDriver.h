@@ -43,7 +43,7 @@
 #include <SDL_hints.h>
 #include <memory>
 #include "../common/common.h"
-#include "InputClasses.h"
+#include "SDLDevice.h"
 #include "../settings/Settings.h"
 #include "../game/Game.h"
 

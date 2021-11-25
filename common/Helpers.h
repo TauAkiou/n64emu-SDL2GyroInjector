@@ -36,6 +36,12 @@ class PluginHelpers {
     public:
         static float ClampFloat(float value, float min, float max);
         static int ClampInt(int value, int min, int max);
+
+    // https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c/10133700
+
+    template <typename T> static int sign(T val) {
+            return (val > T(0)) - (val < T(0));
+        }
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_HELPERS_H
