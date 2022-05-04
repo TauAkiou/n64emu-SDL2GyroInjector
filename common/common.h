@@ -173,7 +173,7 @@ namespace js_settings {
 
     typedef struct PROFILE {
         // Secondary devices are used when we are in Joycon mode.
-        enum STICKMODE StickMode = FULLSTICK;
+        enum STICKMODE StickMode = XONLY;
         int DS4Color = 0x000000;
         int BUTTONPRIM[TOTALBUTTONS] = {GAMEPAD_TRIGGER_RIGHT, GAMEPAD_TRIGGER_LEFT, GAMEPAD_LEFTSHOULDER,
                                         GAMEPAD_RIGHTSHOULDER, GAMEPAD_START, GAMEPAD_A, GAMEPAD_B, GAMEPAD_X,

@@ -41,6 +41,8 @@ using namespace js_settings;
         p.AllowStickInAimMode = j.value("allow_stick_l_aiming", false);
         j.at("freeaim").get_to(p.FreeAiming);
         j.at("aimstick").get_to(p.AimStick);
+        j.at("gyrospace").get_to(p.GyroscopeSpace);
+        j.at("gyrolocalaxis").get_to(p.GyroscopeYAxis);
 
         // Load our button arrays now.
         auto primarybtn_json = j.at("button_primary");
@@ -69,6 +71,8 @@ using namespace js_settings;
                         {"freeaim", p.FreeAiming},
                         {"aimstick", p.AimStick},
                         {"allow_stick_l_aiming", p.AllowStickInAimMode},
+                        {"gyrospace", p.GyroscopeSpace},
+                        {"gyrolocalaxis", p.GyroscopeYAxis},
                         {"button_primary", p.BUTTONPRIM},
                         {"button_secondary", p.BUTTONSEC} });
     };
