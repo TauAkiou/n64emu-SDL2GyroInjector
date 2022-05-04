@@ -91,9 +91,9 @@ vec2<float> InputHandler::ProcessGyroscopeInputForPlayer(PLAYERS player) {
         case PLAYER:
             worldYaw = (device.MOTION.GyroY * device.MOTION.GravY) + (device.MOTION.GyroZ * device.MOTION.GravZ);
             yawRelaxFactor = YAWRELAXFACTOR;
-            return vec2<float> {
+             return vec2<float> {
                     -device.MOTION.GyroX,
-                    -(PluginHelpers::sign(worldYaw) * std::min(std::abs(worldYaw) * yawRelaxFactor, vec2f {device.MOTION.GyroY, device.MOTION.GyroZ}.length()))
+                    (PluginHelpers::sign(worldYaw) * std::min(std::abs(worldYaw) * yawRelaxFactor, vec2f {device.MOTION.GyroY, device.MOTION.GyroZ}.length()))
             };
         case LOCALSPACE:
         default:

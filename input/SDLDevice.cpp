@@ -499,11 +499,11 @@ MotionReport SDLDevice::GetCurrentMotionReport(float deltatime) {
     }
     else {
         float accelerometer[3];
-        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_GYRO, &accelerometer[0], 3);
+        SDL_GameControllerGetSensorData(_sdlgcptr, SDL_SENSOR_ACCEL, &accelerometer[0], 3);
 
-        report.AccelX = accelerometer[0];
-        report.AccelY = accelerometer[1];
-        report.AccelZ = accelerometer[2];
+        report.AccelX = accelerometer[0] / 9.8f;
+        report.AccelY = accelerometer[1] / 9.8f;
+        report.AccelZ = accelerometer[2] / 9.8f;
     }
     // It's processing time.
     _gyrocontrol.ProcessMotion(report.GyroX, report.GyroY, report.GyroZ, report.AccelX, report.AccelY, report.AccelZ, deltatime);
