@@ -271,8 +271,8 @@
     <rect>
      <x>10</x>
      <y>50</y>
-     <width>381</width>
-     <height>61</height>
+     <width>399</width>
+     <height>69</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="controllerSettingsLayout">
@@ -507,7 +507,7 @@
         <x>0</x>
         <y>0</y>
         <width>331</width>
-        <height>192</height>
+        <height>338</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabGyroLayout">
@@ -523,46 +523,6 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
-       <item row="1" column="0">
-        <layout class="QHBoxLayout" name="playerSettingsTabGyroGyroSpaceLayout">
-         <property name="leftMargin">
-          <number>10</number>
-         </property>
-         <property name="rightMargin">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="playerSettingsTabGyroGyroSpaceLabel">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Gyroscope Space</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="playerSettingsTabGyroGyroSpaceBox">
-           <item>
-            <property name="text">
-             <string>Local</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Player</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="playerSettingsTabGyroAimingStyleLayout">
          <property name="leftMargin">
@@ -668,7 +628,10 @@
             </size>
            </property>
            <property name="text">
-            <string>Vertical Axis (Local)</string>
+            <string>Pitch Axis</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -707,7 +670,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope X Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Yaw (X) Sensitivity</string>
+            <string>Horiz. Sensitivity</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -717,7 +680,7 @@
          <item>
           <widget class="QSlider" name="playerSettingsTabGyroXAxisSensitivitySlider">
            <property name="minimum">
-            <number>50</number>
+            <number>0</number>
            </property>
            <property name="maximum">
             <number>2000</number>
@@ -745,7 +708,7 @@
             <string>°</string>
            </property>
            <property name="minimum">
-            <double>0.500000000000000</double>
+            <double>0.000000000000000</double>
            </property>
            <property name="maximum">
             <double>20.000000000000000</double>
@@ -774,7 +737,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope Y Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Pitch (Y) Sensitivity</string>
+            <string>Vertical Sensitivity</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -784,7 +747,7 @@
          <item>
           <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivitySlider">
            <property name="minimum">
-            <number>50</number>
+            <number>0</number>
            </property>
            <property name="maximum">
             <number>2000</number>
@@ -806,7 +769,7 @@
             <string>°</string>
            </property>
            <property name="minimum">
-            <double>0.500000000000000</double>
+            <double>0.000000000000000</double>
            </property>
            <property name="maximum">
             <double>20.000000000000000</double>
@@ -816,6 +779,197 @@
            </property>
            <property name="value">
             <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroUseSeperateAimSensCheckboxLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="playerSettingsTabGyroUseSeperateAimSensCheckbox">
+           <property name="text">
+            <string>Use Seperate Aim Mode Sensitivity</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroGyroSpaceLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroGyroSpaceLabel">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Space</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="playerSettingsTabGyroGyroSpaceBox">
+           <item>
+            <property name="text">
+             <string>Local</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Player</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroXAxisSensitivityAimLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroXAxisSensitivityAimLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope X Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Aim Pitch (X) Sens</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="playerSettingsTabGyroXAxisSensitivityAimSlider">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+           <property name="sliderPosition">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroXAxisSensitivityAimSpinbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>8</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>20.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0">
+        <layout class="QHBoxLayout" name="playerSettingsTabGyroYAxisSensitivityAimLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="playerSettingsTabGyroYAxisSensitivityAimLabel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sensitivity for Gyroscope X Axis.&lt;/p&gt;&lt;p&gt;Measured in Degrees (°). Sensitivity controls how many degrees of real world movement translate into game movement.&lt;/p&gt;&lt;p&gt;Example: A sensitivity of 1.00° will translate every 1.00° of real world movement into 1.00° of game movement. A sensitivity of 2.00 will translate every 1.00° of real world movement into 2.00° of game movement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Aim Yaw (Y) Sens  </string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="playerSettingsTabGyroYAxisSensitivityAimSlider">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+           <property name="sliderPosition">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="playerSettingsTabGyroYAxisSensitivityAimSpinbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>8</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>20.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -1483,7 +1637,7 @@
         <x>10</x>
         <y>10</y>
         <width>321</width>
-        <height>125</height>
+        <height>183</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="playerSettingsTabOtherLayout">
@@ -1624,6 +1778,52 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QHBoxLayout" name="playerSettingsTabOtherTriggerThreshold">
+           <item>
+            <widget class="QLabel" name="playerSettingsTabOtherTriggerThresholdLabel">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the relative amount of distance an analog trigger must be pulled before it registers as a button press.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This value is only useful for controllers that have analog triggers, such as Sony or Xbox controllers&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Default: 0.50 (50% Pull)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Trigger Thresholds</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="playerSettingsTabOtherTriggerThresholdL">
+             <property name="prefix">
+              <string>L: </string>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="playerSettingsTabOtherTriggerThresholdR">
+             <property name="prefix">
+              <string>R: </string>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
       </layout>
@@ -1649,7 +1849,7 @@
       <x>0</x>
       <y>20</y>
       <width>361</width>
-      <height>171</height>
+      <height>177</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="globalLayout">

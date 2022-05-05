@@ -147,6 +147,7 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
     _baseDialog->playerSettingsTabOtherCursorAimingPerfectDarkCheckbox->setChecked(profile.PerfectDarkAimMode);
     _baseDialog->playerSettingsTabOtherCursorAimingGoldeneyeCheckbox->setChecked(profile.GoldeneyeAimMode);
     _baseDialog->playerSettingsTabOtherAllowAimingUsingStickCheckbox->setChecked(profile.AllowStickInAimMode);
+    _baseDialog->playerSettingsTabGyroUseSeperateAimSensCheckbox->setChecked(profile.UseSeperateGyroAimSensitivity);
 
     auto ds4color = _getColorFromInt(profile.DS4Color);
     _baseDialog->playerSettingsTabOtherDS4SpinboxRed->setValue(ds4color.r);
@@ -184,6 +185,16 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
 
     _baseDialog->playerSettingsTabStickMoveDeadzoneYSpinbox->setValue(profile.MoveStickDeadzone.y);
     _baseDialog->playerSettingsTabStickMoveDeadzoneYSlider->setValue(profile.MoveStickDeadzone.y * 100);
+
+    _baseDialog->playerSettingsTabGyroXAxisSensitivityAimSpinbox->setValue(profile.GyroscopeAimSensitivity.x);
+    _baseDialog->playerSettingsTabGyroXAxisSensitivityAimSlider->setValue(profile.GyroscopeAimSensitivity.x * 100);
+
+    _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSpinbox->setValue(profile.GyroscopeAimSensitivity.y);
+    _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSlider->setValue(profile.GyroscopeAimSensitivity.y * 100);
+
+    _baseDialog->playerSettingsTabOtherTriggerThresholdL->setValue(profile.TriggerThreshold.x * 100);
+    _baseDialog->playerSettingsTabOtherTriggerThresholdR->setValue(profile.TriggerThreshold.y * 100);
+
 
 }
 
@@ -776,6 +787,38 @@ void ConfigDialog::on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int valu
 
 }
 
+void ConfigDialog::on_playerSettingsTabGyroUseSeperateAimSensCheckbox_stateChanged(int state) {
+    _localprofiles[_selectedplayer].UseSeperateGyroAimSensitivity = (bool)state;
+}
+
+void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivityAimSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSlider->setValue((int)(value * 100.0));
+    _localprofiles[_selectedplayer].GyroscopeAimSensitivity.y = (float)value;
+}
+
+void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivityAimSpinbox_valueChanged(double value) {
+    _baseDialog->playerSettingsTabGyroXAxisSensitivityAimSlider->setValue((int)(value * 100.0));
+    _localprofiles[_selectedplayer].GyroscopeAimSensitivity.x = (float)value;
+}
+
+void ConfigDialog::on_playerSettingsTabGyroXAxisSensitivityAimSlider_sliderMoved(int value) {
+    _baseDialog->playerSettingsTabGyroXAxisSensitivityAimSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].GyroscopeAimSensitivity.x = ((float)value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabGyroYAxisSensitivityAimSlider_sliderMoved(int value) {
+    _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSpinbox->setValue(value / 100.0);
+    _localprofiles[_selectedplayer].GyroscopeAimSensitivity.y = ((float)value / 100.0f);
+}
+
+void ConfigDialog::on_playerSettingsTabOtherTriggerThresholdL_valueChanged(double value) {
+    _localprofiles[_selectedplayer].TriggerThreshold.x = (float)value;
+}
+
+void ConfigDialog::on_playerSettingsTabOtherTriggerThresholdR_valueChanged(double value) {
+    _localprofiles[_selectedplayer].TriggerThreshold.y = (float)value;
+}
+
 // ---------------------------------------------------------------------------------------------------------
 
 void ConfigDialog::_commitAssignments() {
@@ -864,3 +907,5 @@ void ConfigDialog::_mapButtonToCommand(CONTROLLERENUM command, bool isSecondary)
     buttonlist[command]->setText(
             QString::fromStdString("None"));
 }
+
+

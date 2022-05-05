@@ -241,8 +241,8 @@ void PerfectDark::_aimmode(const int player, const js_settings::PROFILE& profile
             crosshairposx[player] += aimstickdata.x / 10.0f * ((profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 2) / sensitivity / RATIOFACTOR); // * fmax(mouseaccel, 1); // calculate the crosshair position
             crosshairposy[player] += (!profile.StickPitchInverted ? aimstickdata.y : -aimstickdata.y) / 10.0f * ((profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 2) / sensitivity); // * fmax(mouseaccel, 1);
         }
-        crosshairposx[player] += gyro_vectors.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / (sensitivity) / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
-        crosshairposy[player] += (!profile.GyroPitchInverted ? gyro_vectors.y : -gyro_vectors.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
+        crosshairposx[player] += gyro_vectors.x / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / (sensitivity) / RATIOFACTOR) * _cfgptr->DeltaTime; //* fmax(mouseaccel, 1); // calculate the crosshair position
+        crosshairposy[player] += (!profile.GyroPitchInverted ? gyro_vectors.y : -gyro_vectors.y) / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime; // * fmax(mouseaccel, 1);
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
         crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
         _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
@@ -503,8 +503,8 @@ void PerfectDark::_processOriginalInput(int player, const js_settings::PROFILE& 
 
         const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
         const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
-        const float sensitivity_gyro_x = (profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
-        const float sensitivity_gyro_y = (profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_gyro_x = (_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+        const float sensitivity_gyro_y = (_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
 
         const float gunsensitivity_stick_x = sensitivity_stick_x * (profile.Crosshair / 2.5f);
         const float gunsensitivity_stick_y = sensitivity_stick_y * (profile.Crosshair / 2.5f);
@@ -649,8 +649,8 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
 
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_x = (profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_y = (profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_x = (_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_y = (_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
 
 
     const float gunsensitivity_stick_x = sensitivity_stick_x * (profile.Crosshair / 2.5f);
@@ -830,10 +830,10 @@ void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& pr
 
     //const float mouseaccel = PROFILE[player].SETTINGS[ACCELERATION] ? sqrt(DEVICE[player].XPOS * DEVICE[player].XPOS + DEVICE[player].YPOS * DEVICE[player].YPOS) / TICKRATE / 12.0f * PROFILE[player].SETTINGS[ACCELERATION] : 0;
     if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
-        crosshairposx[player] += gyro_vectors.x / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
+        crosshairposx[player] += gyro_vectors.x / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
 
 
-    crosshairposy[player] += (profile.GyroPitchInverted ? -gyro_vectors.y : gyro_vectors.y) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
+    crosshairposy[player] += (profile.GyroPitchInverted ? -gyro_vectors.y : gyro_vectors.y) / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
     if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
 

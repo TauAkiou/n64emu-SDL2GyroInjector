@@ -185,6 +185,9 @@ namespace js_settings {
         vec2<float> MoveStickDeadzone = {0.25, 0.25};
         vec2<float> AimStickSensitivity = {1.00, 1.00};
         vec2<float> GyroscopeSensitivity = {2.00, 2.00};
+        vec2<float> GyroscopeAimSensitivity = {2.00, 2.00};
+        // x = left trigger, y = right trigger
+        vec2<float> TriggerThreshold = {0.5, 0.5};
         float Crosshair = {1.00};
         bool GyroPitchInverted = {false};
         bool StickPitchInverted = {false};
@@ -196,6 +199,7 @@ namespace js_settings {
         bool AimStick = false; // True: Left, False: Right
         GYROSPACE GyroscopeSpace = LOCALSPACE;
         GYROYAXIS GyroscopeYAxis = YAW;
+        bool UseSeperateGyroAimSensitivity = false;
 
 
         //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
@@ -209,8 +213,6 @@ namespace js_settings {
     void from_json(const nlohmann::json &j, EMUSETTINGS &p);
 }
 
-
-
 typedef struct {
     vec2<float> AIMSTICK;
     MotionReport MOTION;
@@ -221,6 +223,7 @@ typedef struct {
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROSTATE;
+    vec2<float> GYROSENSITIVITY;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H

@@ -162,8 +162,8 @@ void Goldeneye::_processOriginalAimmode(int player, const js_settings::PROFILE& 
 
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_x = profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
-    const float sensitivity_gyro_y = profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_x = _cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_y = _cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR / 40.0f; // * fmax(mouseaccel, 1);
 
     const float gunsensitivity_stick_x = sensitivity_stick_x * (profile.Crosshair / 2.5f);
     const float gunsensitivity_stick_y = sensitivity_stick_y * (profile.Crosshair / 2.5f);
@@ -280,8 +280,8 @@ void Goldeneye::_aimmode(const int player, const js_settings::PROFILE& profile, 
                     (profile.AimStickSensitivity.y * (sensitivity_basefactor_stick.y / 2) / sensitivity); // fmax(mouseaccel, 1);
         }
 
-        crosshairposx[player] += gyroscope.y / 10.0f * ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
-        crosshairposy[player] += (!profile.GyroPitchInverted ? gyroscope.x : -gyroscope.x) / 10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR )/ sensitivity) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
+        crosshairposx[player] += gyroscope.y / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
+        crosshairposy[player] += (!profile.GyroPitchInverted ? gyroscope.x : -gyroscope.x) / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR )/ sensitivity) * _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
 
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
         crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
@@ -340,7 +340,7 @@ void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile)
     const float sensitivity_stick_x = profile.AimStickSensitivity.x * sensitivity_basefactor_stick.x / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_stick_y = profile.AimStickSensitivity.y * sensitivity_basefactor_stick.y / 40.0f; // * fmax(mouseaccel, 1);
 
-    const float sensitivity_gyro_yaw_camera = (profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
+    const float sensitivity_gyro_yaw_camera = (_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_gyro_yaw = 400 / 40.0f; // * fmax(mouseaccel, 1);
     const float sensitivity_gyro_pitch = 400 / 40.0f; // * fmax(mouseaccel, 1);
 
@@ -479,13 +479,13 @@ void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& p
 
     if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
         crosshairposx[player] += gyroscope.y / 10.0f *
-                                 ((profile.GyroscopeSensitivity.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) *
+                                 ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) *
                                  _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
     }
 
     crosshairposy[player] +=
             (!profile.GyroPitchInverted ? gyroscope.x : -gyroscope.x) /
-            10.0f * ((profile.GyroscopeSensitivity.y * GYRO_BASEFACTOR) / sensitivity) *
+            10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / sensitivity) *
             _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
 
     if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {

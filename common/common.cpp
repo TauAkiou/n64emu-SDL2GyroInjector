@@ -43,6 +43,11 @@ using namespace js_settings;
         j.at("aimstick").get_to(p.AimStick);
         j.at("gyrospace").get_to(p.GyroscopeSpace);
         j.at("gyrolocalaxis").get_to(p.GyroscopeYAxis);
+        j.at("gyro_use_separate_aiming_sensitivity").get_to(p.UseSeperateGyroAimSensitivity);
+        j.at("trigger_thresholds").at("lt").get_to(p.TriggerThreshold.x);
+        j.at("trigger_thresholds").at("rt").get_to(p.TriggerThreshold.y);
+        j.at("gyro_aimmode_sensitivity").at("x").get_to(p.GyroscopeAimSensitivity.x);
+        j.at("gyro_aimmode_sensitivity").at("y").get_to(p.GyroscopeAimSensitivity.y);
 
         // Load our button arrays now.
         auto primarybtn_json = j.at("button_primary");
@@ -74,5 +79,9 @@ using namespace js_settings;
                         {"gyrospace", p.GyroscopeSpace},
                         {"gyrolocalaxis", p.GyroscopeYAxis},
                         {"button_primary", p.BUTTONPRIM},
-                        {"button_secondary", p.BUTTONSEC} });
+                        {"button_secondary", p.BUTTONSEC},
+                        {"gyro_use_separate_aiming_sensitivity", p.UseSeperateGyroAimSensitivity},
+                        {"trigger_thresholds", {{"lt", p.TriggerThreshold.x}, {"rt", p.TriggerThreshold.y}}},
+                        {"gyro_aimmode_sensitivity", {{"x", p.GyroscopeAimSensitivity.x}, {"y", p.GyroscopeAimSensitivity.y}}}
+                });
     };
