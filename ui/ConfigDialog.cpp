@@ -155,7 +155,7 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
     _baseDialog->playerSettingsTabOtherDS4SpinboxBlue->setValue(ds4color.b);
 
     _baseDialog->playerSettingsTabGyroGyroSpaceBox->setCurrentIndex(profile.GyroscopeSpace);
-    _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setCurrentIndex(profile.GyroscopeSpace);
+    _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setCurrentIndex(profile.GyroscopeYAxis);
 
     if(_baseDialog->playerSettingsTabGyroGyroSpaceBox->currentIndex() != (int)LOCALSPACE)
         _baseDialog->playerSettingsTabGyroLocalSpaceYAxisBox->setEnabled(false);

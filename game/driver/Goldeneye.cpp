@@ -182,7 +182,7 @@ void Goldeneye::_processOriginalAimmode(int player, const js_settings::PROFILE& 
             if(!cursoraimingflag) { // if not aiming (or geaimmode is off)
                 cam_yaw += aimstickdata.x / 10.0f * sensitivity_stick_x *
                         (fov / basefov); // regular mouselook calculation
-                cam_yaw += gyroscope.y / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov);
+                cam_yaw += gyroscope.y / 10.0f * sensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov);
             }
             else
                 cam_yaw += aimx[player] * (fov / basefov); // scroll screen with aimx/aimy
@@ -226,9 +226,9 @@ void Goldeneye::_processOriginalAimmode(int player, const js_settings::PROFILE& 
             {
                 float gunx = _link->ReadFloat(playerbase[player] + GE_gunx), crosshairx = _link->ReadFloat(playerbase[player] + GE_crosshairx); // after camera x and y have been calculated and injected, calculate the gun/crosshair movement
                 gunx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / basefov) * 0.019f;
-                gunx += gyroscope.y / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * _cfgptr->DeltaTime * (fov / basefov) * 0.019f;
+                gunx += gyroscope.y / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * _cfgptr->DeltaTime * (fov / basefov) * 0.019f;
                 crosshairx += aimstickdata.x / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_stick_x * (fov / 4 / (basefov / 4)) * 0.01912f / RATIOFACTOR;
-                crosshairx += gyroscope.y / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_x * (fov / 4 / (basefov / 4)) * _cfgptr->DeltaTime * 0.01912f / RATIOFACTOR;
+                crosshairx += gyroscope.y / (!aimingflag ? 10.0f : 40.0f) * gunsensitivity_gyro_y * (fov / 4 / (basefov / 4)) * _cfgptr->DeltaTime * 0.01912f / RATIOFACTOR;
                 if(aimingflag) // emulate cursor moving back to the center
                     gunx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f, crosshairx /= _settings->GetIfEmulatorOverclocked() ? 1.03f : 1.07f;
                 gunx = PluginHelpers::ClampFloat(gunx, -GUNAIMLIMIT, GUNAIMLIMIT);

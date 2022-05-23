@@ -173,8 +173,8 @@ DWORD SdlDriver::injectionloop() {
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
-                memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
-                _gameptr->Inject(); // ship empty input to game
+                //memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
+                //gameptr->Inject(); // ship empty input to game
                 _windowactive = 0;
             }
             else {
@@ -185,10 +185,11 @@ DWORD SdlDriver::injectionloop() {
             checkwindowtick++;
 
 
-        if(_windowactive && _gameptr->Status() && !_looppaused) { // if emulator is focused, game is valid and config dialog isn't open
-
+        if(_gameptr->Status() && !_looppaused) { // if emulator is focused, game is valid and config dialog isn't open
+            if(!_windowactive) memset(&_cstateptr->Device, 0, sizeof(DEVICE));
             _gameptr->Inject(); // send input to game driver
         }
+
         Sleep(emutickrate); // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
 
     }
