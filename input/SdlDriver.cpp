@@ -129,21 +129,18 @@ DWORD SdlDriver::injectionloop() {
             dev->AIMSTICK.x = sdl_axisreport.RStick.x;
             dev->AIMSTICK.y = sdl_axisreport.RStick.y;
 
-            if(sdl_axisreport.LTrigger >= 0.50)
+            if(sdl_axisreport.LTrigger >= profile.TriggerThreshold.x)
                 sdl_buttons |= 1 << GAMEPAD_OFFSET_TRIGGER_LEFT;
 
-            if(sdl_axisreport.RTrigger >= 0.50)
+            if(sdl_axisreport.RTrigger >= profile.TriggerThreshold.y)
                 sdl_buttons |= 1 << GAMEPAD_OFFSET_TRIGGER_RIGHT;
 
-
-            // Disable the gyro if the toggle is off.
+            // Disable the gyro & accelerometer if the toggle is off.
             if(!gyro_is_disabled[player]) {
-                dev->GYRO.x = -sdl_motionreport.GyroY;
-                dev->GYRO.y = -sdl_motionreport.GyroX;
+                dev->MOTION = sdl_motionreport;
             }
             else {
-                dev->GYRO.x = 0;
-                dev->GYRO.y = 0;
+                dev->MOTION = {};
             }
 
             for(int button = FIRE; button < TOTALBUTTONS; button++) {
@@ -156,6 +153,16 @@ DWORD SdlDriver::injectionloop() {
             dev->BUTTONPRIM[STRAFELEFT] = sdl_axisreport.LStick.x < -profile.MoveStickDeadzone.x;
             dev->BUTTONPRIM[STRAFERIGHT] = sdl_axisreport.LStick.x > profile.MoveStickDeadzone.x;
 
+            // Get gyro sensitivity for Standard/Aim mode if enabled.
+            if(profile.UseSeperateGyroAimSensitivity) {
+                dev->GYROSENSITIVITY.x = dev->BUTTONPRIM[AIM] || dev->BUTTONSEC[AIM] ?
+                        profile.GyroscopeAimSensitivity.x : profile.GyroscopeSensitivity.x;
+                dev->GYROSENSITIVITY.y = dev->BUTTONPRIM[AIM] || dev->BUTTONSEC[AIM] ?
+                        profile.GyroscopeAimSensitivity.y : profile.GyroscopeSensitivity.y;
+            } else {
+                    dev->GYROSENSITIVITY.x = profile.GyroscopeSensitivity.x;
+                    dev->GYROSENSITIVITY.y = profile.GyroscopeSensitivity.y;
+            }
         }
 
         if(checkwindowtick > (250 / emutickrate)) // poll every 500ms
@@ -178,10 +185,11 @@ DWORD SdlDriver::injectionloop() {
             checkwindowtick++;
 
 
-        if(_windowactive && _gameptr->Status() && !_looppaused) { // if emulator is focused, game is valid and config dialog isn't open
-
+        if(_gameptr->Status() && !_looppaused) { // if emulator is focused, game is valid and config dialog isn't open
+            if(!_windowactive) memset(&_cstateptr->Device, 0, sizeof(DEVICE));
             _gameptr->Inject(); // send input to game driver
         }
+
         Sleep(emutickrate); // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed
 
     }
@@ -200,6 +208,7 @@ int SdlDriver::Initialize(const HWND hw) {
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_SWITCH_HOME_LED, "0");
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1");
+        SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_XBOX, "1");
         if(SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
             return -1; // SDL failed to initialize.
 

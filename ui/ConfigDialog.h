@@ -104,6 +104,10 @@ private slots:
     void on_cancelButton_clicked();
     void on_okButton_clicked();
     void on_reconnectControllers_clicked();
+    void on_playerSettingsTabGyroLocalSpaceYAxisBox_activated(int index);
+    void on_playerSettingsTabGyroGyroSpaceBox_activated(int index);
+
+
     void on_playerSettingsTabGyroXAxisSensitivitySlider_sliderMoved(int value);
     void on_playerSettingsTabGyroXAxisSensitivitySpinbox_valueChanged(double value);
     void on_playerSettingsTabGyroYAxisSensitivitySlider_sliderMoved(int value);
@@ -136,6 +140,14 @@ private slots:
     void on_playerSettingsTabOtherDS4SpinboxRed_valueChanged(int value);
     void on_playerSettingsTabOtherDS4SpinboxGreen_valueChanged(int value);
     void on_playerSettingsTabOtherDS4SpinboxBlue_valueChanged(int value);
+    void on_playerSettingsTabGyroUseSeperateAimSensCheckbox_stateChanged(int state);
+    void on_playerSettingsTabGyroXAxisSensitivityAimSpinbox_valueChanged(double value);
+    void on_playerSettingsTabGyroYAxisSensitivityAimSpinbox_valueChanged(double value);
+    void on_playerSettingsTabGyroXAxisSensitivityAimSlider_sliderMoved(int value);
+    void on_playerSettingsTabGyroYAxisSensitivityAimSlider_sliderMoved(int value);
+    void on_playerSettingsTabOtherTriggerThresholdL_valueChanged(double value);
+    void on_playerSettingsTabOtherTriggerThresholdR_valueChanged(double value);
+
 
 
 

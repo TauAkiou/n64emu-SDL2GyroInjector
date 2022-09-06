@@ -72,10 +72,13 @@ class InputHandler {
     public:
         InputHandler() = default;
         vec2<float> ProcessAimStickInputForPlayer(PLAYERS player, bool ignore_stickmode);
+        vec2<float> InputHandler::ProcessGyroscopeInputForPlayer(PLAYERS player);
         static vec2<float> HandleDeadZoneStickInput(vec2<float> stick, vec2<float> deadzone);
 
-    static vec2<float> GetBaseFactorForStickType(enum STICKMODE mode);
-    static vec2<float> GetGeneralBaseFactorForStick();
+        static vec2<float> GetBaseFactorForStickType(enum STICKMODE mode);
+        static vec2<float> GetGeneralBaseFactorForStick();
+
+    vec2<float> GetLocalSpaceInputForPlayer(PLAYERS player);
 };
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_INPUTHANDLER_H

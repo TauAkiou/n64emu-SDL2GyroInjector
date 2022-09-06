@@ -118,8 +118,8 @@ public:
         vec2 d(v.x - x, v.y - y);
         return d.length();
     }
-    float length() const {
-        return std::sqrt(x * x + y * y);
+    [[nodiscard]] float length() const {
+        return std::sqrt((x * x) + (y * y));
     }
     void truncate(double length) {
         double angle = atan2f(y, x);

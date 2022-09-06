@@ -16,14 +16,7 @@
 #include "GamepadMotion/GamepadMotion.hpp"
 
 
-struct MotionReport {
-    float GyroX = 0.0f;
-    float GyroY = 0.0f;
-    float GyroZ = 0.0f;
-    float AccelX = 0.0f;
-    float AccelY = 0.0f;
-    float AccelZ = 0.0f;
-};
+
 
 struct AxisReport {
     vec2<float> LStick { 0, 0 };

@@ -33,7 +33,8 @@
 
 #define GYRO_BASEFACTOR 400
 #define PI 3.1415927f
-#define __GYRO_INJECTOR_VERSION__ "v0.31b-prerelease"
+
+#define __GYRO_INJECTOR_VERSION__ "v0.4b"
 #define __CURRENTYEAR__ "2021"
 
 #define CONSOLE { AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout; )};
@@ -45,6 +46,7 @@
 #include <utility>
 #include "nlohmann/json.hpp"
 #include "vec2.h"
+#include "vec3.h"
 
 // Bitmask defines for buttons.
 #define GAMEPAD_A 1
@@ -126,6 +128,8 @@ enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 enum CONTROLLERMODE { DISCONNECTED = 0, FULLCONTROLLER, JOYCONS };
 enum AIMTYPE { STANDARD = 0, SPLATOON, FREE };
+enum GYROSPACE { LOCALSPACE = 0, PLAYER };
+enum GYROYAXIS { YAW = 0, ROLL, HYBRID };
 
 enum JSD_ControllerType {
     None = 0,
@@ -143,6 +147,22 @@ typedef struct clr {
     unsigned char b;
 } Color;
 
+struct MotionReport {
+    float GyroX = 0.0f;
+    float GyroY = 0.0f;
+    float GyroZ = 0.0f;
+    float AccelX = 0.0f;
+    float AccelY = 0.0f;
+    float AccelZ = 0.0f;
+    float GravX = 0.0f;
+    float GravY = 0.0f;
+    float GravZ = 0.0f;
+    float QuatW = 0.0f;
+    float QuatX = 0.0f;
+    float QuatY = 0.0f;
+    float QuatZ = 0.0f;
+};
+
 namespace js_settings {
 
     typedef struct EMUSETTINGS {
@@ -154,7 +174,7 @@ namespace js_settings {
 
     typedef struct PROFILE {
         // Secondary devices are used when we are in Joycon mode.
-        enum STICKMODE StickMode = FULLSTICK;
+        enum STICKMODE StickMode = XONLY;
         int DS4Color = 0x000000;
         int BUTTONPRIM[TOTALBUTTONS] = {GAMEPAD_TRIGGER_RIGHT, GAMEPAD_TRIGGER_LEFT, GAMEPAD_LEFTSHOULDER,
                                         GAMEPAD_RIGHTSHOULDER, GAMEPAD_START, GAMEPAD_A, GAMEPAD_B, GAMEPAD_X,
@@ -166,6 +186,9 @@ namespace js_settings {
         vec2<float> MoveStickDeadzone = {0.25, 0.25};
         vec2<float> AimStickSensitivity = {1.00, 1.00};
         vec2<float> GyroscopeSensitivity = {2.00, 2.00};
+        vec2<float> GyroscopeAimSensitivity = {2.00, 2.00};
+        // x = left trigger, y = right trigger
+        vec2<float> TriggerThreshold = {0.5, 0.5};
         float Crosshair = {1.00};
         bool GyroPitchInverted = {false};
         bool StickPitchInverted = {false};
@@ -175,6 +198,11 @@ namespace js_settings {
         bool AllowStickInAimMode = {false};
         AIMTYPE FreeAiming = { STANDARD };
         bool AimStick = false; // True: Left, False: Right
+        GYROSPACE GyroscopeSpace = LOCALSPACE;
+        GYROYAXIS GyroscopeYAxis = YAW;
+        bool UseSeperateGyroAimSensitivity = false;
+
+
         //vec2<float> VECTORSETTINGS[TOTALVECTORSETTINGS];
         //float FLOATSETTINGS[TOTALVECTORSETTINGS];
         //int SETTINGS[TOTALSETTINGS];
@@ -186,16 +214,17 @@ namespace js_settings {
     void from_json(const nlohmann::json &j, EMUSETTINGS &p);
 }
 
-
-
 typedef struct {
-    vec2<float> AIMSTICK, GYRO;
+    vec2<float> AIMSTICK;
+    MotionReport MOTION;
+    vec3<float> ACCELEROMETER;
     float LTRIGGER, RTRIGGER;
     int POSX, POSY; // Just in case we want kb/m support
     int BUTTONPRIM[TOTALBUTTONS];
     int BUTTONSEC[TOTALBUTTONS];
     int ARROW[4];
     bool GYROSTATE;
+    vec2<float> GYROSENSITIVITY;
 } DEVICE;
 
 #endif //INC_1964_INPUT_JOYSHOCKCPP_COMMON_H

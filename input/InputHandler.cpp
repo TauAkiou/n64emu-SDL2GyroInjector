@@ -26,7 +26,10 @@
 
 
 #include <iostream>
+#include <algorithm>
 #include "InputHandler.h"
+
+#define YAWRELAXFACTOR 1.41f
 
 vec2<float> InputHandler::GetBaseFactorForStickType(enum STICKMODE mode) {
     switch(mode) {
@@ -69,6 +72,48 @@ vec2<float> InputHandler::ProcessAimStickInputForPlayer(PLAYERS player, bool ign
             auto flick = getFlickState(player, _ctrlptr->Device[player].AIMSTICK);
             laststick[player] = _ctrlptr->Device[player].AIMSTICK;
             return { flick, 0 };
+    }
+}
+
+vec2<float> InputHandler::GetLocalSpaceInputForPlayer(PLAYERS player) {
+    auto device = _ctrlptr->Device[player];
+    return vec2<float> { -device.MOTION.GyroX, -device.MOTION.GyroY };
+}
+
+vec2<float> InputHandler::ProcessGyroscopeInputForPlayer(PLAYERS player) {
+    auto device = _ctrlptr->Device[player];
+    auto settings = _settings->GetProfileForPlayer(player);
+    float worldYaw;
+    float yawRelaxFactor;
+    float yawDirection;
+
+    switch(settings.GyroscopeSpace) {
+        case PLAYER:
+            worldYaw = (device.MOTION.GyroY * device.MOTION.GravY) + (device.MOTION.GyroZ * device.MOTION.GravZ);
+            yawRelaxFactor = YAWRELAXFACTOR;
+             return vec2<float> {
+                    -device.MOTION.GyroX,
+                    (PluginHelpers::sign(worldYaw) * std::min(std::abs(worldYaw) * yawRelaxFactor, vec2f {device.MOTION.GyroY, device.MOTION.GyroZ}.length()))
+            };
+        case LOCALSPACE:
+        default:
+            switch(settings.GyroscopeYAxis) {
+                case YAW:
+                default: // x = pitch, y = yaw
+                    return vec2<float> { -device.MOTION.GyroX, -device.MOTION.GyroY };
+                case ROLL:
+                    return vec2<float> { -device.MOTION.GyroX, -device.MOTION.GyroZ };
+                case HYBRID:
+                    // Basically stolen from Jibb's implementation
+                    vec2<float> yawAxes = { device.MOTION.GyroY, device.MOTION.GyroZ };
+                    if(abs(yawAxes.x) > abs(yawAxes.y)) {
+                        yawDirection = PluginHelpers::sign(yawAxes.x);
+                    }
+                    else {
+                        yawDirection = PluginHelpers::sign(yawAxes.y);
+                    }
+                    return vec2<float> { -device.MOTION.GyroX, -(yawAxes.length() * yawDirection) };
+            }
     }
 }
 
@@ -115,7 +160,7 @@ float InputHandler::getFlickState(PLAYERS player, const vec2<float> &stick) {
 
         float lastFlickProgress = flickprogress[player];
         if (lastFlickProgress < flicktime) {
-            flickprogress[player] = min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
+            flickprogress[player] = std::min(flickprogress[player] + _ctrlptr->DeltaTime, flicktime);
 
             // get last time and this time in 0-1 completion range
             float lastPerOne = lastFlickProgress / flicktime;
