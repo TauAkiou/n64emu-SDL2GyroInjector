@@ -173,8 +173,8 @@ DWORD SdlDriver::injectionloop() {
             checkwindowtick = 0;
             if(_emulatorwindow != GetForegroundWindow()) // don't send input if the window is inactive.
             {
-                //memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
-                //gameptr->Inject(); // ship empty input to game
+                memset(&_cstateptr->Device, 0, sizeof(DEVICE)); // reset player input
+                _gameptr->Inject(); // ship empty input to game
                 _windowactive = 0;
             }
             else {
