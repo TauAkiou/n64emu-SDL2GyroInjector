@@ -33,7 +33,7 @@
 
 #define GYRO_BASEFACTOR 400
 #define PI 3.1415927f
-#define __GYRO_INJECTOR_VERSION__ "v0.3b-prerelease"
+#define __GYRO_INJECTOR_VERSION__ "v0.4b"
 #define __CURRENTYEAR__ "2021"
 
 #define CONSOLE { AllocConsole(); AttachConsole(GetCurrentProcessId()); freopen("CON", "w", stdout; )};
