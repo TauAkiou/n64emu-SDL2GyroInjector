@@ -343,21 +343,21 @@ void PerfectDark::_radialmenunav(const int player, const js_settings::PROFILE& p
         ymenu[player] = PluginHelpers::ClampFloat(ymenu[player], -max, max);
     }
         if(ymenu[player] < -threshold) // c-up
-            radialmenudirection[player][FORWARDS] = 1;
+            radialmenudirection[player].forwards = true;
         else if(ymenu[player] > threshold) // c-down
-            radialmenudirection[player][BACKWARDS] = 1;
+            radialmenudirection[player].backwards = true;
         if(xmenu[player] < -threshold) // c-left
-            radialmenudirection[player][STRAFELEFT] = 1;
+            radialmenudirection[player].left = true;
         else if(xmenu[player] > threshold) // c-right
-            radialmenudirection[player][STRAFERIGHT] = 1;
+            radialmenudirection[player].right = true;
         if(xmenu[player] < -threshold && ymenu[player] < -threshold && (-xmenu[player] + -ymenu[player]) / (max * 2) > diagonalthres) // c-up-left
-            radialmenudirection[player][FORWARDS] = 1, radialmenudirection[player][STRAFELEFT] = 1;
+            radialmenudirection[player].forwards = 1, radialmenudirection[player].left = 1;
         else if(xmenu[player] > threshold && ymenu[player] < -threshold && (xmenu[player] + -ymenu[player]) / (max * 2) > diagonalthres) // c-up-right
-            radialmenudirection[player][FORWARDS] = 1, radialmenudirection[player][STRAFERIGHT] = 1;
+            radialmenudirection[player].forwards = 1, radialmenudirection[player].right = 1;
         else if(xmenu[player] < -threshold && ymenu[player] > threshold && (-xmenu[player] + ymenu[player]) / (max * 2) > diagonalthres) // c-down-left
-            radialmenudirection[player][BACKWARDS] = 1, radialmenudirection[player][STRAFELEFT] = 1;
+            radialmenudirection[player].forwards = 1, radialmenudirection[player].left = 1;
         else if(xmenu[player] > threshold && ymenu[player] > threshold && (xmenu[player] + ymenu[player]) / (max * 2) > diagonalthres) // c-down-right
-            radialmenudirection[player][BACKWARDS] = 1, radialmenudirection[player][STRAFERIGHT] = 1;
+            radialmenudirection[player].backwards = 1, radialmenudirection[player].right = 1;
     }
     else
         xmenu[player] = 0, ymenu[player] = 0;
@@ -372,10 +372,10 @@ void PerfectDark::_controller()
 {
     for(int player = PLAYER1; player < ALLPLAYERS; player++)
     {
-        Emulator::Controller[player].U_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[FORWARDS] || _cfgptr->Device[player].BUTTONSEC[FORWARDS] || radialmenudirection[player][FORWARDS];
-        Emulator::Controller[player].D_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[BACKWARDS] || _cfgptr->Device[player].BUTTONSEC[BACKWARDS] || radialmenudirection[player][BACKWARDS];
-        Emulator::Controller[player].L_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[STRAFELEFT] || _cfgptr->Device[player].BUTTONSEC[STRAFELEFT] || radialmenudirection[player][STRAFELEFT];
-        Emulator::Controller[player].R_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[STRAFERIGHT] || _cfgptr->Device[player].BUTTONSEC[STRAFERIGHT] || radialmenudirection[player][STRAFERIGHT];
+        Emulator::Controller[player].U_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[FORWARDS] || _cfgptr->Device[player].BUTTONSEC[FORWARDS] || radialmenudirection[player].forwards;
+        Emulator::Controller[player].D_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[BACKWARDS] || _cfgptr->Device[player].BUTTONSEC[BACKWARDS] || radialmenudirection[player].backwards;
+        Emulator::Controller[player].L_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[STRAFELEFT] || _cfgptr->Device[player].BUTTONSEC[STRAFELEFT] || radialmenudirection[player].left;
+        Emulator::Controller[player].R_CBUTTON = _cfgptr->Device[player].BUTTONPRIM[STRAFERIGHT] || _cfgptr->Device[player].BUTTONSEC[STRAFERIGHT] || radialmenudirection[player].right;
         Emulator::Controller[player].Z_TRIG = _cfgptr->Device[player].BUTTONPRIM[FIRE] || _cfgptr->Device[player].BUTTONSEC[FIRE] || _cfgptr->Device[player].BUTTONPRIM[PREVIOUSWEAPON] || _cfgptr->Device[player].BUTTONSEC[PREVIOUSWEAPON];
         Emulator::Controller[player].R_TRIG = _cfgptr->Device[player].BUTTONPRIM[AIM] || _cfgptr->Device[player].BUTTONSEC[AIM];
         Emulator::Controller[player].A_BUTTON = _cfgptr->Device[player].BUTTONPRIM[ACCEPT] || _cfgptr->Device[player].BUTTONSEC[ACCEPT] || _cfgptr->Device[player].BUTTONPRIM[PREVIOUSWEAPON] || _cfgptr->Device[player].BUTTONSEC[PREVIOUSWEAPON] || _cfgptr->Device[player].BUTTONPRIM[NEXTWEAPON] || _cfgptr->Device[player].BUTTONSEC[NEXTWEAPON];
@@ -396,8 +396,12 @@ void PerfectDark::_controller()
             Emulator::Controller[player].Y_AXIS = ystick[player];
         }
         PD_ResetXYStick(player); // reset x/y stick
-        PD_ResetRadialMenuBtns(player); // reset radialmenudirection
-    }
+        // reset radialmenudirection - macro is not working for some reason?
+        RADIALDIRECTION *rdir = &radialmenudirection[player];
+        memset(rdir, 0, sizeof(RADIALDIRECTION));
+
+        //PD_ResetRadialMenuBtns(player); // reset radialmenudirection
+        }
 }
 //==========================================================================
 // PerfectDark::_injecthacks()

@@ -204,6 +204,7 @@ int SdlDriver::GetConnectedDeviceCount() const {
 int SdlDriver::Initialize(const HWND hw) {
     if(!_initialized) {
         // Make sure that these two hints are set to force enable enhanced mode over bluetooth.
+        SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_SWITCH, "1");
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_JOY_CONS, "1");
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_SWITCH_HOME_LED, "0");
         SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");

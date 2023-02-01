@@ -638,9 +638,9 @@ std::chrono::time_point<std::chrono::steady_clock> SDLDevice::GetStartOfLastCali
 
 void SDLDevice::SetLightbarColor(int color) {
     if(SDL_GameControllerHasLED(_sdlgcptr)) {
-        auto r = (color >> 16) & 0xFF;
-        auto g = (color >> 8) & 0xFF;
-        auto b = color & 0xFF;
+        unsigned char r = (color >> 16) & 0xFF;
+        unsigned char g = (color >> 8) & 0xFF;
+        unsigned char b = color & 0xFF;
 
         SDL_GameControllerSetLED(_sdlgcptr, r, g, b);
         _colorbar_color = color;
