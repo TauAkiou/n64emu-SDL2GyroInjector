@@ -35,12 +35,19 @@
 #include "../../input/InputHandler.h"
 #include "../../common/Helpers.h"
 #include "GameDriver.h"
+#include <string>
 
 #define PD_ResetCrouchToggle(X) safetocrouch[X] = 1, safetostand[X] = 0, crouchstance[X] = 2 // reset crouch toggle bind
 #define PD_ResetXYStick(X) xstick[X] = 0, ystick[X] = 0, usingstick[X] = 0 // reset x/y stick array
 #define PD_ResetRadialMenuBtns(X) for(int direction = 0; direction < 4; direction++) radialmenudirection[X][direction] = 0 // reset direction buttons
 #define PD_WITHINRANGE(param) ((_link.rdramptr != 0) && ((param & 0xFF800000U) == 0x80000000U))
 
+struct RADIALDIRECTION {
+    bool forwards = false;
+    bool backwards = false;
+    bool left = false;
+    bool right = false;
+};
 
 class PerfectDark : public GameDriver {
 private:
@@ -52,7 +59,7 @@ private:
     int usingstick[4] = {0};
     int xmenu[4] = {0};
     int ymenu[4] = {0};
-    int radialmenudirection[4][4] = {{0}, {0}, {0}, {0}};
+    RADIALDIRECTION radialmenudirection[4] = {};
     int safetocrouch[4] = { 1, 1, 1, 1 };
     int safetostand[4] = {0};
     int crouchstance[4] = {0};
