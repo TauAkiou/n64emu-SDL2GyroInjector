@@ -355,7 +355,7 @@ void PerfectDark::_radialmenunav(const int player, const js_settings::PROFILE& p
         else if(xmenu[player] > threshold && ymenu[player] < -threshold && (xmenu[player] + -ymenu[player]) / (max * 2) > diagonalthres) // c-up-right
             radialmenudirection[player].forwards = 1, radialmenudirection[player].right = 1;
         else if(xmenu[player] < -threshold && ymenu[player] > threshold && (-xmenu[player] + ymenu[player]) / (max * 2) > diagonalthres) // c-down-left
-            radialmenudirection[player].forwards = 1, radialmenudirection[player].left = 1;
+            radialmenudirection[player].backwards = 1, radialmenudirection[player].left = 1;
         else if(xmenu[player] > threshold && ymenu[player] > threshold && (xmenu[player] + ymenu[player]) / (max * 2) > diagonalthres) // c-down-right
             radialmenudirection[player].backwards = 1, radialmenudirection[player].right = 1;
     }
