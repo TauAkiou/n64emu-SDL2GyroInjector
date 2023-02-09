@@ -1,5 +1,6 @@
 # this cmake file is part of the following project, which is licensed under
 # an MIT license. Please see version.LICENSE for details.
+# https://github.com/nocnokneo/cmake-git-versioning-example
 
 
 if(GIT_EXECUTABLE)
