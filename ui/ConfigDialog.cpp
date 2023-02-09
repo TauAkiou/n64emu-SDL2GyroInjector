@@ -634,13 +634,13 @@ void ConfigDialog::on_playerSettingsTabGyroAimingStyleBox_activated(int index) {
     switch(index) {
         default:
         case 0:
-            _localprofiles[_selectedplayer].FreeAiming = STANDARD;
+            _localprofiles[_selectedplayer].FreeAiming = FLOATFIXED;
             break;
         case 1:
-            _localprofiles[_selectedplayer].FreeAiming = SPLATOON;
+            _localprofiles[_selectedplayer].FreeAiming = FLOATVERTICAL;
             break;
         case 2:
-            _localprofiles[_selectedplayer].FreeAiming = FREE;
+            _localprofiles[_selectedplayer].FreeAiming = FLOATFULL;
             break;
     }
 }

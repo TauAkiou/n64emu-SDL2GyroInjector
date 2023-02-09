@@ -543,7 +543,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gyroscope crosshair aiming mode. Note that using anything other then &lt;span style=&quot; font-weight:600;&quot;&gt;Standard&lt;/span&gt; can cause bugs.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Standard: &lt;/span&gt;Standard mouselook style aiming. Gyroscope controls camera, crosshair is fixed to center of screen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Splatoon: &lt;/span&gt;Simulates Splatoon style reticle/crosshair aiming. Gyroscope will move unfixed crosshair on Y axis - X Axis is fixed outside of aim mode.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Free: &lt;/span&gt;Fully unlocked reticle/crosshair aiming. Gyroscope will move crosshair on X and Y axis even when Aim Mode is not enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Aiming Style</string>
+            <string>Crosshair</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -557,17 +557,17 @@
            </property>
            <item>
             <property name="text">
-             <string>Standard</string>
+             <string>Fixed</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Splatoon</string>
+             <string>Floating (Vertical Only)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Free Aim</string>
+             <string>Floating (Full)</string>
             </property>
            </item>
           </widget>

@@ -34,6 +34,7 @@
 #include <windows.h>
 #include "plugin.h"
 #include "maindll.h"
+#include "inj_version.h"
 
 extern "C" DLLEXPORT void CALL CloseDLL(void);
 extern "C" DLLEXPORT void CALL ControllerCommand(int Control, BYTE *Command);

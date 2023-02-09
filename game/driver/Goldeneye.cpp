@@ -364,7 +364,7 @@ void Goldeneye::_processFreeAim(int player, const js_settings::PROFILE& profile)
             if(!cursoraimingflag) { // if not aiming (or geaimmode is off)
                 cam_yaw += aimstickdata.x / 10.0f * sensitivity_stick_x *
                         (fov / basefov); // regular mouselook calculation
-                if(profile.FreeAiming == SPLATOON) {
+                if(profile.FreeAiming == FLOATVERTICAL) {
                     cam_yaw += gyroscope.y / 10.0f * sensitivity_gyro_yaw_camera * _cfgptr->DeltaTime * (fov / basefov);
                 }
             }
@@ -477,7 +477,7 @@ void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& p
                 (profile.AimStickSensitivity.y * (sensitivity_basefactor_stick.y / 2) / sensitivity); // fmax(mouseaccel, 1);
     }
 
-    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
+    if(profile.FreeAiming == FLOATFULL || (profile.FreeAiming == FLOATVERTICAL && aimingflag)) {
         crosshairposx[player] += gyroscope.y / 10.0f *
                                  ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) *
                                  _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
@@ -488,14 +488,14 @@ void Goldeneye::_aimmode_freeaim(const int player, const js_settings::PROFILE& p
             10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / sensitivity) *
             _cfgptr->DeltaTime; // fmax(mouseaccel, 1);
 
-    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag)) {
+    if(profile.FreeAiming == FLOATFULL || (profile.FreeAiming == FLOATVERTICAL && aimingflag)) {
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMITFREE,
                                                           CROSSHAIRLIMITFREE); // apply clamp then inject
     }
     crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMITFREE,
                                                       CROSSHAIRLIMITFREE);
 
-    if(profile.FreeAiming == SPLATOON && !aimingflag) {
+    if(profile.FreeAiming == FLOATVERTICAL && !aimingflag) {
         crosshairposx[player] = crosshairx; // Ensure x is locked to center in Splatoon mode.
     }
 

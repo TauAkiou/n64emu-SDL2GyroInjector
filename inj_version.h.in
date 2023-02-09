@@ -1,0 +1,9 @@
+// version code obtained from: https://github.com/nocnokneo/cmake-git-versioning-example
+// license information can be found under version.LICENSE
+
+#ifndef SDL2_GYROINJECTOR_INJ_VERSION_H_IN
+#define SDL2_GYROINJECTOR_INJ_VERSION_H_IN
+
+#define INJ_VERSION "@INJ_VERSION@"
+
+#endif //SDL2_GYROINJECTOR_INJ_VERSION_H_IN

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 project(SDL2_GyroInjector)
 set(CMAKE_CXX_STANDARD 17)
+include_directories(${CMAKE_BINARY_DIR})
 
 # automatically download nlohmann/json.
 message("Fetching nhlohmann/json...")
@@ -79,7 +80,7 @@ add_library(SDL2_GyroInjector SHARED
         input/SDLDevice.cpp
         input/GamepadMotion/GamepadMotion.hpp
         input/GamepadMotion/GamepadMotion.cpp
-        common/common.cpp)
+        common/common.cpp inj_version.h.in)
 
 if(MSVC)
     set("FORCE_STATIC_VCRT" "ON")
@@ -101,6 +102,11 @@ message("${SDL2_LIBRARIES}")
 target_link_libraries(SDL2_GyroInjector PUBLIC Qt5::Widgets Qt5::Core Qt5::Gui ${SDL2_LIBRARIES})
 target_link_libraries(SDL2_GyroInjector PRIVATE nlohmann_json::nlohmann_json)
 
+if(GITRELEASE)
+# if we are doing a git release, then we will load the
+
+
+ENDIF()
 
 # Automatic deployment for the plugin.
 IF(1964_INSTALL_DIRECTORY)
@@ -113,3 +119,15 @@ IF(1964_INSTALL_DIRECTORY)
             "${1964_PLUGIN_DIRECTORY}/SDL2_GyroInjector.dll"
             COMMENT "Copying to 1964 Directory...")
 ENDIF()
+
+# version code obtained from: https://github.com/nocnokneo/cmake-git-versioning-example
+# license information can be found under version.LICENSE
+find_package(Git)
+add_custom_target(version
+        ${CMAKE_COMMAND} -D SRC=${CMAKE_SOURCE_DIR}/inj_version.h.in
+        -D DST=${CMAKE_BINARY_DIR}/inj_version.h
+        -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
+        -P ${CMAKE_SOURCE_DIR}/GenerateVersionHeader.cmake
+        )
+
+add_dependencies(SDL2_GyroInjector version)

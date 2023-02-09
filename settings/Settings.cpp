@@ -114,7 +114,8 @@ vec2<int> Settings::GetOverrideRatio() {
 }
 
 void Settings::SetOverrideRatio(const vec2<int>& overrideratio) {
-    EmulatorSettings.RatioOverride;
+    EmulatorSettings.RatioOverride.x = overrideratio.x;
+    EmulatorSettings.RatioOverride.y = overrideratio.y;
 }
 
 void Settings::SetAssignmentForPlayer(enum PLAYERS player, Assignment asgn) {

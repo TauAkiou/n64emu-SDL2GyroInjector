@@ -107,7 +107,7 @@ DLLEXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
 {
     PluginInfo->Version = 0xFBAD; // no emulator supports this other than my disgusting version of 1964 (awful hack that i created because plugins are not complicated enough and i don't know what the f**k i am doing as evident from the code i've written)
     PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    sprintf(PluginInfo->Name, "SDL2 Gyro Injector %s", __GYRO_INJECTOR_VERSION__);
+    sprintf(PluginInfo->Name, "SDL2 Gyro Injector %s", INJ_VERSION);
 #ifdef SPEEDRUN_BUILD
     sprintf(PluginInfo->Name, "%s (Speedrun Build)", PluginInfo->Name);
 #endif

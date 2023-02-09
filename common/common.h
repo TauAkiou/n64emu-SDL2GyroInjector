@@ -127,7 +127,7 @@ enum QUICKCONFIGENUM {DISABLED = 0, DEFAULT, CUSTOM};
 enum STICKMODE {FULLSTICK = 0, XONLY, FLICK, ALLMODES};
 enum PLAYERS { PLAYER1 = 0, PLAYER2, PLAYER3, PLAYER4, ALLPLAYERS};
 enum CONTROLLERMODE { DISCONNECTED = 0, FULLCONTROLLER, JOYCONS };
-enum AIMTYPE { STANDARD = 0, SPLATOON, FREE };
+enum AIMTYPE { FLOATFIXED = 0, FLOATVERTICAL, FLOATFULL };
 enum GYROSPACE { LOCALSPACE = 0, PLAYER };
 enum GYROYAXIS { YAW = 0, ROLL, HYBRID };
 
@@ -196,7 +196,7 @@ namespace js_settings {
         bool GoldeneyeAimMode = {true};
         bool PerfectDarkAimMode = {true};
         bool AllowStickInAimMode = {false};
-        AIMTYPE FreeAiming = { STANDARD };
+        AIMTYPE FreeAiming = { FLOATFIXED };
         bool AimStick = false; // True: Left, False: Right
         GYROSPACE GyroscopeSpace = LOCALSPACE;
         GYROYAXIS GyroscopeYAxis = YAW;

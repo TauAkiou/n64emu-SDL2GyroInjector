@@ -690,7 +690,7 @@ void PerfectDark::_processFreeAimInput(int player, const js_settings::PROFILE& p
                 // Aiming mode will only use the camera to move if set to FREE. Splatoon allows X movement on the camera.
                 camx += aimstickdata.x / 10.0f * sensitivity_stick_x * (fov / basefov); // regular mouselook calculation
 
-                if(profile.FreeAiming == SPLATOON) {
+                if(profile.FreeAiming == FLOATVERTICAL) {
                     camx += gyro_vectors.y / 10.0f * sensitivity_gyro_x * _cfgptr->DeltaTime *
                             (fov / basefov);
                 }
@@ -833,12 +833,12 @@ void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& pr
     }
 
     //const float mouseaccel = PROFILE[player].SETTINGS[ACCELERATION] ? sqrt(DEVICE[player].XPOS * DEVICE[player].XPOS + DEVICE[player].YPOS * DEVICE[player].YPOS) / TICKRATE / 12.0f * PROFILE[player].SETTINGS[ACCELERATION] : 0;
-    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
+    if(profile.FreeAiming == FLOATFULL || (profile.FreeAiming == FLOATVERTICAL && aimingflag))
         crosshairposx[player] += gyro_vectors.y / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.x * GYRO_BASEFACTOR) / sensitivity / RATIOFACTOR) * _cfgptr->DeltaTime;  // * fmax(mouseaccel, 1); // calculate the crosshair position
 
 
     crosshairposy[player] += (profile.GyroPitchInverted ? -gyro_vectors.x : gyro_vectors.x) / 10.0f * ((_cfgptr->Device[player].GYROSENSITIVITY.y * GYRO_BASEFACTOR) / sensitivity) * _cfgptr->DeltaTime;
-    if(profile.FreeAiming == FREE || (profile.FreeAiming == SPLATOON && aimingflag))
+    if(profile.FreeAiming == FLOATFULL || (profile.FreeAiming == FLOATVERTICAL && aimingflag))
         crosshairposx[player] = PluginHelpers::ClampFloat(crosshairposx[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT); // apply clamp then inject
 
     crosshairposy[player] = PluginHelpers::ClampFloat(crosshairposy[player], -CROSSHAIRLIMIT, CROSSHAIRLIMIT);
@@ -846,7 +846,7 @@ void PerfectDark::_aimmode_free(const int player, const js_settings::PROFILE& pr
     _link->WriteFloat(playerbase[player] + PD_crosshairx, crosshairposx[player]);
     _link->WriteFloat(playerbase[player] + PD_crosshairy, crosshairposy[player]);
 
-    if(profile.FreeAiming == SPLATOON && !aimingflag) {
+    if(profile.FreeAiming == FLOATVERTICAL && !aimingflag) {
         crosshairposx[player] = crosshairx;  // Ensure x is locked to center in Splatoon mode.
     }
 
