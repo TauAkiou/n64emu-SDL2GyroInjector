@@ -134,6 +134,7 @@ void MainDll::UpdateControllerStatus() {
 
 
 int MainDll::HandleConfigWindow(int argc, char* argv[]) {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     std::unique_ptr<QApplication> pQApp;
     QCoreApplication* pApp = QCoreApplication::instance();
     // Stop the injection thread while we are in settings.
