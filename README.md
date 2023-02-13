@@ -1,6 +1,6 @@
 # n64emu-SDL2GyroInjector
 
-SDL2InputInjector is a rewritten version of the original Keyboard + Mouse Injector Plugin designed to take advantage of SDL2's motion control support.
+SDL2GyroInjector is a rewritten version of the original Keyboard + Mouse Injector Plugin designed to take advantage of SDL2's motion control support.
 
 The plugin is a practical reference implementation of ideas and concepts catalogued on [GyroWiki](http://gyrowiki.jibbsmart.com/). It can also be used for standard twin-stick input.
 
