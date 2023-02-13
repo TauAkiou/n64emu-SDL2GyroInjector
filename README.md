@@ -1,85 +1,71 @@
-# SDL2 Input Injector For Perfect Dark & Goldeneye
+# n64emu-SDL2GyroInjector
 
-This is a modified/rewritten C++ version of the Keyboard/Mouse Injector Plugin written by Carnivorous.
+SDL2InputInjector is a rewritten version of the original Keyboard + Mouse Injector Plugin designed to take advantage of SDL2's motion control support.
 
-This plugin works with the custom, overclocked version of the 1964 Emulator released by [Stolen and Carnivorous](http://www.shootersforever.com/forums_message_boards/viewtopic.php?t=7045)
+The plugin is a practical reference implementation of ideas and concepts catalogued on [GyroWiki](http://gyrowiki.jibbsmart.com/). It can also be used for standard twin-stick input.
 
-This plugin is a rewrite heavily based on work done by Stolen and Carnivorous. A majority of the credit for this project goes to them and the ShootersForever community.
+It is heavily based on the original Keyboard + Mouse injection code written by [Stolen and Carnivorous](http://www.shootersforever.com/forums_message_boards/viewtopic.php?t=7045). A majority of the credit goes to them for the original codebase & plugin concept.
 
-This plugin is beta software and is very likely to have bugs or other issues. Please report bugs in the repository issue tracker.
+Original codebase is maintained by Graslu00: https://github.com/Graslu/1964GEPD
+
+## Download
+
+This plugin is only compatible with the 1964GEPD 0.8.5 emulator. It will **not** run on any other emulator. 
+
+The emulator can be obtained from Graslu's [release page](https://github.com/Graslu/1964GEPD/releases/tag/latest).
+The latest release of the plugin can be found here: https://github.com/TauAkiou/n64emu-SDL2GyroInjector/releases
 
 ## Features:
 * Full Controller Support for Goldeneye/Perfect Dark.
   * Mouse Style Gyro Aim supported on all controllers supported by SDL2.
-  * Joycons not currently implemented. 
-
 * Extensive input customization.
-* Support for up to 4 players.
-* Some features designed for gyroscope aiming:
-    - Unlocked Aimer Modes (Free Aim, Splatoon (planned))
-    - [Flick Stick](http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick)
-  
+* Support for up to 4 players on controllers.
+* Implements Jibb Smart's [Flick Stick](http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick)
+* Floating/Deattached Crosshair (Vertical, or fully unlocked modes. WIP.)
+
 ### Todo List:
 - [x] ~~Rewrite input backend using SDL.~~
 - [x] ~~Implement basic QT Plugin UI~~
 - [x] ~~Implement Gyroscope Calibration~~
 - [X] ~~Implement configuration saving~~
+- [ ] Refactor & clean up controller code.
 - [ ] Controller Player ID
 - [ ] Code polishing & organization
 
-
-## Potential Future Features
-* Force Feedback (Potentially possible if we can poke the moments the game is supposed to have rumble.)
-* Analog Movement (Also requires poking the game's player struct for info.)
-* Keybord & Mouse Support
-    - SDL2 natively supports keyboard and mouse input, so it makes sense to potentially include it. However, this version will not be able to supplant the original KB/M injector as SDL2 only supports the system KB/M. 
-
 ## Dependencies & Requirements
-This plugin only works on Stolen/Carnivorous' GE/PD 1964 hack. Use the link above to find it.
 - MSVC (Visual Studio 2017 Toolchain)
 - cmake
-- QT Framework 5.15.2
-- SDL2
-
+- QT Framework 5.15.2 - qt5-static for Zilmar-spec builds ((obtainable from [here](https://github.com/gonetz/GLideN64/releases/tag/qt_build)))
+- SDL2 (x86) - Obtainable from [The SDL2 Github](https://github.com/libsdl-org/SDL/releases)
+- nlohmann/json (automatically downloaded by cmake)
 
 ## Building
-This plugin builds using the Visual Studio 2017 toolchain.
+This plugin is only confirmed to build properly on MSVC. Builds using MinGW and related toolchains are not supported.
 
-The emulator used by this plugin is a 32-bit program. Ensure you have the 32-bit (x86 or i686) versions of all dependencies.
+*NOTE:* The supported version of 1964 is a 32-bit (x86) application. Ensure you configure your build environment appropriately and download the correct dependencies.
 
-##Dependencies:
-- msvc (Visual Studio 2017)
-- GlideN64 qt5-static for Zilmar-spec builds (x86) (obtainable from [here](https://github.com/gonetz/GLideN64/releases/tag/qt_build))
-- SDL2 (x86)
-- [nlohmann/json](https://github.com/nlohmann/json) (automatically downloaded by cmake)
-- cmake
-
-##Building
-
-Obtaining SDL2:
-  * Download and extract the latest SDL2 package from [The SDL2 Website](https://www.libsdl.org/download-2.0.php)
-    * Download the Visual C++ Development Libraries.
-  * Extract the package somewhere on your computer.
-  * Copy ```cmake/SDL2Config.cmake``` supplied into the SDL2 directory (Example: if you extracted it at ```C:\msvc\SDL2-2.0.16```, you copy SDL2Config.cmake into that directory.)
-
-Obtaining Qt5:
-  * Download and extract the qt5-static build from the above link.
-    * Ensure you download ```qt-5_15-x86-msvc2017-static.7z```
-  * Extract the package somewhere on your computer.
+Obtain Dependencies
+  * SDL2
+    * Download and extract the latest SDL2 package from the above SDL2 Github Link.
+    * Extract the package somewhere on your computer.
+    * Copy ```cmake/SDL2Config.cmake``` from this repository into the folder you extracted SDL2. (Example: if you extracted it at ```C:\msvc\SDL2-2.0.16```, you copy SDL2Config.cmake into that directory.)
+  * Qt5
+    * Download and extract the qt5-static build from the above link.
+      * Ensure you download ```qt-5_15-x86-msvc2017-static.7z```
+    * Extract the package somewhere on your computer.
 
 Building:
 
-* The following variables must be supplied. 
-  * Qt5_DIR
+* Define the following cmake variables.
+  * Qt5_DIR (Required)
     * Example: ```<Place you extracted qt5>\lib\cmake\Qt5```
-  * SDL2_DIR
+  * SDL2_DIR (Required)
     * Example: ```<Place you extracted SDL2>\.```
+  * 1964_INSTALL_DIRECTORY (Optional)
+    * Set to the directory you extracted the emulator.
+    * This variable will allow cmake to automatically copy the plugin to the emulator's directory.
 
-* You can also supply an optional ```1964_INSTALL_DIRECTORY```
-  * This will be set to the directory you installed the emulator (containing 1964.exe)
-  * Setting this variable will automatically copy the plugin to the 1964 directory when built.
-
-  * When set:
+  * Example build output:
     ```
     mkdir build
     cd build
@@ -90,6 +76,3 @@ Building:
 To run:
   * Copy ```"<Place you extracted SDL2">\lib\x86\SDL2.dll``` into the emulator's directory (where 1964.exe is located)
   * Copy the plugin (If you did not define 1964_INSTALL_DIRECTORY) to the emulator's plugins directory (1964/plugins)
-
-## Releases
-Releases are not yet being provided. You will have to build the plugin yourself.
