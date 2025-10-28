@@ -33,10 +33,10 @@
 #define INC_1964_INPUT_JOYSHOCKCPP_GAMEDRIVER_H
 
 #include "../EmulatorLink.h"
-#include "../common/Helpers.h"
-#include "../settings/Settings.h"
+#include "../../common/Helpers.h"
+#include "../../settings/Settings.h"
 #include "../../common/common.h"
-#include "../plugin.h"
+#include "../../plugin.h"
 #include <string>
 
 #define TICKRATE (_settings->GetIfEmulatorOverclocked() ? 2 : 4) // 2ms (500 Hz) for overclocked, 4ms (250 Hz) for stock speed

@@ -192,8 +192,8 @@ void ConfigDialog::_loadProfileSettingsIntoUi(const js_settings::PROFILE profile
     _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSpinbox->setValue(profile.GyroscopeAimSensitivity.y);
     _baseDialog->playerSettingsTabGyroYAxisSensitivityAimSlider->setValue(profile.GyroscopeAimSensitivity.y * 100);
 
-    _baseDialog->playerSettingsTabOtherTriggerThresholdL->setValue(profile.TriggerThreshold.x * 100);
-    _baseDialog->playerSettingsTabOtherTriggerThresholdR->setValue(profile.TriggerThreshold.y * 100);
+    _baseDialog->playerSettingsTabOtherTriggerThresholdL->setValue(profile.TriggerThreshold.x);
+    _baseDialog->playerSettingsTabOtherTriggerThresholdR->setValue(profile.TriggerThreshold.y);
 
 
 }
